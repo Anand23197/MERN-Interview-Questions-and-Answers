@@ -1,0 +1,9 @@
+Q1) What is the Redux working Flow?
+Ans:-  
+
+Redux is a predictable state container for JavaScript applications, commonly used with React for managing the state of the application in a more organized and scalable way. The basic flow of Redux can be summarized in the following steps:
+
+1. Store Creation:
+
+Create a Redux store, which is a single source of truth for the state of your application.
+The store holds the complete state tree of your app.
