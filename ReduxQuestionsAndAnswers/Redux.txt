@@ -99,3 +99,16 @@ const CounterComponent = () => {
  This summarizes the basic flow of working with Redux in a React application. Actions trigger changes,
  reducers specify how the state changes, the store holds the state, and components can connect to the 
  store to update and access the state.
+
+
+
+ 2) can we have multiple reducers
+3) can we have multiple stores
+4) what is reducer in redux
+5) why reducer is a pure function
+6) why state is immutable in redux
+7) what is redux middleware
+8) Difference b/w redux thunk and saga
+9) how to connect react with redux
+10)how can we access a redux store outside a react component
+11)how can we add multiple middleware to redux
