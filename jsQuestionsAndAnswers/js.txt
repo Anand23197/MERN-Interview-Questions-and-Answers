@@ -48,7 +48,12 @@ Ans:-
 --------
 JavaScript has a runtime model based on an event loop, which is responsible 
 for executing the code, collecting and processing events, and executing queued 
-sub-tasks. This model is quite different from models in other languages like C and Java.
+sub-tasks.
+The event loop allows programs to be responsive to user input and handle concurrent operations
+without blocking the entire application.
+For example, in a web browser, the event loop is responsible for handling user interactions, 
+network requests, and other asynchronous tasks while ensuring the responsiveness of the user 
+interface. In server-side applications, an event loop might be used to manage multiple incoming requests concurrently.
 
 Generally We can understand the event loop in three data storage type a) stack b) heap c) queue
 
@@ -104,6 +109,6 @@ NEVER BLOCKING
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
 
-
+        
 
 
