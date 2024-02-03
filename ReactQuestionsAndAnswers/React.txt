@@ -1,0 +1,18 @@
+Q1) What is UseEffect hook?
+Ans:-
+------
+    useEffect is a React Hook that lets you synchronize a component with an external system.
+
+***Connecting to an external system 
+-----------------------------------
+    Some components need to stay connected to the network, some browser API, or a third-party library, while they are displayed on the page. 
+    These systems aren’t controlled by React, so they are called external.
+
+***Usage
+----------------
+    ==> Connecting to an external system 
+    ------------------------------------
+     Some components need to stay connected to the network, some browser API, or a third-party library, while they are displayed on the page.
+     These systems aren’t controlled by React, so they are called external
+
+    ==> Wrapping Effects in custom Hooks 

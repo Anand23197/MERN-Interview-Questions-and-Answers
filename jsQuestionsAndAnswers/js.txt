@@ -1,0 +1,114 @@
+Q1) What is promises in js?
+Ans:- 
+--------
+The Promise is an object represents the eventual completion (or failure) 
+of an asynchronous operation and its resulting value.
+
+This lets asynchronous methods return values like synchronous methods: 
+instead of immediately returning the final value,
+the asynchronous method returns a promise to supply the value at some point in the future.
+
+A Promise is in one of these states:
+---------------------------------------
+    a) pending: initial state, neither fulfilled nor rejected.
+    b) fulfilled: meaning that the operation was completed successfully.
+    c) rejected: meaning that the operation failed.
+
+CHAINED promises
+-----------------
+The methods Promise.prototype.then(), Promise.prototype.catch(),
+and Promise.prototype.finally() are used to associate further action with a promise
+that becomes settled. As these methods return promises, they can be chained.
+
+The .then() method takes up to two arguments; the first argument is a callback function
+for the fulfilled case of the promise, and the second argument is a callback function
+for the rejected case. Each .then() returns a newly generated promise object, which 
+can optionally be used for chaining; for example:
+
+const myPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("foo");
+  }, 300);
+});
+
+myPromise
+  .then(handleFulfilledA, handleRejectedA)
+  .then(handleFulfilledB, handleRejectedB)
+  .then(handleFulfilledC, handleRejectedC);
+
+
+PROMISE methods
+----------------
+Promise.all(), Promise.allSettled(), Promise.any(), Promise.race(),
+Promise.prototype.catch(), Promise.prototype.finally(), Promise.prototype.then()
+, Promise.resolve(),Promise.reject(), Promise.withResolvers()
+
+2.) What is event Loop ?
+Ans:-
+--------
+JavaScript has a runtime model based on an event loop, which is responsible 
+for executing the code, collecting and processing events, and executing queued 
+sub-tasks.
+The event loop allows programs to be responsive to user input and handle concurrent operations
+without blocking the entire application.
+For example, in a web browser, the event loop is responsible for handling user interactions, 
+network requests, and other asynchronous tasks while ensuring the responsiveness of the user 
+interface. In server-side applications, an event loop might be used to manage multiple incoming requests concurrently.
+
+Generally We can understand the event loop in three data storage type a) stack b) heap c) queue
+
+***STACK
+-------------------
+
+        Function calls form a stack of frames
+        ---------------------------------------------------
+        function foo(b) {
+          const a = 10;
+          return a + b + 11;
+        }
+
+        function bar(x) {
+          const y = 3;
+          return foo(x * y);
+        }
+
+        const baz = bar(7); // assigns 42 to baz
+        ----------------------------------------------------
+
+        Order of operations:
+        ------------------------
+        a) When calling bar, a first frame is created containing references to bar's arguments and local variables.
+        b) When bar calls foo, a second frame is created and pushed on top of the first one, 
+           containing references to foo's arguments and local variables.
+        c) When foo returns, the top frame element is popped out of the stack (leaving only bar's call frame).
+        d) When bar returns, the stack is empty.
+           Note that the arguments and local variables may continue to exist, as they are stored outside
+           the stack — so they can be accessed by any nested functions long after their outer function has returned.
+
+***HEAP
+------------------
+        Objects are allocated in a heap which is just a name to denote a large (mostly unstructured) region of memory.
+
+***QUEUE 
+------------------
+        A JavaScript runtime uses a message queue, which is a list of messages to be processed. Each message has an 
+        associated function that gets called to handle the message.
+        At some point during the event loop, the runtime starts handling the messages on the queue, starting with 
+        the oldest one. To do so, the message is removed from the queue and its corresponding function is called 
+        with the message as an input parameter. As always, calling a function creates a new stack frame for that 
+        function's use.
+
+        The processing of functions continues until the stack is once again empty. Then, the event loop
+        will process the next message in the queue (if there is one).
+
+
+NEVER BLOCKING 
+---------------
+        A very interesting property of the event loop model is that JavaScript, unlike a lot of other languages,
+        never blocks. Handling I/O is typically performed via events and callbacks, so when the application is 
+        waiting for an DB query to return or a fetch() request to return, it can still process other things
+        like user input.
+
+        
+
+
