@@ -1,4 +1,126 @@
-Q1) What is promises in js?
+Q1) What is asynchronous?
+Ans:-
+--------
+Asynchronous programming is a technique that enables your program to start a potentially long-running task and still be able to be
+responsive to other events while that task runs, rather than having to wait until that task has finished. Once that task has finished, 
+your program is presented with the result.
+
+Many functions provided by browsers, especially the most interesting ones, can potentially take a long time, and therefore, 
+are asynchronous. For example:
+
+==>Making HTTP requests using fetch()
+==>Accessing a user's camera or microphone using getUserMedia()
+==>Asking a user to select files using showOpenFilePicker()
+
+So even though you may not have to implement your own asynchronous functions very often, you are very likely to need to use them correctly.
+
+lets understand by code
+-------------------------------
+function makeGreeting(name) {
+  return `Hello, my name is ${name}!`;
+}
+
+const name = "Miriam";
+const greeting = makeGreeting(name);
+console.log(greeting);
+-----------------------------
+
+We should note here that the browser effectively steps through the program one line at a time, in the order we wrote it. 
+At each point, the browser waits for the line to finish its work before going on to the next line. It has to do this because
+each line depends on the work done in the preceding lines.
+That makes this a synchronous program. It would still be synchronous even if we called a separate function.
+Here, makeGreeting() is a synchronous function because the caller has to wait for the function to finish its work and return a
+value before the caller can continue.
+
+**PROBLEM WITH SYNCHRONOUS FUNCTION 
+---------------------------------
+  What if the synchronous function takes a long time?
+  for example lets say you have created a page where have many html tags like text, button etc. and suppose you have created a text box where
+  you type number and after typing you are pressing a button. on button click it will generate prime number and display that number. if you have 
+  type large number and it it taking suppose 1 minute of time to execute it and till one minute will not complete you can't perform any
+  operation in your web page, means your page become unresponsive.
+
+  What we need is a way for our program to:
+  ------------------------------------------
+  ==>Start a long-running operation by calling a function.
+  ==>Have that function start the operation and return immediately, so that our program can still be responsive to other events.
+  ==>Have the function execute the operation in a way that does not block the main thread, for example by starting a new thread.
+  ==>Notify us with the result of the operation when it eventually completes.
+
+Q2) What is callback and callback hell?
+  Ans:-
+  -------
+  An event handler is a particular type of callback. A callback is just a function that's passed into another function,
+   with the expectation that the callback will be called at the appropriate time. As we just saw, callbacks used to be 
+   the main way asynchronous functions were implemented in JavaScript.
+
+  However, callback-based code can get hard to understand when the callback itself has to call functions that accept a callback.
+  This is a common situation if you need to perform some operation that breaks down into a series of asynchronous functions. 
+  For example, consider the following:
+-------------------------------------
+function doStep1(init) {
+  return init + 1;
+}
+
+function doStep2(init) {
+  return init + 2;
+}
+
+function doStep3(init) {
+  return init + 3;
+}
+
+function doOperation() {
+  let result = 0;
+  result = doStep1(result);
+  result = doStep2(result);
+  result = doStep3(result);
+  console.log(`result: ${result}`);
+}
+
+doOperation();
+----------------------------------
+
+Here we have a single operation that's split into three steps, where each step depends on the last step. In our example, 
+the first step adds 1 to the input, the second adds 2, and the third adds 3. Starting with an input of 0, the end result is 6 (0 + 1 + 2 + 3).
+As a synchronous program, this is very straightforward. But what if we implemented the steps using callbacks?
+
+----------------------------------------------
+function doStep1(init, callback) {
+  const result = init + 1;
+  callback(result);
+}
+
+function doStep2(init, callback) {
+  const result = init + 2;
+  callback(result);
+}
+
+function doStep3(init, callback) {
+  const result = init + 3;
+  callback(result);
+}
+
+function doOperation() {
+  doStep1(0, (result1) => {
+    doStep2(result1, (result2) => {
+      doStep3(result2, (result3) => {
+        console.log(`result: ${result3}`);
+      });
+    });
+  });
+}
+
+doOperation();
+--------------------------------------------
+Because we have to call callbacks inside callbacks, we get a deeply nested doOperation() function, which is much 
+harder to read and debug. This is sometimes called "callback hell" or the "pyramid of doom" (because the indentation
+looks like a pyramid on its side).When we nest callbacks like this, it can also get very hard to handle errors: often you have 
+to handle errors at each level of the "pyramid", instead of having error handling only once at the top level.
+For these reasons, most modern asynchronous APIs don't use callbacks. Instead, the foundation of asynchronous programming in 
+JavaScript is the Promise.
+
+Q3) What is promises in js?
 Ans:- 
 --------
 The Promise is an object represents the eventual completion (or failure) 
@@ -108,7 +230,3 @@ NEVER BLOCKING
         never blocks. Handling I/O is typically performed via events and callbacks, so when the application is 
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
-
-        
-
-
