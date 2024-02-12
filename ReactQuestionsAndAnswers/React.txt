@@ -46,7 +46,7 @@ Ans:-
         e.g.
         ------------------------------ 
         function Form() {
-        const inputRef = useRef(null);
+        const inputRef = useRef(null);    
         // ...
         ------------------------------
 
@@ -66,6 +66,7 @@ Ans:-
               return () => connection.disconnect();
             }, [roomId]);
             //....
+        }
         ---------------------------------------------   
 
         Effects are an “escape hatch” from the React paradigm. Don’t use Effects to orchestrate the data flow 
@@ -139,3 +140,239 @@ Ans:-
      These systems aren’t controlled by React, so they are called external
 
     ==> Wrapping Effects in custom Hooks 
+
+
+Q2) What is Error Boundary?
+Ans:- 
+------
+    By default, if your application throws an error during rendering, React will remove its UI from the screen. 
+    To prevent this, you can wrap a part of your UI into an error boundary. An error boundary is a special component 
+    that lets you display some fallback UI instead of the part that crashed—for example, an error message.
+    To implement an error boundary component, you need to provide static getDerivedStateFromError which lets you 
+    update state in response to an error and display an error message to the user. You can also optionally implement 
+    componentDidCatch to add some extra logic, for example, to log the error to an analytics service.
+
+    e.g.
+    ---------------
+    class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    // Example "componentStack":
+    //   in ComponentThatThrows (created by App)
+    //   in ErrorBoundary (created by App)
+    //   in div (created by App)
+    //   in App
+    logErrorToMyService(error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
+}
+------------------------------------------
+
+Then you can wrap a part of your component tree with it:
+
+<ErrorBoundary fallback={<p>Something went wrong</p>}>
+  <Profile />
+</ErrorBoundary>
+
+If Profile or its child component throws an error, ErrorBoundary will “catch” that error, 
+display a fallback UI with the error message you’ve provided, and send a production error 
+report to your error reporting service.
+You don’t need to wrap every component into a separate error boundary. When you think about 
+the granularity of error boundaries, consider where it makes sense to display an error message. 
+For example, in a messaging app, it makes sense to place an error boundary around the list of conversations.
+ It also makes sense to place one around every individual message. However, it wouldn’t make sense to place a 
+ boundary around every avatar.
+
+ NOTE:-
+ ------
+There is currently no way to write an error boundary as a function component. However, you don’t have to write the error boundary class yourself. For example,
+you can use "react-error-boundary" instead.
+
+Q3) What is Lazy Loading ?
+Ans:-
+-------
+lazy lets you defer loading component’s code until it is rendered for the first time.
+
+const SomeComponent = lazy(load)
+-----------------------------
+Parameters 
+-------------
+load: A function that returns a Promise or another thenable (a Promise-like object with a then method).
+React will not call load until the first time you attempt to render the returned component. 
+After React first calls load, it will wait for it to resolve, and then render the resolved value’s .
+default as a React component. Both the returned Promise and the Promise’s resolved value will be cached,
+so React will not call load more than once. If the Promise rejects, React will throw the rejection reason
+for the nearest Error Boundary to handle.
+
+Returns 
+---------
+lazy returns a React component you can render in your tree. While the code for the lazy component is
+still loading, attempting to render it will suspend. Use <Suspense> to display a loading indicator while it’s loading.
+
+  **load function 
+  ---------------
+Parameters 
+----------
+load receives no parameters.
+
+Returns 
+You need to return a Promise or some other thenable (a Promise-like object with a then method). 
+It needs to eventually resolve to an object whose .default property is a valid React component type,
+such as a function, memo, or a forwardRef component.
+
+Usage 
+------
+Lazy-loading components with Suspense 
+--------------------------------------
+Usually, you import components with the static import declaration:
+
+import MarkdownPreview from './MarkdownPreview.js';
+To defer loading this component’s code until it’s rendered for the first time, replace this import with:
+
+import { lazy } from 'react';
+
+const MarkdownPreview = lazy(() => import('./MarkdownPreview.js'));
+This code relies on dynamic import(), which might require support from your bundler or framework..
+ Using this pattern requires that the lazy component you’re importing was exported as the default export.
+
+Now that your component’s code loads on demand, you also need to specify what should be displayed while it
+is loading. You can do this by wrapping the lazy component or any of its parents into a <Suspense> boundary:
+
+<Suspense fallback={<Loading />}>
+  <h2>Preview</h2>
+  <MarkdownPreview />
+ </Suspense>
+
+In this example, the code for MarkdownPreview won’t be loaded until you attempt to render it.
+If MarkdownPreview hasn’t loaded yet, Loading will be shown in its place
+------------------------------------------------------------------------------------
+import { useState, Suspense, lazy } from 'react';
+import Loading from './Loading.js';
+
+const MarkdownPreview = lazy(() => delayForDemo(import('./MarkdownPreview.js')));
+
+export default function MarkdownEditor() {
+  const [showPreview, setShowPreview] = useState(false);
+  const [markdown, setMarkdown] = useState('Hello, **world**!');
+  return (
+    <>
+      <textarea value={markdown} onChange={e => setMarkdown(e.target.value)} />
+      <label>
+        <input type="checkbox" checked={showPreview} onChange={e => setShowPreview(e.target.checked)} />
+        Show preview
+      </label>
+      <hr />
+      {showPreview && (
+        <Suspense fallback={<Loading />}>
+          <h2>Preview</h2>
+          <MarkdownPreview markdown={markdown} />
+        </Suspense>
+      )}
+    </>
+  );
+}
+
+// Add a fixed delay so you can see the loading state
+function delayForDemo(promise) {
+  return new Promise(resolve => {
+    setTimeout(resolve, 2000);
+  }).then(() => promise);
+}
+-------------------------------------------------------------------------------
+
+Q4) What is Suspense?
+Ans:-
+-------
+<Suspense> lets you display a fallback until its children have finished loading.
+
+Syntax
+----------
+<Suspense fallback={<Loading />}>
+  <SomeComponent />
+</Suspense>
+
+**Props 
+----------
+children:
+The actual UI you intend to render. If children suspends while rendering, 
+the Suspense boundary will switch to rendering fallback.
+fallback:
+An alternate UI to render in place of the actual UI if it has not finished loading. 
+Any valid React node is accepted, though in practice, a fallback is a lightweight placeholder view,
+such as a loading spinner or skeleton. Suspense will automatically switch to fallback when children suspends, 
+and back to children when the data is ready. If fallback suspends while rendering, it will activate the closest
+parent Suspense boundary.
+
+Usage
+------
+Displaying a fallback while content is loading 
+You can wrap any part of your application with a Suspense boundary:
+
+-----------------------
+<Suspense fallback={<Loading />}>
+  <Albums />
+</Suspense>
+-----------------------
+
+
+React will display your loading fallback until all the code and data needed by the children has been loaded.
+
+In the example below, the Albums component suspends while fetching the list of albums. Until it’s ready to render,
+ React switches the closest Suspense boundary above to show the fallback—your Loading component. 
+ Then, when the data loads, React hides the Loading fallback and renders the Albums component with data.
+
+-----------------------------------------------
+ import { Suspense } from 'react';
+import Albums from './Albums.js';
+
+export default function ArtistPage({ artist }) {
+  return (
+    <>
+      <h1>{artist.name}</h1>
+      <Suspense fallback={<Loading />}>
+        <Albums artistId={artist.id} />
+      </Suspense>
+    </>
+  );
+}
+
+function Loading() {
+  return <h2>🌀 Loading...</h2>;
+}
+------------------------------------------------
+
+Q5.) What library you have installed in your react project?
+Ans:-
+------------
+Mui, Axios, React-router_dom, etc............
+
+Q6.) After Fetching api url is comming and you have show the page on that url how you will do?
+Ans:-
+------------
+We can do this with window.history.push("urlName") and it will automatically redirect to that page.
+
+Q7.) Do you follow react new features?
+Ans:-
+----------
+Yes we follow they have introduced many hooks like useId, useDeferredValue etc.......
+
+Q8.) What is env?
+Ans:-
+----------
