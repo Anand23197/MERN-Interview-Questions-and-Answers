@@ -230,3 +230,29 @@ NEVER BLOCKING
         never blocks. Handling I/O is typically performed via events and callbacks, so when the application is 
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
+
+
+Q3) Print Second most occuring element in array?
+Ans:-
+-------------------------------------------
+const arr = [2,2,2,5,5,1,1,1,1,8,8,9];
+const obj = {};
+
+//create count of occuring of element in key value pair
+arr.forEach(element => {
+   obj[element] = (obj[element] || 0)+1
+});
+
+//convert object in array and sort according to thair value
+//for sorting we have used sort method that sort with comparator
+
+let sortedArr = Object.entries(obj).sort((a, b)=> b[1] - a[1]);
+
+if(sortedArr.length >= 2){
+   console.log(sortedArr[1][0]);
+}
+-------------------------------------------
+
+Q4) 
+
+
