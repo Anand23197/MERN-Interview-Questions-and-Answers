@@ -1,0 +1,305 @@
+Q1) What is node js?
+Ans:-
+-----
+        Node.js is an open-source and cross-platform JavaScript runtime environment. It is a popular tool 
+for almost any kind of project!Node.js runs the V8 JavaScript engine, the core of Google Chrome,
+outside of the browser. This allows Node.js to be very performant.A Node.js app runs in a single process, 
+without creating a new thread for every request. Node.js provides a set of asynchronous I/O primitives in 
+its standard library that prevent JavaScript code from blocking and generally, libraries in Node.js are
+written using non-blocking paradigms, making blocking behavior the exception rather than the norm.
+When Node.js performs an I/O operation, like reading from the network, accessing a database or the filesystem, 
+instead of blocking the thread and wasting CPU cycles waiting, Node.js will resume the operations when the response
+comes back.This allows Node.js to handle thousands of concurrent connections with a single server without introducing
+the burden of managing thread concurrency, which could be a significant source of bugs.
+Node.js has a unique advantage because millions of frontend developers that write JavaScript for the browser are 
+now able to write the server-side code in addition to the client-side code without the need to learn a completely 
+different language.In Node.js the new ECMAScript standards can be used without problems, as you don't have to wait
+for all your users to update their browsers - you are in charge of deciding which ECMAScript version to use by
+changing the Node.js version, and you can also enable specific experimental features by running Node.js with flags.
+
+
+Q2) Differences between Node.js and the Browser?
+Ans:-
+------
+        Both the browser and Node.js use JavaScript as their programming language. Building apps that run in the browser
+is a completely different thing than building a Node.js application. Despite the fact that it's always JavaScript, 
+there are some key differences that make the experience radically different.
+From the perspective of a frontend developer who extensively uses JavaScript, Node.js apps bring with them a huge
+advantage: the comfort of programming everything - the frontend and the backend - in a single language.
+You have a huge opportunity because we know how hard it is to fully, deeply learn a programming language, and by using
+the same language to perform all your work on the web - both on the client and on the server, you're in a unique
+position of advantage.
+
+**What changes is the ecosystem**
+----------------------------------
+
+In the browser, most of the time what you are doing is interacting with the DOM, or other Web Platform APIs like Cookies.
+Those do not exist in Node.js, of course. You don't have the document, window and all the other objects that are provided by the browser.
+And in the browser, we don't have all the nice APIs that Node.js provides through its modules, like the filesystem access functionality.
+Another big difference is that in Node.js you control the environment. Unless you are building an open source application that anyone can 
+deploy anywhere, you know which version of Node.js you will run the application on. Compared to the browser environment, where you don't get 
+the luxury to choose what browser your visitors will use, this is very convenient.
+This means that you can write all the modern ES2015+ JavaScript that your Node.js version supports. Since JavaScript
+moves so fast, but browsers can be a bit slow to upgrade, sometimes on the web you are stuck with using older
+JavaScript / ECMAScript releases. You can use Babel to transform your code to be ES5-compatible before shipping it to the browser, but in Node.js, you won't need that.
+Another difference is that Node.js supports both the CommonJS and ES module systems (since Node.js v12), while in the browser we are starting
+to see the ES Modules standard being implemented.
+In practice, this means that you can use both require() and import in Node.js, while you are limited to import in 
+the browser.
+
+Q3) What is V8?
+Ans:-
+--------
+V8 is the name of the JavaScript engine that powers Google Chrome. It's the thing that takes our JavaScript
+and executes it while browsing with Chrome. V8 is the JavaScript engine i.e. it parses and executes JavaScript code.
+The DOM, and the other Web Platform APIs (they all makeup runtime environment) are provided by the browser.
+The cool thing is that the JavaScript engine is independent of the browser in which it's hosted. This key feature
+enabled the rise of Node.js. V8 was chosen to be the engine that powered Node.js back in 2009, and as the popularity 
+of Node.js exploded, V8 became the engine that now powers an incredible amount of server-side code written in JavaScript.
+The Node.js ecosystem is huge and thanks to V8 which also powers desktop apps, with projects like Electron.
+
+Other JS engines
+----------------
+Other browsers have their own JavaScript engine:
+--Firefox has SpiderMonkey
+--Safari has JavaScriptCore (also called Nitro)
+--Edge was originally based on Chakra but has more recently been rebuilt using Chromium and the V8 engine.
+and many others exist as well.
+All those engines implement the ECMA ES-262 standard, also called ECMAScript, the standard used by JavaScript.
+The quest for performance
+V8 is written in C++, and it's continuously improved. It is portable and runs on Mac, Windows, Linux and several
+other systems.
+In this V8 introduction, we will ignore the implementation details of V8: they can be found on more authoritative
+sites (e.g. the V8 official site), and they change over time, often radically.
+V8 is always evolving, just like the other JavaScript engines around, to speed up the Web and the Node.js ecosystem.
+On the web, there is a race for performance that's been going on for years, and we (as users and developers) benefit
+a lot from this competition because we get faster and more optimized machines year after year.
+
+Compilation
+-----------
+JavaScript is generally considered an interpreted language, but modern JavaScript engines no longer just interpret
+JavaScript, they compile it.This has been happening since 2009, when the SpiderMonkey JavaScript compiler was added
+to Firefox 3.5, and everyone followed this idea.
+JavaScript is internally compiled by V8 with just-in-time (JIT) compilation to speed up the execution.
+This might seem counter-intuitive, but since the introduction of Google Maps in 2004, JavaScript has evolved from a
+language that was generally executing a few dozens of lines of code to complete applications with thousands to hundreds 
+of thousands of lines running in the browser.
+Our applications can now run for hours inside a browser, rather than being just a few form validation rules or simple scripts.
+In this new world, compiling JavaScript makes perfect sense because while it might take a little bit more to have the
+JavaScript ready, once done it's going to be much more performant than purely interpreted code.
+
+Q4) What is npm?
+Ans:-
+-----
+    npm is the standard package manager for Node.js.
+
+    You can also install a specific package by running
+    ---------------------------------------------------
+    npm install <package-name>
+
+--save-dev installs and adds the entry to the package.json file devDependencies
+--no-save installs but does not add the entry to the package.json file dependencies
+--save-optional installs and adds the entry to the package.json file optionalDependencies
+--no-optional will prevent optional dependencies from being installed
+
+Shorthands of the flags can also be used:
+
+-S: --save
+-D: --save-dev
+-O: --save-optional
+
+The difference between devDependencies and dependencies is that the former contains development tools, 
+like a testing library, while the latter is bundled with the app in production.
+As for the optionalDependencies the difference is that build failure of the dependency will not cause
+installation to fail. But it is your program's responsibility to handle the lack of the dependency.
+Read more about optional dependencies.
+
+Versioning
+-----------
+In addition to plain downloads, npm also manages versioning, so you can specify any specific version of a
+package, or require a version higher or lower than what you need.
+Many times you'll find that a library is only compatible with a major release of another library.
+
+You can install a specific version of a package, by running
+-----------------------------------------------------------
+npm install <package-name>@<version>
+
+Q5) Difference b/w blocking and non blocking?
+Ans:-
+-----
+This overview covers the difference between blocking and non-blocking calls in Node.js. This overview will
+refer to the event loop and libuv but no prior knowledge of those topics is required. Readers are assumed to
+have a basic understanding of the JavaScript language and Node.js callback pattern.
+
+"I/O" refers primarily to interaction with the system's disk and network supported by libuv.
+
+Blocking
+--------
+Blocking is when the execution of additional JavaScript in the Node.js process must wait until a non-JavaScript
+operation completes. This happens because the event loop is unable to continue running JavaScript while a blocking 
+operation is occurring.
+In Node.js, JavaScript that exhibits poor performance due to being CPU intensive rather than waiting on a 
+non-JavaScript operation, such as I/O, isn't typically referred to as blocking. Synchronous methods in the Node.js 
+standard library that use libuv are the most commonly used blocking operations. Native modules may also have blocking 
+methods.
+All of the I/O methods in the Node.js standard library provide asynchronous versions, which are non-blocking, and 
+accept callback functions. Some methods also have blocking counterparts, which have names that end with Sync.
+
+Comparing Code
+---------------------------------------------------------------------------------------
+Blocking methods execute synchronously and non-blocking methods execute asynchronously.
+Using the File System module as an example, this is a synchronous file read:
+
+const fs = require('node:fs');
+const data = fs.readFileSync('/file.md'); // blocks here until file is read
+----------------------------------------------------------------------------
+And here is an equivalent asynchronous example:
+
+const fs = require('node:fs');
+fs.readFile('/file.md', (err, data) => {
+  if (err) throw err;
+});
+
+The first example appears simpler than the second but has the disadvantage of the second line blocking the 
+execution of any additional JavaScript until the entire file is read. Note that in the synchronous version 
+if an error is thrown it will need to be caught or the process will crash. In the asynchronous version, it
+is up to the author to decide whether an error should throw as shown.
+
+Let's expand our example a little bit:
+--------------------------------------
+const fs = require('node:fs');
+const data = fs.readFileSync('/file.md'); // blocks here until file is read
+console.log(data);
+moreWork(); // will run after console.log
+----------------------------------------------
+And here is a similar, but not equivalent asynchronous example:
+
+const fs = require('node:fs');
+fs.readFile('/file.md', (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+moreWork(); // will run before console.log
+----------------------------------------------
+
+In the first example above, console.log will be called before moreWork(). In the second example 
+fs.readFile() is non-blocking so JavaScript execution can continue and moreWork() will be called first.
+The ability to run moreWork() without waiting for the file read to complete is a key design choice that
+allows for higher throughput.
+
+Concurrency and Throughput
+JavaScript execution in Node.js is single threaded, so concurrency refers to the event loop's capacity to
+execute JavaScript callback functions after completing other work. Any code that is expected to run in a 
+concurrent manner must allow the event loop to continue running as non-JavaScript operations, like I/O, are occurring.
+As an example, let's consider a case where each request to a web server takes 50ms to complete and 45ms of that 50ms 
+is database I/O that can be done asynchronously. Choosing non-blocking asynchronous operations frees up that 45ms 
+per request to handle other requests. This is a significant difference in capacity just by choosing to use non-blocking
+methods instead of blocking methods.
+The event loop is different than models in many other languages where additional threads may be created to handle 
+concurrent work.
+
+Q6) What is JavaScript Asynchronous Programming and Callbacks?
+Ans:-
+------
+Asynchronous means that things can happen independently of the main program flow.
+In the current consumer computers, every program runs for a specific time slot and then it stops its 
+execution to let another program continue their execution. This thing runs in a cycle so fast that it's 
+impossible to notice. We think our computers run many programs simultaneously, but this is an illusion 
+(except on multiprocessor machines).
+Programs internally use interrupts, a signal that's emitted to the processor to gain the attention of the system.
+Let's not go into the internals of this now, but just keep in mind that it's normal for programs to be asynchronous 
+and halt their execution until they need attention, allowing the computer to execute other things in the meantime.
+When a program is waiting for a response from the network, it cannot halt the processor until the request finishes.
+Normally, programming languages are synchronous and some provide a way to manage asynchronicity in the language
+or through libraries. C, Java, C#, PHP, Go, Ruby, Swift, and Python are all synchronous by default. Some of them 
+handle async operations by using threads, spawning a new process.
+
+**JavaScript
+------------
+JavaScript is synchronous by default and is single threaded. This means that code cannot create new threads and
+run in parallel.
+
+Lines of code are executed in series, one after another, for example:
+---------------------------------------------------------------------
+const a = 1;
+const b = 2;
+const c = a * b;
+console.log(c);
+doSomething();
+-------------------------
+But JavaScript was born inside the browser, its main job, in the beginning, was to respond to user actions, 
+like onClick, onMouseOver, onChange, onSubmit and so on. How could it do this with a synchronous programming model?
+The answer was in its environment. The browser provides a way to do it by providing a set of APIs that can handle 
+this kind of functionality.
+More recently, Node.js introduced a non-blocking I/O environment to extend this concept to file access, network 
+calls and so on.
+
+Callbacks
+----------
+You can't know when a user is going to click a button. So, you define an event handler for the click event. This event
+handler accepts a function, which will be called when the event is triggered:
+document.getElementById('button').addEventListener('click', () => {
+  // item clicked
+});
+
+This is the so-called callback.
+
+A callback is a simple function that's passed as a value to another function, and will only be executed when the 
+event happens. We can do this because JavaScript has first-class functions, which can be assigned to variables and
+passed around to other functions (called higher-order functions)
+It's common to wrap all your client code in a load event listener on the window object, which runs the callback
+function only when the page is ready:
+
+window.addEventListener('load', () => {
+  // window loaded
+  // do what you want
+});
+
+Callbacks are used everywhere, not just in DOM events.
+One common example is by using timers:
+
+setTimeout(() => {
+  // runs after 2 seconds
+}, 2000);
+
+**Handling errors in callbacks
+------------------------------
+How do you handle errors with callbacks? One very common strategy is to use what Node.js adopted: the
+first parameter in any callback function is the error object: error-first callbacks
+If there is no error, the object is null. If there is an error, it contains some description of the error
+and other information.
+
+const fs = require('node:fs');
+fs.readFile('/file.json', (err, data) => {
+  if (err) {
+    // handle error
+    console.log(err);
+    return;
+  }
+  // no errors, process data
+  console.log(data);
+});
+
+**The problem with callbacks
+---------------------------
+Callbacks are great for simple cases!
+However every callback adds a level of nesting, and when you have lots of callbacks, the code starts to be
+complicated very quickly:
+
+window.addEventListener('load', () => {
+  document.getElementById('button').addEventListener('click', () => {
+    setTimeout(() => {
+      items.forEach(item => {
+        // your code here
+      });
+    }, 2000);
+  });
+});
+JavaScript
+This is just a simple 4-levels code, but I've seen much more levels of nesting and it's not fun.
+
+How do we solve this?
+
+Alternatives to callbacks
+Starting with ES6, JavaScript introduced several features that help us with asynchronous code that do not 
+involve using callbacks: Promises (ES6) and Async/Await (ES2017).
