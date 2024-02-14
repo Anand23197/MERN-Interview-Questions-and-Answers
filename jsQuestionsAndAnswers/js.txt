@@ -231,3 +231,57 @@ NEVER BLOCKING
         never blocks. Handling I/O is typically performed via events and callbacks, so when the application is 
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
+
+
+Q3) Print Second most occuring element in array?
+Ans:-
+-------------------------------------------
+const arr = [2,2,2,5,5,1,1,1,1,8,8,9];
+const obj = {};
+
+//create count of occuring of element in key value pair
+arr.forEach(element => {
+   obj[element] = (obj[element] || 0)+1
+});
+
+//convert object in array and sort according to thair value
+//for sorting we have used sort method that sort with comparator
+
+let sortedArr = Object.entries(obj).sort((a, b)=> b[1] - a[1]);
+
+if(sortedArr.length >= 2){
+   console.log(sortedArr[1][0]);
+}
+-------------------------------------------
+
+Q4) function composition questions
+Given an array of functions [f1, f2, f3, ..., fn], return a new function fn that is the function composition of the array of functions.
+The function composition of [f(x), g(x), h(x)] is fn(x) = f(g(h(x))).
+The function composition of an empty list of functions is the identity function f(x) = x.
+You may assume each function in the array accepts one integer as input and returns one integer as output. 
+
+Example 1:
+Input: functions = [x => x + 1, x => x * x, x => 2 * x], x = 4
+Output: 65
+Explanation:
+Evaluating from right to left ...
+Starting with x = 4.
+2 * (4) = 8
+(8) * (8) = 64
+(64) + 1 = 65
+-----------------------------------
+Ans:-
+-------
+var compose = function(functions) {
+    return function(x) {
+        for(let i = functions.length - 1;i >= 0;i--){
+           x = functions[i](x);
+        }
+        return x;
+    }
+};
+
+  const fn = compose([x => x + 1, x => 2 * x])
+  fn(4) 
+ ----------------------------------
+
