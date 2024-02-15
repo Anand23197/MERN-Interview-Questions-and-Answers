@@ -303,3 +303,243 @@ How do we solve this?
 Alternatives to callbacks
 Starting with ES6, JavaScript introduced several features that help us with asynchronous code that do not 
 involve using callbacks: Promises (ES6) and Async/Await (ES2017).
+
+Q7) Event Emitter in Node js?
+Ans:-
+-----
+  If you worked with JavaScript in the browser, you know how much of the interaction of the user is handled
+through events: mouse clicks, keyboard button presses, reacting to mouse movements, and so on.
+On the backend side, Node.js offers us the option to build a similar system using the events module.
+This module, in particular, offers the EventEmitter class, which we'll use to handle our events.
+
+You initialize that using
+--------------------------------------------
+const EventEmitter = require('node:events');
+const eventEmitter = new EventEmitter();
+--------------------------------------------
+
+This object exposes, among many others, the on and emit methods.
+
+emit is used to trigger an event
+on is used to add a callback function that's going to be executed when the event is triggered
+For example, let's create a start event, and as a matter of providing a sample, we react to that by just logging to the console:
+
+eventEmitter.on('start', () => {
+  console.log('started');
+});
+
+When we run
+eventEmitter.emit('start');
+
+the event handler function is triggered, and we get the console log.
+You can pass arguments to the event handler by passing them as additional arguments to emit():
+
+eventEmitter.on('start', number => {
+  console.log(`started ${number}`);
+});
+eventEmitter.emit('start', 23);
+
+Multiple arguments
+---------------------------------------------
+eventEmitter.on('start', (start, end) => {
+  console.log(`started from ${start} to ${end}`);
+});
+eventEmitter.emit('start', 1, 100);
+---------------------------------------------
+
+The EventEmitter object also exposes several other methods to interact with events, like
+
+once(): add a one-time listener
+removeListener() / off(): remove an event listener from an event
+removeAllListeners(): remove all listeners for an event
+You can read more about these methods in the official documentation.
+
+Q8) How to read environment variables from Node.js?
+Ans:-
+------
+The process core module of Node.js provides the env property which hosts all the environment variables that were 
+set at the moment the process was started.
+
+The below code runs app.js and set USER_ID and USER_KEY.
+------------------------------------------
+USER_ID=239482 USER_KEY=foobar node app.js
+--------------------------------------------
+
+That will pass the user USER_ID as 239482 and the USER_KEY as foobar. This is suitable for testing,
+however for production, you will probably be configuring some bash scripts to export variables.
+------------------------------------------------------------------------
+Note: process does not require a "require", it's automatically available.
+------------------------------------------------------------------------
+
+Here is an example that accesses the USER_ID and USER_KEY environment variables, which we set in above code.
+-------------------------------------
+process.env.USER_ID; // "239482"
+process.env.USER_KEY; // "foobar"
+-------------------------------------
+
+In the same way you can access any custom environment variable you set.
+Node.js 20 introduced experimental support for .env files.
+Now, you can use the --env-file flag to specify an environment file when running your Node.js application.
+Here's an example .env file and how to access its variables using process.env.
+---------------
+# .env file
+PORT=3000
+---------------
+
+In your js file
+---------------------------
+process.env.PORT; // "3000"
+----------------------------
+
+Run app.js file with environment variables set in .env file.
+----------------------------
+node --env-file=.env app.js
+----------------------------
+
+This command loads all the environment variables from the .env file, making them available to the application on
+process.env
+Also, you can pass multiple --env-file arguments. Subsequent files override pre-existing variables defined 
+in previous files.
+-------------------------------------------------------
+node --env-file=.env --env-file=.development.env app.js
+-------------------------------------------------------
+
+Note: if the same variable is defined in the environment and in the file, the value from the environment
+takes precedence.
+
+Q9) What is REPL in node.js ?
+Ans:-
+-----
+The node command is the one we use to run our Node.js scripts:
+--------------
+node script.js
+--------------
+
+If we run the node command without any script to execute or without any arguments, we start a REPL session:
+------
+node
+------
+
+Note:REPL stands for Read Evaluate Print Loop, and it is a programming language environment (basically a console window) 
+that takes single expression as user input and returns the result back to the console after execution. 
+The REPL session provides a convenient way to quickly test simple JavaScript code.
+
+If you try it now in your terminal, this is what happens:
+----------
+❯ node
+>
+----------
+
+The command stays in idle mode and waits for us to enter something.
+Tip: if you are unsure how to open your terminal, google "How to open terminal on your-operating-system".
+
+The REPL is waiting for us to enter some JavaScript code, to be more precise.
+Start simple and enter
+----------------------
+> console.log('test')
+test
+undefined
+>
+----------------------
+
+The first value, test, is the output we told the console to print, then we get undefined which is the
+return value of running console.log(). Node read this line of code, evaluated it, printed the result,
+and then went back to waiting for more lines of code. Node will loop through these three steps for every
+piece of code we execute in the REPL until we exit the session. That is where the REPL got its name.
+
+Node automatically prints the result of any line of JavaScript code without the need to instruct it to do so.
+For example, type in the following line and press enter:
+---------------
+> 5 === '5'
+false
+>
+---------------
+
+Note the difference in the outputs of the above two lines. The Node REPL printed undefined after executed
+console.log(), while on the other hand, it just printed the result of 5 === '5'. You need to keep in mind
+that the former is just a statement in JavaScript, and the latter is an expression.
+
+In some cases, the code you want to test might need multiple lines. For example, say you want to define a 
+function that generates a random number, in the REPL session type in the following line and press enter:
+----------------------------
+function generateRandom() {
+...
+----------------------------
+
+The Node REPL is smart enough to determine that you are not done writing your code yet, and it will go into
+a multi-line mode for you to type in more code. Now finish your function definition and press enter:
+----------------------------
+function generateRandom() {
+...return Math.random()
+}
+undefined
+----------------------------
+
+The _ special variable
+If after some code you type _, that is going to print the result of the last operation.
+
+The Up arrow key
+If you press the up arrow key, you will get access to the history of the previous lines of code executed 
+in the current, and even previous REPL sessions.
+
+Dot commands
+The REPL has some special commands, all starting with a dot .. They are
+
+.help: shows the dot commands help
+.editor: enables editor mode, to write multiline JavaScript code with ease. Once you are in this mode, enter ctrl-D to run the code you wrote.
+.break: when inputting a multi-line expression, entering the .break command will abort further input. Same as pressing ctrl-C.
+.clear: resets the REPL context to an empty object and clears any multi-line expression currently being input.
+.load: loads a JavaScript file, relative to the current working directory
+.save: saves all you entered in the REPL session to a file (specify the filename)
+.exit: exits the repl (same as pressing ctrl-C two times)
+The REPL knows when you are typing a multi-line statement without the need to invoke .editor.
+
+For example if you start typing an iteration like this:
+-----------------------------
+[1, 2, 3].forEach(num => {
+-----------------------------  
+
+and you press enter, the REPL will go to a new line that starts with 3 dots, indicating you can now continue to
+work on that block.
+
+-----------------------
+... console.log(num)
+... })
+-----------------------
+Bash
+If you type .break at the end of a line, the multiline mode will stop and the statement will not be executed.
+
+Run REPL from JavaScript file
+We can import the REPL in a JavaScript file using repl.
+----------------------------------
+const repl = require('node:repl');
+----------------------------------
+
+Using the repl variable we can perform various operations. To start the REPL command prompt, type in the following line
+-------------
+repl.start();
+-------------
+
+Run the file in the command line.
+
+---------------
+node repl.js
+---------------
+
+You can pass a string which shows when the REPL starts. The default is '> ' (with a trailing space), but we 
+can define custom prompt.
+
+--------------------------------
+// a Unix style prompt
+const local = repl.start('$ ');
+--------------------------------
+
+You can display a message while exiting the REPL
+--------------------------------
+local.on('exit', () => {
+  console.log('exiting repl');
+  process.exit();
+});
+--------------------------------
+
+
