@@ -543,3 +543,31 @@ local.on('exit', () => {
 --------------------------------
 
 
+Q10) What is Routing?
+Ans:-
+-------
+    Routing defines the way in which the client requests are handled by the application endpoints.
+
+**Types of url
+-----------------
+  1) File based url
+  eg:- www.eirj.com/index.html
+  in this example www.eirj.com is domain name and index.html is file 
+
+  2) Resoure based url
+  eg:- www.eirj.com/about 
+  int this example www.eirj.com is domain name and about is Resoure 
+
+  Routing basically means implementing diffrent actions for diffrent URLs.
+  These actions can be implemented in diffrent ways, for example, by creating a function. 
+
+**Route parameter
+---------------- 
+ eg:- www.eirj.com/about/id 
+ in this example www.eirj.com is domain name, about is Resoure and id is parameter. 
+
+**Query String 
+----------------
+ eg:- www.eirj.com/books?author=john&id=2 
+ in this example after question mark whatever I have written is query string. 
+ there is two query string author and id and both query strings are available in key value pair.
