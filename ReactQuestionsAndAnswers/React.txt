@@ -371,7 +371,7 @@ We can do this with window.history.push("urlName") and it will automatically red
 Q7.) Do you follow react new features?
 Ans:-
 ----------
-Yes we follow they have introduced many hooks like useId, useDeferredValue etc.......
+Yes we follow React latest version, they have introduced many hooks like useId, useDeferredValue etc.......
 
 Q8.) What is env?
 Ans:-
