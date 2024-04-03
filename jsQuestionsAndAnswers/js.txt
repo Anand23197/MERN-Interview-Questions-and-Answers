@@ -222,6 +222,48 @@ NEVER BLOCKING
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
 
+Q4) Diffrence between map, filter, forEach ?
+ans:- 
+Array.prototype.map
+-------------------
+        This function creates a new array and return entire array.
+        
+        e.g:- const array1 = [1, 4, 9, 16];
+
+        // Pass a function to map
+        const map1 = array1.map((x) => x * 2);
+        console.log(map1);
+        // Expected output: Array [2, 8, 18, 32]
+
+Array.prototype.filter 
+----------------------
+        The filter() method of Array instances creates a shallow copy of 
+a portion of a given array, filtered down to just the elements from the given
+array that pass the test implemented by the provided function and return a new array 
+
+        eg:-
+        const words = ['spray', 'elite', 'exuberant', 'destruction', 'present'];
+
+        const result = words.filter((word) => word.length > 6);
+
+        console.log(result);
+        // Expected output: Array ["exuberant", "destruction", "present"]
+
+Array.prototype.forEach 
+---------------------- 
+        The forEach() method of Array instances executes a provided function once for each array element,
+and it never returns array. 
+
+const array1 = ['a', 'b', 'c'];
+
+array1.forEach((element) => console.log(element));
+
+// Expected output: "a"
+// Expected output: "b"
+// Expected output: "c"
+
+
+
 
 Q3) Print Second most occuring element in array?
 Ans:-
