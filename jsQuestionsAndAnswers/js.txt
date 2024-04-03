@@ -275,7 +275,7 @@ var compose = function(functions) {
   fn(4) 
  ----------------------------------
 
- Q6) Add all the elements in single array? 
+ Q6) Add all the elements in single array, without using inbuilt function? 
  const arr = [1,2, [3,4, [5,6]], 7, 8, [9,10]];
 
  Ans:= 
@@ -288,7 +288,7 @@ var compose = function(functions) {
             res.push(arr[i]);
           }
       }
-      
+
       function addElem(newArr){
          for(let i = 0;i<newArr.length;i++){
             if(Array.isArray(newArr[i])){
@@ -298,7 +298,7 @@ var compose = function(functions) {
             }
          }
       }
-      
+
       console.log(res);
 
 
