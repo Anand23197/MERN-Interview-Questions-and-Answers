@@ -1,0 +1,15 @@
+Q1) What is git reset, restore and revert command?
+Ans:-
+-----
+    **restore
+    -- remove file from staging area or working directory area.
+Q2) What is rebase command? 
+Ans:- 
+-----
+    git rebase same like merge command but in rebase it does not preserve commit history.
+Q3) What is git checkout?
+Ans:-
+-----
+    git checkout command is used for switch to diffrent branches 
+    syntax:-  git checkout "branchName"
+    If you will do:      git checkout -b "branchName", then it will create new branch in git repository.
