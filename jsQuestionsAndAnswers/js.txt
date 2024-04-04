@@ -263,9 +263,69 @@ array1.forEach((element) => console.log(element));
 // Expected output: "c"
 
 
+Q5) Diffrence between Promise.all and Promise.allSettled ? 
+Ans:- 
+---------
+Promise.all()
+-----------------
+The Promise.all() method takes an iterable of promises as an input, and returns a 
+single Promise that resolves to an array of the results of the input promises.
+Promise.all is rejected if at least one of the elements are rejected. For example, 
+we pass 2 promises that resolve and one promise that rejects immediately, 
+then Promise.all will reject immediately.
+----------------------------------------
+
+const promise1 = Promise.resolve(3);
+const promise2 = 42;
+const promise3 = new Promise((resolve, reject) => {
+  setTimeout(reject, 100, 'foo');
+});
+
+Promise.all([promise1, promise2, promise3]).then((values) => {
+  console.log(values);
+}).catch((err)=>{
+ console.log(err);
+})
+
+//output "foo"
+
+Promise.allSettled()
+--------------------
+     It returns a promise that always resolves after all of the given promises
+have either fulfilled or rejected, with an array of objects that each describes
+the outcome of each promise.
+The value (or reason) reflects what value each promise was fulfilled (or rejected) with.
+if success then it will give {status : "fulfilled",value : val}
+if rejected then it will give {status : "rejected", reason : val} 
+
+----------------------------------------------
+const promise1 = Promise.resolve(3);
+const promise2 = 42;
+const promise3 = new Promise((resolve, reject) => {
+  setTimeout(reject, 100, 'foo');
+});
+
+Promise.allSettled([promise1, promise2, promise3]).then((values) => {
+  console.log(values);
+}).catch((err)=>{
+ console.log(err);
+})
+// Expected output:
+[{
+  status: "fulfilled",
+  value: 3
+}, {
+  status: "fulfilled",
+  value: 42
+}, {
+  reason: "foo",
+  status: "rejected"
+}]
 
 
-Q3) Print Second most occuring element in array?
+
+
+Q5) Print Second most occuring element in array?
 Ans:-
 -------------------------------------------
 const arr = [2,2,2,5,5,1,1,1,1,8,8,9];
@@ -286,7 +346,7 @@ if(sortedArr.length >= 2){
 }
 -------------------------------------------
 
-Q4) function composition questions
+Q6) function composition questions
 Given an array of functions [f1, f2, f3, ..., fn], return a new function fn that is the function composition of the array of functions.
 The function composition of [f(x), g(x), h(x)] is fn(x) = f(g(h(x))).
 The function composition of an empty list of functions is the identity function f(x) = x.
@@ -317,7 +377,7 @@ var compose = function(functions) {
   fn(4) 
  ----------------------------------
 
- Q6) Add all the elements in single array, without using inbuilt function? 
+ Q7) Add all the elements in single array, without using inbuilt function? 
  const arr = [1,2, [3,4, [5,6]], 7, 8, [9,10]];
 
  Ans:= 
@@ -342,5 +402,8 @@ var compose = function(functions) {
       }
 
       console.log(res);
+
+
+  
 
 
