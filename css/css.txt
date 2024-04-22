@@ -1,0 +1,20 @@
+Q1) Number of ways to specify colors in css?
+Ans:-  there are many ways to specify colors in css
+   a) predefined color names
+   => Modern browser support 140 named color, eg: red, green, blue etc.  
+   b) RGB 
+   => eg. rgb(255,255,255)
+   c) RGBA 
+   => eg. rgba(255,255,255,0.5), in rgba a(alpha) is used for transparent.
+   d) HEX 
+   => in this we use hexadecimal color format. eg. "#ff00ff" 
+   e) HSL
+   => hsl means Hue, Saturation, Lightness. Hue represents degree in color wheel.
+      saturion and Lightness you can define from 0% to 100%. In saturion 0% means shade of gray,
+      100% means full color.In Lightness 0% is black 50% means neither light or dark, 100% is white.
+      e.g. hsl(0, 100%, 50%);
+   f) HSLA     
+   => a(alpha) give transparancy. e.g. hsla(0,100%,50%, 0.5);
+
+Q2) How to stop repeatation of image from background?
+Ans:- you can define property, background-image : "no-repeat"

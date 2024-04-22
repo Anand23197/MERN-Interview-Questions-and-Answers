@@ -376,3 +376,59 @@ Yes we follow React latest version, they have introduced many hooks like useId, 
 Q8.) What is env?
 Ans:-
 ----------
+
+Q9) What is HOC create HOC ? 
+Ans :- A component that take input as a component and return comonent is known as Higher Order Component.
+      e.g.:-
+      ------------
+      function Hoc({props}){
+       return 
+       <div style={{color: "red"}}>
+         {props.children}
+       </div>
+     
+      }
+
+      function App(){
+      return <Hoc><button>click</button></Hoc>
+      } 
+
+Q10) Create a custom Hook? 
+Ans:- 
+-------
+      import React from 'react';
+
+// Define a Higher Order Component
+const withLogger = (WrappedComponent) => {
+  // Return a new component
+  return class extends React.Component {
+    // Define any additional behavior here
+    componentDidMount() {
+      console.log(`Component ${WrappedComponent.name} mounted.`);
+    }
+
+    render() {
+      // Render the wrapped component with its original props
+      return <WrappedComponent {...this.props} />;
+    }
+  };
+};
+
+// Example functional component
+const MyComponent = ({ name }) => {
+  return <div>Hello, {name}!</div>;
+};
+
+// Wrap MyComponent with withLogger HOC
+const MyComponentWithLogger = withLogger(MyComponent);
+
+// Usage of the wrapped component
+const App = () => {
+  return (
+    <div>
+      <MyComponentWithLogger name="Alice" />
+    </div>
+  );
+};
+
+export default App;
