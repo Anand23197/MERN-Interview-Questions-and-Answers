@@ -396,39 +396,42 @@ Ans :- A component that take input as a component and return comonent is known a
 Q10) Create a custom Hook? 
 Ans:- 
 -------
-      import React from 'react';
+      import { useState } from 'react';
 
-// Define a Higher Order Component
-const withLogger = (WrappedComponent) => {
-  // Return a new component
-  return class extends React.Component {
-    // Define any additional behavior here
-    componentDidMount() {
-      console.log(`Component ${WrappedComponent.name} mounted.`);
-    }
+// Custom hook for managing a counter
+function useCounter(initialValue = 0, step = 1) {
+  const [count, setCount] = useState(initialValue);
 
-    render() {
-      // Render the wrapped component with its original props
-      return <WrappedComponent {...this.props} />;
-    }
+  const increment = () => {
+    setCount(prevCount => prevCount + step);
   };
-};
 
-// Example functional component
-const MyComponent = ({ name }) => {
-  return <div>Hello, {name}!</div>;
-};
+  const decrement = () => {
+    setCount(prevCount => prevCount - step);
+  };
 
-// Wrap MyComponent with withLogger HOC
-const MyComponentWithLogger = withLogger(MyComponent);
+  const reset = () => {
+    setCount(initialValue);
+  };
 
-// Usage of the wrapped component
-const App = () => {
+  return {
+    count,
+    increment,
+    decrement,
+    reset
+  };
+}
+
+// Usage example
+function CounterComponent() {
+  const { count, increment, decrement, reset } = useCounter(0, 1);
+
   return (
     <div>
-      <MyComponentWithLogger name="Alice" />
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+      <button onClick={decrement}>Decrement</button>
+      <button onClick={reset}>Reset</button>
     </div>
   );
-};
-
-export default App;
+}
