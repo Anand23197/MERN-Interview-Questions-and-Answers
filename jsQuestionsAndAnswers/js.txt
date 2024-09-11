@@ -38,7 +38,7 @@ value before the caller can continue.
   What if the synchronous function takes a long time?
   for example lets say you have created a page where have many html tags like text, button etc. and suppose you have created a text box where
   you type number and after typing you are pressing a button. on button click it will generate prime number and display that number. if you have 
-  type large number and it it taking suppose 1 minute of time to execute it and till one minute will not complete you can't perform any
+  type large number and if it taking suppose 1 minute of time to execute it and till one minute will not complete you can't perform any
   operation in your web page, means your page become unresponsive.
 
   What we need is a way for our program to:

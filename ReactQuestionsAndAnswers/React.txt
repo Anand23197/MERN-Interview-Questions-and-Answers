@@ -435,3 +435,104 @@ function CounterComponent() {
     </div>
   );
 }
+
+Q11) what is tree shaking in react?
+Ans:- Tree shaking is a technique used in modern JavaScript applications to reduce the size of the final 
+bundle by eliminating unused code. In the context of React, it means removing unused modules, components, 
+and functions from the final bundle that gets shipped to the browser.
+
+How it works:
+--------------
+ES Modules:
+Tree shaking relies heavily on the use of ES modules (import and export syntax). This syntax allows tools 
+like Webpack and Rollup to analyze the dependencies between modules and identify which parts of the code are
+actually used.
+
+Static Analysis:
+During the build process, the bundler analyzes the code and builds a dependency graph. It determines which 
+modules are actually imported and used by your application.
+
+Dead Code Elimination:
+Once the dependency graph is built, the bundler can identify modules that are never used and remove them from
+the final bundle. This process is known as "tree shaking" because it's like shaking a tree to remove the dead branches.
+
+How to enable tree shaking in React:
+------------------------------------
+
+Use ES Modules:-
+Make sure you are using the import and export syntax in your JavaScript files.
+
+Webpack Configuration:
+If you are using Webpack, ensure that you have the following settings in your webpack.config.js file:
+
+   module.exports = {
+     mode: 'production', // Tree shaking is enabled by default in production mode
+     optimization: {
+       usedExports: true, // Tell webpack to mark used exports
+     },
+   };
+
+Babel Configuration: 
+If you are using Babel, make sure you have the @babel/preset-env preset configured correctly.
+This preset will transpile your ES modules to a format that the browser can understand.
+
+   // .babelrc
+   {
+     "presets": [
+       [
+         "@babel/preset-env",
+         {
+           "modules": false, // Disable module transformation for tree shaking
+         }
+       ]
+     ]
+   }
+
+Import correctly: 
+Import only the specific functions or components you need from your libraries.
+
+   // Instead of:
+   import _ from 'lodash';
+
+   // Do this:
+   import debounce from 'lodash/debounce';
+
+Benefits of tree shaking:
+-------------------------
+Smaller bundle size: Tree shaking can significantly reduce the size of your final bundle, which leads to faster loading times and improved performance.
+Faster application startup: Smaller bundle size results in faster application startup times, providing a better user experience.
+Improved maintainability: Removing unused code makes your codebase cleaner and easier to maintain.
+
+Q12)What is reconciliation in react?
+Ans:- The process by which React updates the actual DOM to match the latest state of the virtual DOM is known as reconciliation.
+
+Why it's needed:
+-----------------
+Manipulating the real DOM directly is slow. React creates a virtual DOM, a lightweight copy of the real DOM in memory,
+which is much faster to update. Reconciliation then figures out the minimal changes needed to update the real
+DOM based on the virtual DOM.
+
+Q13) What is diffing algorithm?
+Ans:- The algorithm used by React during reconciliation to determine the differences between the old virtual DOM 
+and the new virtual DOM.
+
+How it works:
+Tree diffing: React compares the two trees from the top down. If the root elements are different, the entire subtree is replaced.
+Component diffing: If the root elements are the same type, React compares their props. If the props are different, the component is updated.
+Element diffing: React compares the children of components. It uses keys to identify children and efficiently update them.
+
+Key Points:
+-----------
+
+Efficiency:
+The diffing algorithm is designed to be efficient, with a time complexity of O(n). This means that the time it
+takes to diff grows linearly with the number of elements in the virtual DOM.
+
+Keys:
+Keys help React identify which elements in a list have changed, been added, or removed. 
+This allows React to optimize list updates, avoiding unnecessary re-rendering.
+
+Tradeoffs:
+While the diffing algorithm is efficient, there are still cases where you might need to optimize further:
+->Use shouldComponentUpdate to prevent unnecessary re-renders.
+->Virtualize long lists to render only the visible items.
