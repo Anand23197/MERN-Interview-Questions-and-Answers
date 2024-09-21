@@ -156,7 +156,7 @@ Promise.all(), Promise.allSettled(), Promise.any(), Promise.race(),
 Promise.prototype.catch(), Promise.prototype.finally(), Promise.prototype.then()
 , Promise.resolve(),Promise.reject(), Promise.withResolvers()
 
-2.) What is event Loop ?
+4.) What is event Loop ?
 Ans:-
 --------
 JavaScript has a runtime model based on an event loop, which is responsible 
@@ -222,7 +222,7 @@ NEVER BLOCKING
         waiting for an DB query to return or a fetch() request to return, it can still process other things
         like user input.
 
-Q4) Diffrence between map, filter, forEach ?
+Q5) Diffrence between map, filter, forEach ?
 ans:- 
 Array.prototype.map
 -------------------
@@ -263,7 +263,7 @@ array1.forEach((element) => console.log(element));
 // Expected output: "c"
 
 
-Q5) Diffrence between Promise.all and Promise.allSettled ? 
+Q6) Diffrence between Promise.all and Promise.allSettled ? 
 Ans:- 
 ---------
 Promise.all()
@@ -325,7 +325,7 @@ Promise.allSettled([promise1, promise2, promise3]).then((values) => {
 
 
 
-Q5) Print Second most occuring element in array?
+Q7) Print Second most occuring element in array?
 Ans:-
 -------------------------------------------
 const arr = [2,2,2,5,5,1,1,1,1,8,8,9];
@@ -346,7 +346,7 @@ if(sortedArr.length >= 2){
 }
 -------------------------------------------
 
-Q6) function composition questions
+Q8) function composition questions
 Given an array of functions [f1, f2, f3, ..., fn], return a new function fn that is the function composition of the array of functions.
 The function composition of [f(x), g(x), h(x)] is fn(x) = f(g(h(x))).
 The function composition of an empty list of functions is the identity function f(x) = x.
@@ -377,7 +377,7 @@ var compose = function(functions) {
   fn(4) 
  ----------------------------------
 
- Q7) Add all the elements in single array, without using inbuilt function? 
+ Q9) Add all the elements in single array, without using inbuilt function? 
  const arr = [1,2, [3,4, [5,6]], 7, 8, [9,10]];
 
  Ans:= 
@@ -403,7 +403,92 @@ var compose = function(functions) {
 
       console.log(res);
 
+Q10) Given an array sum the number located in even position using advance technique don't use loop?
+Ans:- 
+-------
 
-  
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const sumOfEvenNumbers = numbers.reduce((sum, number, index) => {
+    if (index % 2 !== 0) {
+        return sum + number;
+    }
+    return sum;
+}, 0);
+
+console.log(sumOfEvenNumbers); // Output: 30
+
+if you will remove initial value from second parameter from reduce function then it will take array's first value as initial value.
+
+Q11) what will be the output of the code.
+console.log("anand")
+
+setTimeout(() => {
+  console.log("timer")
+}, 100)
+new Promise((res, rej) => {
+  console.log("promise")
+  rej()
+})
+  .then(() => {
+    console.log("first")
+  })
+  .catch(() => {
+    console.log("second")
+  })
+  .then(() => {
+    console.log("third")
+  })
+
+console.log("raj")
+
+ans:=
+"anand"
+"promise"
+"raj"
+"second"
+"third"
+"timer"
+
+Q12)  How Object.freeze() works under the hood?
+Ans:- check below article link for best Explanation
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+
+example:-
+-----------------------------
+function simpleFreeze(obj) {
+  // Prevent adding new properties
+  Object.preventExtensions(obj);
+
+  // Get all properties and make them non-writable and non-configurable
+  Object.getOwnPropertyNames(obj).forEach(prop => {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+    
+    if (descriptor.configurable) {
+      Object.defineProperty(obj, prop, {
+        writable: false,
+        configurable: false
+      });
+    }
+  });
+
+  return obj;
+}
+
+const obj = {
+ name : "anand",
+ age : "25"
+}
+
+simpleFreeze(obj);
+
+ obj.name = "raj"
+ 
+ console.log(obj);
 
 
+ in simple words you can do via Object.defineProperty(obj, pro, {
+  writable: false,
+  configurable : false
+ })
+ for Preventing changes, but you can do more changes or add properties for doing this.

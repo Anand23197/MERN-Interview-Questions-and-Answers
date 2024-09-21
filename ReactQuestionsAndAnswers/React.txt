@@ -536,3 +536,56 @@ Tradeoffs:
 While the diffing algorithm is efficient, there are still cases where you might need to optimize further:
 ->Use shouldComponentUpdate to prevent unnecessary re-renders.
 ->Virtualize long lists to render only the visible items.
+
+Q14)What is useImperativeHandle hook?
+Ans:- useImperativeHandle is a React Hook that lets you customize the handle exposed as a ref.
+
+
+egample:-
+-----------
+MyInput.js
+------------------
+import { forwardRef, useRef, useImperativeHandle } from 'react';
+
+const MyInput = forwardRef(function MyInput(props, ref) {
+  const inputRef = useRef(null);
+
+  useImperativeHandle(ref, () => {
+    return {
+      focus() {
+        inputRef.current.focus();
+      },
+      scrollIntoView() {
+        inputRef.current.scrollIntoView();
+      },
+    };
+  }, []);
+
+  return <input {...props} ref={inputRef} />;
+});
+
+export default MyInput;
+
+App.js
+-------------
+import { useRef } from 'react';
+import MyInput from './MyInput.js';
+
+export default function Form() {
+  const ref = useRef(null);
+
+  function handleClick() {
+    ref.current.focus();
+
+  }
+
+  return (
+    <form>
+      <MyInput placeholder="Enter your name" ref={ref} />
+      <button type="button" onClick={handleClick}>
+        Edit
+      </button>
+    </form>
+  );
+}
+
