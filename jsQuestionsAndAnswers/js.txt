@@ -492,3 +492,5 @@ simpleFreeze(obj);
   configurable : false
  })
  for Preventing changes, but you can do more changes or add properties for doing this.
+
+ Q13) 

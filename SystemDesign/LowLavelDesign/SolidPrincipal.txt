@@ -1,0 +1,190 @@
+Q) What is SOLID Principle?
+Ans:- 
+SOLID principle is an acronym that stands for 5 key principles in software development: 
+
+S – Single Responsibility Principle 
+O – Open Closed Principle 
+L – Liskov Substitution Principle
+I – Interface Segregation Principle
+D – Dependency Inversion Principle
+
+It has become one of the key principles in modern software development to ensure the code is using these SOLID principles.
+Following are the advantages that offer while using SOLID principles in your software development.
+
+-   Helps developers to break down complex problems into smaller manageable pieces.
+-   Helps developers to reduce the dependencies on code so that in the future if any one area of the code changes,
+    it won’t impact the other area of the code.
+-   Helps developers to move tightly coupled code or components into a loosely coupled, flexible, and maintainable manner.
+
+
+1) Single Responsibility Principle
+
+As the name suggests, the Single Responsibility principle states 2 key principles.
+
+a) Your class or method should have only one reason to change.
+b) Your class or method should have only one responsibility to take care of.
+
+Imagine a baker who is responsible for baking bread. The baker’s role is to focus on the task of baking bread, 
+ensuring that the bread is of high quality, properly baked, and meets the bakery’s standards.
+However, if the baker is also responsible for managing the inventory, ordering supplies, serving customers, 
+and cleaning the bakery, this would violate the SRP.Each of these tasks represents a separate responsibility,
+and by combining them, the baker’s focus and effectiveness in baking bread could be compromised.
+To adhere to the SRP, the bakery could assign different roles to different individuals or teams. 
+For example, there could be a separate person or team responsible for managing the inventory, another for ordering supplies, 
+another for serving customers, and another for cleaning the bakery.
+
+class BreadBaker{
+    public void bakeBreak(){
+        system.out.println("Baking high quality bread");
+    }
+}
+
+class inventoryManager{
+    public void manageInventory(){
+        system.out.println("Managing inventory");
+    }
+}
+
+class SupplyOrder{
+    public void orderSupplies(){
+        System.out.println("Ordering supplies...");
+    }
+}
+
+
+public class BakeryManagement {
+    public static void main(String[] args){
+        BreadBaker baker = new BreadBaker();
+        inventoryManager inventoryManager = new InventoryManager();
+        SupplyOrder supplyOrder = new SupplyOrder();
+    
+
+        //each class focuses on its specific responsibility
+
+        baker.bakeBread();
+        inventoryManager.manageInventory();
+        supplyOrder.orderSupplies();
+    }
+}
+
+2) Open/Closed Principle
+
+This principle states that “Software entities (classes, modules, functions, etc.) should be open for extension, 
+but closed for modification” which means you should be able to extend a class behavior, without modifying it.
+
+Let’s understand Open/Closed Principle using an example:
+
+-   Imagine you have a class called PaymentProcessor that processes payments for an online store. 
+Initially, the PaymentProcessor class only supports processing payments using credit cards. However, 
+you want to extend its functionality to also support processing payments using PayPal.
+
+Instead of modifying the existing PaymentProcessor class to add PayPal support, you can create a new class called PayPalPaymentProcessor 
+that extends the PaymentProcessor class. This way, the PaymentProcessor class remains closed for modification but open for extension,
+adhering to the Open-Closed Principle. Let’s understand this through the code implementation.
+
+Interface PaymentProcessor {
+    void processPayment(double amount); // abstract method
+}
+
+class CreditCardPaymentProcessor implements PaymentProcessor {
+    @Override
+   void processPayment(double amount){
+    System.out.println("Processing Credit card payment $" + amount);
+   }
+}
+
+class PayPalPaymentProcessor implements PaymentProcessor {
+    @Override
+    void processPayment(double amount){
+        System.out.println("Processing PayPal payment of $" + amount);
+    }
+}
+
+public class BakeryManagement {
+    public static void main(String[] args){
+        
+        CreditCardPaymentProcessor creditCardPaymentProcessor = new CreditCardPaymentProcessor();
+        PayPalPaymentProcessor payPalPaymentProcessor = new PayPalPaymentProcessor();
+
+        creditCardPaymentProcessor.processPayment(100);
+        payPalPaymentProcessor.processPayment(200);
+
+
+    }
+}
+
+3. Liskov’s Substitution Principle
+The principle was introduced by Barbara Liskov in 1987 and according to this principle “Derived or child classes 
+must be substitutable for their base or parent classes“. This principle ensures that any class that is the child 
+of a parent class should be usable in place of its parent without any unexpected behavior.
+
+Let’s understand Liskov’s Substitution Principle using an example:
+
+One of the classic examples of this principle is a rectangle having four sides. A rectangle’s height can be any value
+and width can be any value. A square is a rectangle with equal width and height. So we can say that we can extend the 
+properties of the rectangle class into square class. 
+
+
+In order to do that you need to swap the child (square) class with parent (rectangle) class to fit the definition of a 
+square having four equal sides but a derived class does not affect the behavior of the parent class so if you will do 
+that it will violate the Liskov Substitution Principle.
+
+Let’s understand by example
+
+class Rectangle {
+    protected double width;
+    protected double height;
+
+    public Rectangle(double width, double height){
+        this.width = width;
+        this.height = height;
+    }
+
+    public double area(){
+        return width * height;
+    }
+
+    public double getWidth(){
+        return width;
+    }
+
+    public double getHeight(){
+        return height;
+    }
+   
+     public void setWidth(double width){
+        this.width = width; // ensure both and height remain the same;
+    }
+       @Override
+    public void setHeight(double height){
+         this.height = height; // ensure both and height remain the same;
+    }
+}
+
+class Square extends Rectangle {
+    public Square(double size){
+        super(size, size);
+    }
+
+    @Override
+    public void setWidth(double width){
+        this.width = this.height = width; // ensure both and height remain the same;
+    }
+
+    @Override
+    public void setHeight(double height){
+        this.width = this.height = height; // ensure both and height remain the same;
+    }
+    
+}
+
+public class ShapeDemo {
+    public static void main(String[] args){
+        Square square = new Square(5.0);
+        square.setWidth(6.0);
+
+        System.out.println("New Width and height of square: " + square.getWidth() + ", " + square.getHeight());
+        System.out.println("area of square" + square.area());
+    }
+}
+

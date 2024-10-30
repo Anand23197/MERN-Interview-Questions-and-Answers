@@ -589,3 +589,78 @@ export default function Form() {
   );
 }
 
+Q15) What is useLayoutEffect?
+Ans :- useLayoutEffect is a version of useEffect that fires before the browser repaints the screen.
+
+Usage:-
+---------
+Measuring layout before the browser repaints the screen
+
+Most components don’t need to know their position and size on the screen to decide what to render. 
+They only return some JSX. Then the browser calculates their layout (position and size) and repaints the screen.
+
+Sometimes, that’s not enough. Imagine a tooltip that appears next to some element on hover. 
+If there’s enough space, the tooltip should appear above the element, but if it doesn’t fit, it should appear below.
+In order to render the tooltip at the right final position, you need to know its height (i.e. whether it fits at the top).
+
+To do this, you need to render in two passes:
+
+1. Render the tooltip anywhere (even with a wrong position).
+2. Measure its height and decide where to place the tooltip.
+3. Render the tooltip again in the correct place.
+
+All of this needs to happen before the browser repaints the screen. You don’t want the user to see the tooltip moving.
+Call useLayoutEffect to perform the layout measurements before the browser repaints the screen:
+
+example:-
+------------
+function Tooltip() {
+  const ref = useRef(null);
+  const [tooltipHeight, setTooltipHeight] = useState(0); // You don't know real height yet
+
+  useLayoutEffect(() => {
+    const { height } = ref.current.getBoundingClientRect();
+    setTooltipHeight(height); // Re-render now that you know the real height
+  }, []);
+
+  // ...For Rest implementation visit React Official Website.
+}
+
+Q16) What is useTransition Hook?
+Ans :- useTransition is a React Hook that lets you update the state without blocking the UI.
+
+syntax:-
+------------
+const [isPending, startTransition] = useTransition()
+useTransition returns an array with exactly two items:
+
+1) The isPending flag that tells you whether there is a pending Transition.
+2) The startTransition function that lets you mark a state update as a Transition.
+
+Usage
+1) Marking a state update as a non-blocking Transition
+2) Updating the parent component in a Transition
+3) Displaying a pending visual state during the Transition
+4) Preventing unwanted loading indicators
+5) Building a Suspense-enabled router
+6) Displaying an error to users with an error boundary
+
+
+
+Q17) How React behave is it asynchronous or synchronous ? 
+Ans:- React updates are asynchronous by default. When you call setState (or a similar state update function from hooks like useState), 
+React schedules the update to be applied later, during the next render cycle. This means that the state isn't updated immediately after 
+calling setState. Instead, React batches multiple updates and re-renders the component efficiently to avoid unnecessary updates.
+
+example:-
+----------
+const [count, setCount] = useState(0);
+
+function handleClick() {
+  console.log(count); // Will log the value before update
+  setCount(count + 1);
+  console.log(count); // Will still log the old value (due to async update)
+}
+
+In the above code, count will not be immediately updated after calling setCount. It will update after the next render,
+so you'll see the old value in the console.
