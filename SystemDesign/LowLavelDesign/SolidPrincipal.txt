@@ -188,3 +188,228 @@ public class ShapeDemo {
     }
 }
 
+4. Interface Segregation Principle
+This principle is the first principle that applies to Interfaces instead of classes in SOLID and it is similar
+to the single responsibility principle. It states that “do not force any client to implement an interface which
+is irrelevant to them“. Here your main goal is to focus on avoiding fat interface and give preference to many small 
+client-specific interfaces. You should prefer many client interfaces rather than one general interface and each interface should have a specific responsibility.
+
+Let’s understand Interface Segregation Principle using an example:
+
+-- Suppose you have a Store interface 
+
+public interface Store {
+    public void Save();
+    public void Delete();
+    public void Update();
+    public void Fetch();
+    public void AddKey();
+    public void RemoveKey();
+}
+
+Now suppose you have a class called DBStore that implements Store interface and also contains extra methods
+
+public Class DBStore implements Store{
+
+    @Override
+    public void Save(){
+
+    }
+
+    @Override
+    public void Delete(){
+
+    }
+
+    @Override
+    public void Update(){
+
+    }
+
+    @Override 
+    public void Fetch(){
+
+    }
+
+    public void AddKey(){
+
+    }
+
+    public void RemoveKey(){
+
+    }
+
+}
+
+Now suppose you have CacheStore class  that implements Store interface, but here is problems that CacheStore only needs of AddKey() and
+RemoveKey() methods but since it is implementing Store interface all methods needs to implements that is violating principle of Interface
+Segregation and it is make Store interface fat.
+
+Now solution is that we can create two interface DBStore Interface and CacheStore Interface
+
+Interface DBStore {
+     public void Save();
+    public void Delete();
+    public void Update();
+    public void Fetch();
+}
+
+Interface CacheStore {
+    AddKey();
+    RemoveKey();
+}
+
+class DBStoreService implement DBStore {
+      @Override
+    public void Save(){
+
+    }
+
+    @Override
+    public void Delete(){
+
+    }
+
+    @Override
+    public void Update(){
+
+    }
+
+    @Override 
+    public void Fetch(){
+
+    }
+}
+
+class CacheStoreService implements CacheStore {
+    @Override
+    public void AddKey(){
+
+    }
+
+    @Override
+    public void RemoveKey(){
+
+    }
+}
+
+
+In this way we have segregate the interfaces.
+
+
+5. Dependency Inversion Principle
+The Dependency Inversion Principle (DIP) is a principle in object-oriented design that states that “High-level modules 
+should not depend on low-level modules. Both should depend on abstractions“. Additionally, abstractions should not depend
+on details(implementation). Details(implementation) should depend on abstractions.
+
+In simpler terms, the DIP suggests that classes should rely on abstractions (e.g., interfaces or abstract classes) rather
+than concrete implementations.
+This allows for more flexible and decoupled code, making it easier to change implementations without affecting other parts 
+of the codebase.
+
+example:-
+    Suppose we have three classes A,B,C.  class A depends on class B, class B Depends on class C.
+    If changes happens in class C it will hamper class B, if class B changes it will hampler class A. it is the problem.
+    another problem is that if you write unit test cases because class A is dependent on class B somehow you need to mock
+    class B, and since class B dependent on class C you, somehow you need to mock class C. means it is difficult to manage, 
+    diffcult to change and diffcult to test.
+
+    class A  extends B{
+        field : type
+        method(type) : type
+    }
+
+    class B  extends C{
+        field: type
+        method(type) : type
+    }
+
+    class C {
+        field : type 
+        method(type) : type
+    }
+
+    for this we will implement Dependency Inversion principle.
+
+    To solve this problem Let’s introduce an Interface called Interface B and Interface C, and interface B depends on interface C
+
+    Interface B  extends C{
+        field: type
+        method(type) : type
+    }
+    Interface C {
+          field: type
+        method(type) : type
+    }
+
+    class A implements B{
+          field: type
+        method(type) : type
+    }
+
+    class B implements B{
+          field: type
+        method(type) : type
+    }
+
+    class C implements C{
+          field: type
+        method(type) : type
+    }
+
+
+Let’s understand with real world example. I am taking example from Interface Segregation principle:-
+    public class  CacheStore {
+        
+        public void AddKey(String key, String value){
+
+        }
+
+        public void RemoveKey(String key){
+
+        }
+
+        public void EvictKey(){
+
+        }
+    }
+
+    
+
+    public class UserProfile {
+        CacheStore cacheStore = new CacheStore();
+        cacheStore.AddKey("arpit", "male");
+    }
+
+ in this example class UserProfile directly using cacheStoreService class, if in future if will change the AddKey() method in any case 
+ then i need to change in UserProfile class as well because it depends on cacheStoreService.
+   
+   public Interface  CacheStore {
+        public void AddKey(String key, String value);
+        public void RemoveKey(String key);
+        public void EvictKey();
+    }
+
+    public class  CacheStoreService implements CacheStore {
+        @Override
+        public void AddKey(String key, String value){
+
+        }
+
+        @Override
+        public void RemoveKey(String key){
+
+        }
+
+        @Override
+        public void EvictKey(){
+
+        }
+    }
+    public class UserProfile {
+          CacheStore cacheStore = new CacheStore();
+        cacheStore.AddKey("arpit", "male");
+    }
+ instead of that we can simply implement from interface and use it. So that implementation of these methods can be changed internaly 
+ without changing CacheStore interface.
+
