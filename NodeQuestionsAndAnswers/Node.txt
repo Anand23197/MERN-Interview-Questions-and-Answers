@@ -571,3 +571,111 @@ Ans:-
  eg:- www.eirj.com/books?author=john&id=2 
  in this example after question mark whatever I have written is query string. 
  there is two query string author and id and both query strings are available in key value pair.
+
+
+ Q11) Diffrence between search param and query params?
+ Ans:- Both refer to the same thing — key-value pairs in the URL after ?
+  The term “search params” is used more often in frontend/browser code (with URLSearchParams).
+  “query params” is the broader and more common term, especially in backend or API contexts.
+
+  1. Query Parameters (Backend/API Perspective)
+  
+  -> Part of the URL after the ?
+
+  -> Sent to the server in the HTTP request
+
+  -> Used for filtering, pagination, searching, etc.
+-------------------------------------------------
+example-
+  GET /users?page=2&limit=10
+in node js with express js
+  req.query.page // '2'
+  req.query.limit // '10'
+  -------------------------------------------------
+
+2. Search Parameters (Frontend/Browser Perspective)
+
+-> Term used in browser-side JavaScript (DOM APIs)
+
+-> Accessed using the URLSearchParams API
+
+------------------------------------------------
+const params = new URLSearchParams(window.location.search);
+const page = params.get('page'); // '2'
+------------------------------------------------
+
+URL Breakdown:
+https://example.com/products?category=books&sort=price
+
+ -> ?category=books&sort=price → query string
+
+ -> category and sort → query/search parameters
+
+ -> Use .query in backend (e.g., Express)
+
+ -> Use URLSearchParams in frontend
+
+
+ Q12) how to use commmand line in node js?
+
+ Ans:- Node.js allows interaction with the command line through several methods. Here's a breakdown:
+1. Running Node.js Scripts:
+  -> Using the node command: The most common way is to use the node command followed by the script's file name.
+
+  eg:-
+  ----------------------
+    node your_script.js
+
+  -> Shebang: Adding a shebang line at the beginning of your script allows direct execution (on Unix-like systems).
+
+  eg:-
+  ---------------------
+      #!/usr/bin/env node
+    // Your code here
+
+2. Interacting with the Command Line:
+console.log(): The console.log() function is used to print output to the command line. 
+It can handle strings, numbers, objects, and more.
+
+eg:-
+---------------------------
+    console.log("Hello, command line!");
+    const x = 10;
+    console.log("The value of x is:", x); 
+
+Command-line arguments: Access command-line arguments passed to the script using process.argv.
+    console.log(process.argv);
+
+    The first two elements of the array are the node executable path and the script path, respectively.
+    The remaining elements are the arguments.
+    -> Using child_process module: Execute shell commands from within Node.js using the child_process module.
+
+    example:-
+    --------------------------------------
+        const { exec } = require('child_process');
+    exec('ls -l', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+    });
+    --------------------------------------
+
+    3. Node.js REPL (Read-Eval-Print Loop):
+The Node.js REPL is an interactive environment for executing JavaScript code.
+To start the REPL, type node in your terminal without any file argument.
+You can enter JavaScript code directly and it will be executed immediately.
+Dot commands: REPL has special dot commands for various actions:
+.help: Shows help for dot commands.
+.editor: Enters editor mode for multi-line input.
+.clear: Clears the REPL context.
+.load: Loads a JavaScript file.
+.save: Saves the REPL session to a file.
+.exit: Exits the REPL.
+
+    4. Packages for Command Line Interfaces:
+commander: A popular library to handle command-line arguments.
+yargs: Another library for parsing command-line arguments.
+These methods enable you to create powerful command-line tools and interact with the system using Node.js.
