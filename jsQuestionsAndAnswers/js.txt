@@ -674,6 +674,12 @@ Only accessible via messaging (postMessage)
 
 Needs to be served over HTTP(s), not file://
 
+⚙️ Terminate Worker
+To stop a worker:
+---------------------------
+worker.terminate();
+
+
 
 
 
