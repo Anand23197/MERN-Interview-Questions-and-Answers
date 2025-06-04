@@ -493,4 +493,153 @@ simpleFreeze(obj);
  })
  for Preventing changes, but you can do more changes or add properties for doing this.
 
- Q13) 
+ Q13) What is index db.
+ Ans:- IndexedDB is a built-in browser database that lets you store large amounts of structured data,
+       including files/blobs, in the user's browser.
+
+Key Features of IndexedDB:
+---------------------------------------
+-> Client-side: Data is stored in the user's browser.
+
+-> Asynchronous: Operations are non-blocking (via events or Promises).
+
+-> Key-value store: Data is stored as key-value pairs.
+
+-> Structured storage: You can store JavaScript objects directly.
+
+-> Works offline: Great for offline-first web apps.
+
+ Use Cases
+ ------------
+-> Offline data storage (e.g., forms, product catalogs)
+
+-> Caching API responses
+
+-> Local storage for PWAs (Progressive Web Apps)
+
+-> Storing files/blobs like images
+
+example 
+---------------------
+
+// Open or create a database
+const request = indexedDB.open("MyDB", 1);
+
+request.onupgradeneeded = function (event) {
+  const db = event.target.result;
+  db.createObjectStore("users", { keyPath: "id" });
+};
+
+request.onsuccess = function (event) {
+  const db = event.target.result;
+
+  const tx = db.transaction("users", "readwrite");
+  const store = tx.objectStore("users");
+
+  store.put({ id: 1, name: "Alice" });
+
+  tx.oncomplete = () => console.log("Data saved");
+};
+
+
+Q14) how to integrate web worker with indexdb? 
+Ans:-                                              
+
+Q15) What is generator function? 
+Ans:- A generator function in JavaScript is a special type of function that can pause and resume execution. 
+It’s defined using the function* syntax and uses the yield keyword.
+
+example-
+-------------------------------------
+function* myGenerator() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const gen = myGenerator();
+
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next()); // { value: 2, done: false }
+console.log(gen.next()); // { value: 3, done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+
+Each call to next() resumes from where it left off.
+
+🧠 Key Concepts
+Keyword	Meaning
+function*	- Declares a generator
+yield	    - Pauses the function and sends out a value
+next()	  - Resumes the generator, returns { value, done }
+return	  - Ends the generator early (optional return value)
+yield*	  - Delegates to another generator 
+
+✅ Use Cases
+1. Custom Iterators
+
+function* range(start, end) {
+  for (let i = start; i <= end; i++) {
+    yield i;
+  }
+}
+
+for (const num of range(1, 5)) {
+  console.log(num); // 1 to 5
+}
+
+
+2. Infinite Sequences
+
+function* idGenerator() {
+  let id = 0;
+  while (true) {
+    yield id++;
+  }
+}
+
+const ids = idGenerator();
+console.log(ids.next().value); // 0
+console.log(ids.next().value); // 1
+
+3. Asynchronous Control Flow (with async generators) 
+
+async function* fetchPages() {
+  let page = 1;
+  while (page <= 3) {
+    const data = await fetch(`/api/data?page=${page}`).then(res => res.json());
+    yield data;
+    page++;
+  }
+}
+
+⛓️ Integration Example in React
+Use a generator to simulate a typewriter effect:
+function* typeWriter(text) {
+  for (let i = 0; i <= text.length; i++) {
+    yield text.slice(0, i);
+  }
+}
+
+Use in React with a timeout loop: 
+const [text, setText] = useState('');
+useEffect(() => {
+  const gen = typeWriter('Hello world!');
+  const interval = setInterval(() => {
+    const next = gen.next();
+    if (next.done) clearInterval(interval);
+    else setText(next.value);
+  }, 100);
+  return () => clearInterval(interval);
+}, []);
+
+
+🟡 Generator vs Async/Await 
+
+| Feature       | Generator            | Async/Await      |
+| ------------- | -------------------- | ---------------- |
+| Syntax        | `function*`, `yield` | `async`, `await` |
+| Sync or Async | Sync                 | Async            |
+| Use Case      | Iteration, pausing   | Promises, I/O    |
+
+
+

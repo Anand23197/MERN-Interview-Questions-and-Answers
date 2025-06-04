@@ -801,3 +801,128 @@ function Welcome(props) {
 function App() {
 	return <Welcome name="John" />;
 }
+
+Q20) what is Atomic design pattern in react ?
+Ans-> Atomic Design is a methodology for creating design systems that promotes modularity,
+scalability, and maintainability of user interfaces. It breaks down interfaces into fundamental 
+building blocks, inspired by chemistry. Here's how it applies to React.
+
+a) Atoms:
+  -> The smallest, indivisible components.
+  -> Examples in React: buttons, input fields, icons, labels, and typogrphy.
+  -> Created as functional or class components with minimal logic.
+
+b) Molecules:
+  -> Combinations of atoms working together.
+  -> Examples: a search bar (input + button), a card (image + text + button), or a form field (label + input)
+  -> These are reusable and can have their own properties and functionalities.
+
+c) Organisms:
+  -> Groups of molecules and/or atoms forming a distinct section of an interface.
+  -> Examples: a navigation bar, a header, a sidebar, a card list.
+  -> They represent more complex UI component.
+
+d) Templates: 
+  -> Full-page layouts composed of organisms.
+  -> Define the overall structure of page but lack specific content.
+  -> They act as wireframes, showing the arrangement of components.
+
+e) Pages:
+  -> Specific instances of templates with real content.
+  -> Where components are populated with data and connected to the applications's functionality.
+  -> This is where the final UI is rendered.
+
+Benefits of using Atomic Design in React and AI:
+
+Component Reusability:
+  Pre-designed components can be shared across different projects, saving time and effort.
+Consistent Design System:
+  Ensures a unified look and feel across applications, improving the user experience.
+Maintainability:
+  Easier to update and maintain code as individual components are modular and decoupled.
+Scalability:
+  Suitable for building large-scale applications with complex UIs.
+Team Collaboration:
+  Clear structure promotes teamwork and reduces conflicts when building components.
+Readability:
+  Clear component hierarchy makes the codebase easier to understand.
+Prototyping:
+  Facilitates faster prototyping and building new views by reusing existing UI building blocks. 
+
+
+Q21 ) Facade design pattern in react?
+Ans:- The Facade Design Pattern is a structural pattern that provides a simplified interface 
+to a more complex system or set of subsystems. In React, this can be useful to encapsulate 
+complex logic, third-party libraries, or multiple state interactions behind a clean and simple API.
+
+🧠 When to Use the Facade Pattern in React
+Wrapping complex business logic into a simple interface.
+
+Hiding multiple service or API calls.
+
+Simplifying state management interactions.
+
+Wrapping third-party libraries (like Stripe, Firebase, etc.).
+
+✅ Example: Using Facade Pattern in React
+Scenario:
+You want to manage authentication logic (login, logout, user session) using Firebase, 
+but want your components to deal with a simple API.
+
+Example
+-------------
+// services/AuthFacade.ts
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+import { app } from "./firebase"; // assume Firebase is initialized in this file
+
+const auth = getAuth(app);
+
+export const AuthFacade = {
+  login: async (email: string, password: string) => {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  },
+
+  logout: async () => {
+    await signOut(auth);
+  },
+
+  subscribeToAuthChanges: (callback: (user: any) => void) => {
+    return onAuthStateChanged(auth, callback);
+  },
+
+  getCurrentUser: () => {
+    return auth.currentUser;
+  }
+};
+
+👨‍💻 Step 2: Use in a React Component
+
+// components/LoginForm.tsx
+import { useState } from "react";
+import { AuthFacade } from "../services/AuthFacade";
+
+export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      await AuthFacade.login(email, password);
+      alert("Logged in!");
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div>
+      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
+      <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="Password" />
+      <button onClick={handleLogin}>Login</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
+}
+

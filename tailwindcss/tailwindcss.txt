@@ -1,0 +1,8 @@
+Q1) what is jit engine in tailwind css?
+Ans:- https://v2.tailwindcss.com/docs/just-in-time-mode
+
+Q2) what is linting strategy in tailwind css?
+Ans:-https://tailwindcss.com/blog/introducing-linting-for-tailwindcss-intellisense
+
+Q3) How you can use theme in tailwind css ?
+Ans:-https://tailwindcss.com/docs/theme
