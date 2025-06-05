@@ -1,0 +1,81 @@
+Q1) What is accessibility standard in web development.
+Ans:- Web accessibility ensures that websites and web apps are usable by everyone — including 
+people with disabilities (visual, auditory, cognitive, motor, etc.).
+
+✅ Core Accessibility Standards
+1. WCAG (Web Content Accessibility Guidelines)
+Maintained by W3C (World Wide Web Consortium)
+
+WCAG 2.1 / 2.2 has four main principles known as POUR:
+
+| Principle          | Description                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| **Perceivable**    | Content must be presented in ways that users can perceive (e.g., alt text for images, captions for videos) |
+| **Operable**       | UI must be usable with keyboard and assistive tech (e.g., keyboard navigation, skip links)                 |
+| **Understandable** | Content and operations must be easy to understand (e.g., form instructions, error messages)                |
+| **Robust**         | Content must be robust enough to work with a wide variety of assistive technologies                        |
+
+🏷️ Key Accessibility Practices (with Code Examples)
+1. Use Semantic HTML
+<!-- Good -->
+<header>...</header>
+<main>...</main>
+<nav>...</nav>
+<footer>...</footer>
+<article>...</article>
+
+<!-- Bad -->
+<div class="header">...</div>
+
+
+2. Alt Text for Images
+<img src="dog.jpg" alt="A brown dog playing in the field" />
+
+
+3. Keyboard Navigation
+Use tabindex
+Avoid custom controls that can’t be focused or activated with keyboard
+
+Example:
+<button tabindex="0">Submit</button>
+
+4. Labeling Form Fields
+<label for="email">Email Address</label>
+<input id="email" type="email" name="email" />
+
+5. Color Contrast
+Ensure text and background color contrast ratio is ≥ 4.5:1.
+Tool: WebAIM Contrast Checker
+
+🧑‍🦯 Assistive Technology Considerations
+-> Screen readers (like NVDA, JAWS, VoiceOver)
+-> Braille displays
+-> Switch devices
+-> Eye-tracking input
+
+🧪 Tools to Test Accessibility
+✅ Lighthouse (in Chrome DevTools)
+
+✅ axe DevTools browser extension
+
+✅ WAVE (https://wave.webaim.org/)
+
+✅ NVDA/JAWS/VoiceOver screen readers
+
+🧾 ARIA (Accessible Rich Internet Applications)
+Used when semantic HTML isn't enough:
+<div role="alert" aria-live="assertive">Error occurred!</div>
+
+⚠️ Use ARIA as a last resort — prefer native elements first.
+
+📋 Summary Checklist
+| Feature               | Example or Tool          |
+| --------------------- | ------------------------ |
+| Semantic HTML         | `<main>`, `<button>`     |
+| Alt text              | `<img alt="..." />`      |
+| Keyboard accessible   | `tabindex`, buttons      |
+| Form labels           | `<label for="...">`      |
+| Color contrast        | 4.5:1 or higher          |
+| Screen reader support | ARIA roles, live regions |
+| Testing tools         | Lighthouse, axe, WAVE    |
+

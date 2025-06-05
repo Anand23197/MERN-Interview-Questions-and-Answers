@@ -779,6 +779,3 @@ useEffect(() => {
 | Syntax        | `function*`, `yield` | `async`, `await` |
 | Sync or Async | Sync                 | Async            |
 | Use Case      | Iteration, pausing   | Promises, I/O    |
-
-
-

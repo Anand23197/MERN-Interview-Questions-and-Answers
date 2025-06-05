@@ -1,0 +1,117 @@
+Facade is a structural design pattern.
+Facade Method Design Pattern provides a unified interface to a set of interfaces in a subsystem. 
+Facade defines a high-level interface that makes the subsystem easier to use. 
+
+Use Case: Home Theater System
+------------------------------------
+We want to simplify the usage of a complex system of subsystems: DVDPlayer, Projector, and Amplifier.
+
+✅ 1. Subsystems
+--------------------------------
+// DVD Player
+public class DVDPlayer {
+    public void on() {
+        System.out.println("DVD Player ON");
+    }
+
+    public void play(String movie) {
+        System.out.println("Playing movie: " + movie);
+    }
+
+    public void off() {
+        System.out.println("DVD Player OFF");
+    }
+}
+
+// Projector
+public class Projector {
+    public void on() {
+        System.out.println("Projector ON");
+    }
+
+    public void off() {
+        System.out.println("Projector OFF");
+    }
+}
+
+// Amplifier
+public class Amplifier {
+    public void on() {
+        System.out.println("Amplifier ON");
+    }
+
+    public void setVolume(int level) {
+        System.out.println("Setting volume to: " + level);
+    }
+
+    public void off() {
+        System.out.println("Amplifier OFF");
+    }
+}
+
+✅ 2. Facade Class
+-----------------------------
+public class HomeTheaterFacade {
+    private DVDPlayer dvdPlayer;
+    private Projector projector;
+    private Amplifier amplifier;
+
+    public HomeTheaterFacade(DVDPlayer dvd, Projector projector, Amplifier amplifier) {
+        this.dvdPlayer = dvd;
+        this.projector = projector;
+        this.amplifier = amplifier;
+    }
+
+    public void watchMovie(String movie) {
+        System.out.println("Get ready to watch a movie...");
+        projector.on();
+        amplifier.on();
+        amplifier.setVolume(5);
+        dvdPlayer.on();
+        dvdPlayer.play(movie);
+    }
+
+    public void endMovie() {
+        System.out.println("Shutting movie theater down...");
+        dvdPlayer.off();
+        amplifier.off();
+        projector.off();
+    }
+}
+
+
+✅ 3. Client Code (Usage)
+------------------------------
+public class Main {
+    public static void main(String[] args) {
+        DVDPlayer dvd = new DVDPlayer();
+        Projector projector = new Projector();
+        Amplifier amplifier = new Amplifier();
+
+        HomeTheaterFacade homeTheater = new HomeTheaterFacade(dvd, projector, amplifier);
+
+        homeTheater.watchMovie("Inception");
+        System.out.println();
+        homeTheater.endMovie();
+    }
+}
+
+
+✅ Output
+-----------------
+Get ready to watch a movie...
+Projector ON
+Amplifier ON
+Setting volume to: 5
+DVD Player ON
+Playing movie: Inception
+
+Shutting movie theater down...
+DVD Player OFF
+Amplifier OFF
+Projector OFF
+
+🎯 Explanation
+Subsystems have their own operations and complexity.
+HomeTheaterFacade simplifies the interaction by exposing a clean interface (watchMovie() and endMovie()).
+This encapsulates the complexity and improves readability, usability, and maintenance.

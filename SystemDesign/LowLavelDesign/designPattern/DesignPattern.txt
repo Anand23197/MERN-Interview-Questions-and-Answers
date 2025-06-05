@@ -1,0 +1,94 @@
+Q1) What is design pattern?
+Ans:- A design pattern is a general, reusable solution to a commonly occurring problem in software design. 
+It’s not code itself, but a blueprint or template for how to solve a problem in various situations, 
+helping make code more maintainable, scalable, and flexible.
+Design patterns are typically based on object-oriented programming principles and are used to solve
+ design-level problems (not algorithmic ones).
+
+ Main Types of Design Patterns
+Design patterns are broadly categorized into three main types:
+
+🔧 1. Creational Patterns
+----------------------------
+Creational Patterns focus on the process of object creation or problems related to object creation. They help in making a system independent of 
+how its objects are created, composed and represented.
+
+| Pattern              | Purpose                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| **Singleton**        | Ensures a class has only one instance and provides a global point of access.                        |
+| **Factory Method**   | Defines an interface for creating an object, but lets subclasses decide which class to instantiate. |
+| **Abstract Factory** | Provides an interface for creating families of related or dependent objects.                        |
+| **Builder**          | Separates the construction of a complex object from its representation.                             |
+| **Prototype**        | Creates new objects by copying an existing object (prototype).                                      |
+
+🔁 2. Structural Patterns
+These deal with object composition, i.e., how classes and objects are structured to form larger structures.
+
+Common Structural Patterns:
+
+| Pattern       | Purpose                                                                    |
+| ------------- | -------------------------------------------------------------------------- |
+| **Adapter**   | Allows incompatible interfaces to work together.                           |
+| **Bridge**    | Separates an object’s abstraction from its implementation.                 |
+| **Composite** | Composes objects into tree structures to represent part-whole hierarchies. |
+| **Decorator** | Adds responsibilities to objects dynamically.                              |
+| **Facade**    | Provides a simplified interface to a complex subsystem.                    |
+| **Flyweight** | Reduces the cost of creating a large number of similar objects.            |
+| **Proxy**     | Provides a placeholder for another object to control access.               |
+
+
+🔁 3. Behavioral Patterns
+These focus on communication between objects and how they interact.
+
+| Pattern                     | Purpose                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| **Observer**                | Allows an object to notify other objects about changes.                          |
+| **Strategy**                | Defines a family of algorithms and makes them interchangeable.                   |
+| **Command**                 | Encapsulates a request as an object, allowing for parameterization.              |
+| **Chain of Responsibility** | Passes a request along a chain of handlers.                                      |
+| **Mediator**                | Reduces communication between classes by using a mediator object.                |
+| **State**                   | Allows an object to alter its behavior when its internal state changes.          |
+| **Template Method**         | Defines the skeleton of an algorithm in a method, deferring steps to subclasses. |
+| **Iterator**                | Provides a way to access elements of a collection sequentially.                  |
+| **Memento**                 | Captures and restores an object’s internal state.                                |
+| **Visitor**                 | Separates algorithms from the objects they operate on.                           |
+
+
+
+Q3) What is singleton design pattern ? 
+Ans :- https://www.geeksforgeeks.org/singleton-design-pattern/
+
+Q4) What is factory method ? 
+Ans :- https://www.geeksforgeeks.org/factory-method-for-designing-pattern/ 
+
+Q5) What is abstract factory design pattern ? 
+Ans :- https://www.geeksforgeeks.org/abstract-factory-pattern/ 
+
+Q6) what is builder pattern ? 
+Ans :- https://www.geeksforgeeks.org/builder-design-pattern/ 
+
+Q7) What is protype design pattern ? 
+Ans :- https://www.geeksforgeeks.org/prototype-design-pattern/ 
+
+Q8) What is Adapter design pattern ? 
+Ans :- https://www.geeksforgeeks.org/adapter-pattern/ 
+
+
+https://www.geeksforgeeks.org/facade-design-pattern-introduction/ 
+
+Q10) What is Decorator pattern ? 
+Ans :- https://www.geeksforgeeks.org/decorator-pattern/ 
+
+Q11) What is Flyweight pattern ? 
+Ans :- https://www.geeksforgeeks.org/flyweight-design-pattern/ 
+
+Q12) What is Observer pattern ? 
+Ans :- https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/ 
+
+Q13) What is Strategy design pattern ? 
+Ans :- https://www.geeksforgeeks.org/strategy-pattern-set-1/ 
+
+Q14) What is Chain of Responsibility pattern ?
+Ans:- https://www.geeksforgeeks.org/chain-responsibility-design-pattern/ 
+
+
