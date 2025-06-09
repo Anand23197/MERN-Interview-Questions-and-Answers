@@ -1,0 +1,156 @@
+The Prototype Design Pattern is a creational pattern that enables the creation of new objects 
+by copying an existing object. Prototype allows us to hide the complexity of making new instances 
+from the client. The existing object acts as a prototype and contains the state of the object.
+
+🟢Components of Prototype Design Pattern
+--------------------------------------------------
+The Prototype Design Pattern's components include the prototype interface or abstract class, concrete prototypes
+and the client code, and the clone method specifying cloning behavior. These components work together to enable the 
+creation of new objects by copying existing ones.
+
+Prototype Interface or Abstract Class
+->  This defines the method for cloning objects and sets a standard that all concrete prototypes must follow. 
+    Its main purpose is to serve as a blueprint for creating new objects by outlining the cloning contract.
+->  It includes a clone method that concrete prototypes will implement to create copies of themselves.
+
+Concrete Prototype
+->  This class implements the prototype interface or extends the abstract class. It represents a specific 
+    type of object that can be cloned.
+->  The Concrete Prototype details how the cloning process should work for instances of that class and provides
+    the specific logic for the clone method.
+
+Client
+->  The Client is the code or module that requests new object creation by interacting with the prototype.
+->  It initiates the cloning process without needing to know the specifics of the concrete classes involved.
+
+Clone Method
+->  This method is declared in the prototype interface or abstract class and outlines how an object should be copied.
+->  Concrete prototypes implement this method to define their specific cloning behavior, detailing how to duplicate 
+    the object's internal state to create a new, independent instance.
+
+🟢Example 
+--------------------------
+Imagine you're working on a drawing application, and you need to create and manipulate various shapes. 
+Each shape might have different attributes like color or size. Creating a new shape class for every variation
+becomes tedious. Also, dynamically adding or removing shapes during runtime can be challenging. 
+
+🔹 Step 1: Define the Prototype Interface
+---------------------------------------------
+public interface Shape extends Cloneable {
+    Shape clone();
+    void draw();
+}
+---------------------------------------------
+
+🔵 Step 2: Concrete Prototype – Circle
+--------------------------------------------
+public class Circle implements Shape {
+    private int radius;
+    private String color;
+
+    public Circle(int radius, String color) {
+        this.radius = radius;
+        this.color = color;
+    }
+
+    @Override
+    public Circle clone() {
+        return new Circle(radius, color);
+    }
+
+    @Override
+    public void draw() {
+        System.out.println("Drawing Circle with radius " + radius + " and color " + color);
+    }
+}
+-------------------------------------------
+
+🔶 Step 3: Concrete Prototype – Rectangle
+-------------------------------------------------------------
+public class Rectangle implements Shape {
+    private int width;
+    private int height;
+    private String color;
+
+    public Rectangle(int width, int height, String color) {
+        this.width = width;
+        this.height = height;
+        this.color = color;
+    }
+
+    @Override
+    public Rectangle clone() {
+        return new Rectangle(width, height, color);
+    }
+
+    @Override
+    public void draw() {
+        System.out.println("Drawing Rectangle with width " + width + ", height " + height + " and color " + color);
+    }
+}
+-----------------------------------------------------------
+
+🧠 Step 4: Shape Registry (Optional but Useful)
+This acts as a prototype manager.
+-------------------------------------------------
+import java.util.HashMap;
+import java.util.Map;
+
+public class ShapeRegistry {
+    private Map<String, Shape> prototypes = new HashMap<>();
+
+    public void addPrototype(String key, Shape shape) {
+        prototypes.put(key, shape);
+    }
+
+    public Shape getClone(String key) {
+        return prototypes.get(key).clone();
+    }
+}
+--------------------------------------------------
+
+🚀 Step 5: Client Code
+--------------------------------------------------
+public class DrawingApp {
+    public static void main(String[] args) {
+        ShapeRegistry registry = new ShapeRegistry();
+
+        // Original prototypes
+        registry.addPrototype("blueCircle", new Circle(10, "Blue"));
+        registry.addPrototype("redRect", new Rectangle(20, 10, "Red"));
+
+        // Clone and draw shapes
+        Shape shape1 = registry.getClone("blueCircle");
+        shape1.draw();
+
+        Shape shape2 = registry.getClone("redRect");
+        shape2.draw();
+
+        Shape shape3 = registry.getClone("blueCircle");
+        shape3.draw(); // Clone again
+    }
+}
+--------------------------------------------------
+
+✅When to use the Prototype Design Pattern 
+-----------------------------------------------
+
+->  Use the Prototype pattern when creating new objects is more complex or costly than copying existing ones.
+    Cloning can be more efficient if significant resources are needed.
+->  The Prototype pattern is helpful for managing various objects with minor differences. Instead of creating
+    multiple classes, you can clone and modify prototypes.
+->  Consider the Prototype pattern for dynamic configurations where you need to create objects at runtime. 
+    You can clone a base configuration and adjust it as necessary.
+->  The Prototype pattern can lower initialization costs, as cloning is often faster than building a new object 
+    from scratch, especially if initialization is resource-intensive.
+
+✅When not to use the Prototype Design Pattern 
+-----------------------------------------------
+
+->  Avoid using the Prototype pattern when your application predominantly deals with unique object instances, 
+    and the overhead of implementing the pattern outweighs its benefits.
+->  If object creation is simple and does not involve significant resource consumption, and there are no variations 
+    of objects, using the Prototype pattern might be unnecessary complexity.
+->  If your objects are immutable (unchangeable) and do not need variations, the benefits of cloning may not be significant.
+->  If your system has a clear and straightforward object creation process that is easy to understand and manage, 
+    introducing the Prototype pattern may add unnecessary complexity.

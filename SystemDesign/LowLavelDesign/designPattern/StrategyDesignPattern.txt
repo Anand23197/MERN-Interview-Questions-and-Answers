@@ -1,0 +1,149 @@
+The Strategy Design Pattern defines a family of algorithms, encapsulates each one, and makes 
+them interchangeable at runtime, allowing clients to switch algorithms dynamically without altering the code structure.
+
+🎯 Intent
+To enable selecting an algorithm's behavior at runtime by encapsulating it inside a strategy class.
+
+
+🟢Components of the Strategy Design Pattern
+-----------------------------------------
+1. Context
+A class or object known as the Context assigns the task to a strategy object and contains a reference to it.
+
+->  It serves as an intermediary between the client and the strategy, offering an integrated approach for task 
+    execution without exposing every detail of the process.
+->  The Context maintains a reference to a strategy object and calls its methods to perform the task, allowing 
+    for interchangeable strategies to be used.
+
+2. Strategy Interface
+An abstract class or interface known as the Strategy Interface specifies a set of methods that all concrete strategies must implement.
+
+->  As a kind of agreement, it guarantees that all strategies follow the same set of rules and are interchangeable by the Context.
+->  The Strategy Interface promotes flexibility and modularity in the design by establishing a common interface that enables
+    decoupling between the Context and the specific strategies.   
+
+3. Concrete Strategies
+Concrete Strategies are the various implementations of the Strategy Interface. Each concrete strategy provides a specific
+algorithm or behavior for performing the task defined by the Strategy Interface.
+
+->  Concrete strategies encapsulate the details of their respective algorithms and provide a method for executing the task.
+->  They are interchangeable and can be selected and configured by the client based on the requirements of the task.
+
+4. Client
+The Client is responsible for selecting and configuring the appropriate strategy and providing it to the Context.
+
+->  It knows the requirements of the task and decides which strategy to use based on those requirements.
+->  The client creates an instance of the desired concrete strategy and passes it to the Context, enabling
+    the Context to use the selected strategy to perform the task.
+
+✅ Real-World Example
+-------------------------------
+We’ll simulate a shopping cart where the user can choose different payment strategies (e.g., Credit Card, PayPal).
+
+1️⃣ Strategy Interface
+-------------------------------
+public interface PaymentStrategy {
+    void pay(int amount);
+}
+-------------------------------
+
+
+2️⃣ Concrete Strategies
+--------------------------------
+🟢Credit Card Payment
+public class CreditCardPayment implements PaymentStrategy {
+    private String cardNumber;
+    private String name;
+
+    public CreditCardPayment(String cardNumber, String name) {
+        this.cardNumber = cardNumber;
+        this.name = name;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid ₹" + amount + " using Credit Card (" + cardNumber + ")");
+    }
+}
+
+🟢PayPal Payment
+public class PayPalPayment implements PaymentStrategy {
+    private String email;
+
+    public PayPalPayment(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid ₹" + amount + " using PayPal (" + email + ")");
+    }
+}
+------------------------------------
+
+3️⃣ Context Class – Shopping Cart
+----------------------------------------------------------
+public class ShoppingCart {
+    private PaymentStrategy paymentStrategy;
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void checkout(int amount) {
+        if (paymentStrategy == null) {
+            throw new IllegalStateException("Payment strategy not set!");
+        }
+        paymentStrategy.pay(amount);
+    }
+}
+--------------------------------------------------------------
+
+4️⃣ Client Code
+---------------------------------------------------------
+public class Main {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+
+        // Use Credit Card
+        cart.setPaymentStrategy(new CreditCardPayment("1234-5678-9012", "Alice"));
+        cart.checkout(500);
+
+        // Switch to PayPal
+        cart.setPaymentStrategy(new PayPalPayment("alice@example.com"));
+        cart.checkout(300);
+    }
+}
+---------------------------------------------------------
+
+
+✅When to use the Strategy Design Pattern?
+-----------------------------------------------------------
+->  Multiple Algorithms: When you have multiple algorithms that can be used interchangeably based on different contexts,
+    such as sorting algorithms (bubble sort, merge sort, quick sort), searching algorithms, compression algorithms, etc.
+->  Encapsulating Algorithms: When you want to encapsulate the implementation details of algorithms separately from the 
+    context that uses them, allowing for easier maintenance, testing, and modification of algorithms without affecting the client code.
+->  Runtime Selection: When you need to dynamically select and switch between different algorithms at runtime based on user
+    preferences, configuration settings, or system states.
+->  Reducing Conditional Statements: When you have a class with multiple conditional statements that choose between different 
+    behaviors, using the Strategy pattern helps in eliminating the need for conditional statements and making the code more modular
+    and maintainable.
+->  Testing and Extensibility: When you want to facilitate easier unit testing by enabling the substitution of algorithms with 
+    mock objects or stubs. Additionally, the Strategy pattern makes it easier to extend the system with new algorithms without
+    modifying existing code.
+
+❌ When not to use the Strategy Design Pattern?
+--------------------------------------------------------------
+->  Single Algorithm: If there is only one fixed algorithm that will be used throughout the lifetime of the application,
+    and there is no need for dynamic selection or switching between algorithms, using the Strategy pattern might introduce 
+    unnecessary complexity.
+->  Overhead:If the overhead of implementing multiple strategies outweighs the benefits, especially in simple scenarios 
+    where direct implementation without the Strategy pattern is more straightforward and clear.
+->  Inflexible Context: If the context class tightly depends on a single algorithm and there is no need for flexibility or 
+    interchangeability, using the Strategy pattern may introduce unnecessary abstraction and complexity.
+
+
+
+
+
+

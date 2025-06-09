@@ -1,0 +1,155 @@
+The Observer Design Pattern is a behavioral design pattern that defines a one-to-many 
+dependency between objects. When one object (the subject) changes state, all its dependents (observers) 
+are notified and updated automatically. It primarily deals with the interaction and communication between 
+objects, specifically focusing on how objects behave in response to changes in the state of other objects.
+
+🟢In simple term:-
+The Observer Design Pattern is a behavioral pattern where an object (called the Subject) maintains a list of its dependents (called Observers) 
+and notifies them automatically when its state changes.
+
+📝Note: 
+Subjects are the objects that maintain and notify observers about changes in their state, 
+while Observers are the entities that react to those changes.
+
+✅Below are some key points about observer design pattern:
+--------------------------------------------------------------------
+->  Defines how a group of objects (observers) interact based on changes in the state of a subject.
+->  Observers react to changes in the subject's state.
+->  The subject doesn't need to know the specific classes of its observers, allowing for flexibility.
+->  Observers can be easily added or removed without affecting the subject.
+
+✅ Observer Pattern Components
+--------------------------------------------------------------------
+Subject – Holds observers and notifies them.
+->  The subject maintains a list of observers (subscribers or listeners).
+->  It Provides methods to register and unregister observers dynamically and defines a method to notify observers
+    of changes in its state.
+
+Observer – Defines an interface to receive updates.
+->  Observer defines an interface with an update method that concrete observers must implement and ensures a common 
+    or consistent way for concrete observers to receive updates from the subject.
+
+ConcreteSubject – Implements Subject and manages state.
+->  ConcreteSubjects are specific implementations of the subject. They hold the actual state or data that observers want to track. 
+    When this state changes, concrete subjects notify their observers.
+->  For instance, if a weather station is the subject, specific weather stations in different locations would be concrete subjects.
+
+ConcreteObserver – Implements Observer to receive updates.
+->  Concrete Observer implements the observer interface. They register with a concrete subject and react when notified of a state change.
+->  When the subject's state changes, the concrete observer's update() method is invoked, allowing it to take appropriate actions.
+->  For example, a weather app on your smartphone is a concrete observer that reacts to changes from a weather station.
+
+
+🎯 Real-Life Example: News Subscription System
+---------------------------------------------------
+You have a NewsAgency (Subject).
+Multiple Subscribers (Observers) want to be notified whenever there is a news update.
+
+1️⃣ Observer Interface
+--------------------------------
+public interface Observer {
+    void update(String news);
+}
+-------------------------------
+
+2️⃣ Subject Interface
+--------------------------------
+public interface Subject {
+    void addObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers();
+}
+--------------------------------
+
+3️⃣ Concrete Subject: NewsAgency
+---------------------------------
+import java.util.ArrayList;
+import java.util.List;
+
+public class NewsAgency implements Subject {
+    private List<Observer> observers = new ArrayList<>();
+    private String news;
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer obs : observers) {
+            obs.update(news);
+        }
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+        notifyObservers();
+    }
+}
+---------------------------------------------------------
+
+4️⃣ Concrete Observer: NewsSubscriber
+-----------------------------------------------
+public class NewsSubscriber implements Observer {
+    private String name;
+
+    public NewsSubscriber(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(String news) {
+        System.out.println(name + " received news: " + news);
+    }
+}
+----------------------------------------------------
+
+5️⃣ Client Code
+--------------------------------------------------
+public class Main {
+    public static void main(String[] args) {
+        NewsAgency agency = new NewsAgency();
+
+        Observer subscriber1 = new NewsSubscriber("Alice");
+        Observer subscriber2 = new NewsSubscriber("Bob");
+
+        agency.addObserver(subscriber1);
+        agency.addObserver(subscriber2);
+
+        agency.setNews("New Java 21 Released!");
+        agency.setNews("Observer Pattern is awesome!");
+    }
+}
+--------------------------------------------------
+
+
+✅ Use Cases of Observer Pattern
+->  Event listeners in GUIs.
+->  Pub/Sub systems (e.g., Kafka, Redis).
+->  Model-View-Controller (MVC).
+->  Chat notifications, stock price alerts, etc.
+
+✅When to use the Observer Design Pattern?
+----------------------------------------------------------------------------
+->  When you need one object to notify multiple others about changes.
+->  When you want to keep objects loosely connected, so they don’t rely on each other’s details.
+->  When you want observers to automatically respond to changes in the subject’s state.
+->  When you want to easily add or remove observers without changing the main subject.
+->  When you’re dealing with event systems that require various components to react without direct connections.
+
+❌When not to use the Observer Design Pattern?
+-----------------------------------------------------------------------------
+->  When the relationships between objects are simple and don’t require notifications.
+->  When performance is a concern, as many observers can lead to overhead during updates.
+->  When the subject and observers are tightly coupled, as it defeats the purpose of decoupling.
+->  When number of observers is fixed and won’t change over time.
+->  When the order of notifications is crucial, as observers may be notified in an unpredictable sequence.
+
+
+

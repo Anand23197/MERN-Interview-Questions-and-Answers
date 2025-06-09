@@ -1,0 +1,163 @@
+ The Factory Method Design Pattern is a creational design pattern used in software development.
+ It provides an interface for creating objects in a superclass while allowing subclasses to specify the types of objects they create.
+
+-> This pattern simplifies the object creation process by placing it in a dedicated method, promoting loose coupling between the object 
+    creator and the objects themselves.
+-> This approach enhances flexibility, extensibility, and maintainability, enabling subclasses to implement their own factory methods
+    for creating specific object types.
+
+
+🎯When to Use the Factory Method Design Pattern
+--------------------------------------------------
+-> If your object creation process is complex or varies under different conditions, using a factory method can make your
+   client code simpler and promote reusability.
+-> The Factory Method Pattern allows you to create objects through an interface or abstract class, hiding the details of 
+   concrete implementations. This reduces dependencies and makes it easier to modify or expand the system without affecting existing code.
+-> If your application needs to create different versions of a product or may introduce new types in the future, the Factory
+   Method Pattern provides a flexible way to handle these variations by defining specific factory methods for each product type.
+-> Factories can also encapsulate configuration logic, allowing clients to customize the object creation process by providing 
+   parameters or options to the factory method.
+--------------------------------------------------
+
+
+🎯Components of Factory Method Design Pattern
+---------------------------------------------------
+Creator: This is an abstract class or an interface that declares the factory method. The creator typically contains a method
+         that serves as a factory for creating objects. It may also contain other methods that work with the created objects.
+Concrete Creator: Concrete Creator classes are subclasses of the Creator that implement the factory method to create specific
+         types of objects. Each Concrete Creator is responsible for creating a particular product.
+Product: This is the interface or abstract class for the objects that the factory method creates. The Product defines the common 
+         interface for all objects that the factory method can create.
+Concrete Product: Concrete Product classes are the actual objects that the factory method creates. Each Concrete Product class 
+         implements the Product interface or extends the Product abstract class.
+ ------------------------------------------------------------
+
+    Example
+    ------------------------------------
+    Consider a software application that needs to handle the creation of various types of vehicles, 
+    such as Two Wheelers, Three Wheelers, and Four Wheelers. Each type of vehicle has its own specific properties and behaviors.
+    -----------------------------------------------
+
+    ✅ Step-by-Step Factory Pattern Implementation
+
+    1. Create a Vehicle Interface
+    ---------------------------
+    public interface Vehicle {
+    void design();
+    void manufacture();
+    }
+    -----------------------------
+
+    2. Concrete Classes: TwoWheeler, ThreeWheeler, FourWheeler 
+    ----------------------------------------------------------
+    public class TwoWheeler implements Vehicle {
+    @Override
+    public void design() {
+        System.out.println("Designing a Two Wheeler");
+    }
+
+    @Override
+    public void manufacture() {
+        System.out.println("Manufacturing a Two Wheeler");
+    }
+    }
+
+
+
+    public class ThreeWheeler implements Vehicle {
+    @Override
+    public void design() {
+        System.out.println("Designing a Three Wheeler");
+    }
+
+    @Override
+    public void manufacture() {
+        System.out.println("Manufacturing a Three Wheeler");
+    }
+    }
+
+
+
+    public class FourWheeler implements Vehicle {
+    @Override
+    public void design() {
+        System.out.println("Designing a Four Wheeler");
+    }
+
+    @Override
+    public void manufacture() {
+        System.out.println("Manufacturing a Four Wheeler");
+    }
+    }
+    ----------------------------------------------------------- 
+
+    3. Factory Class
+    -----------------------------
+    public class VehicleFactory {
+    public static Vehicle getVehicle(String type) {
+        switch (type.toLowerCase()) {
+            case "two":
+                return new TwoWheeler();
+            case "three":
+                return new ThreeWheeler();
+            case "four":
+                return new FourWheeler();
+            default:
+                throw new IllegalArgumentException("Unknown vehicle type: " + type);
+        }
+    }
+    }
+    --------------------------------------
+
+    4. Client Code (Usage)
+    -------------------------------------
+    public class Main {
+    public static void main(String[] args) {
+        Vehicle twoWheeler = VehicleFactory.getVehicle("two");
+        twoWheeler.design();
+        twoWheeler.manufacture();
+
+        Vehicle threeWheeler = VehicleFactory.getVehicle("three");
+        threeWheeler.design();
+        threeWheeler.manufacture();
+
+        Vehicle fourWheeler = VehicleFactory.getVehicle("four");
+        fourWheeler.design();
+        fourWheeler.manufacture();
+    }
+    }
+    -----------------------------------------
+
+
+    🧠 Summary:
+->  Vehicle is the interface.
+->  TwoWheeler, ThreeWheeler, and FourWheeler are concrete classes.
+->  VehicleFactory is the factory that returns the correct instance based on input.
+->  Main is the client that uses the factory without worrying about implementation details.
+
+
+✅Use Cases of the Factory Method
+--------------------------------------------------------------
+-> Used in JDBC for creating connections and in frameworks like Spring for managing beans.
+-> Libraries like Swing and JavaFX use factories to create flexible UI components.
+-> Tools like Log4j rely on factories to create configurable loggers.
+-> Factories help create objects from serialized data, supporting various formats.
+---------------------------------------------------------------
+
+
+✅Advantages of the Factory Method
+----------------------------------------------------------------
+-> Separates creation logic from client code, improving flexibility.
+-> New product types can be added easily.
+-> Simplifies unit testing by allowing mock product creation.
+-> Centralizes object creation logic across the application.
+-> Hides specific product classes from clients, reducing dependency.
+
+✅Disadvantages of the Factory Method
+-------------------------------------------------------------
+-> Adds more classes and interfaces, which can complicate maintenance.
+-> Slight performance impacts due to polymorphism.
+-> Concrete creators are linked to their products.
+-> Clients need knowledge of specific subclasses.
+-> May lead to unnecessary complexity if applied too broadly.
+-> Factory logic can be harder to test.

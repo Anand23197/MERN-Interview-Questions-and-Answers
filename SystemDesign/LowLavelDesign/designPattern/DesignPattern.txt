@@ -54,7 +54,6 @@ These focus on communication between objects and how they interact.
 | **Visitor**                 | Separates algorithms from the objects they operate on.                           |
 
 
-
 Q3) What is singleton design pattern ? 
 Ans :- https://www.geeksforgeeks.org/singleton-design-pattern/
 
@@ -73,9 +72,6 @@ Ans :- https://www.geeksforgeeks.org/prototype-design-pattern/
 Q8) What is Adapter design pattern ? 
 Ans :- https://www.geeksforgeeks.org/adapter-pattern/ 
 
-
-https://www.geeksforgeeks.org/facade-design-pattern-introduction/ 
-
 Q10) What is Decorator pattern ? 
 Ans :- https://www.geeksforgeeks.org/decorator-pattern/ 
 
@@ -90,5 +86,3 @@ Ans :- https://www.geeksforgeeks.org/strategy-pattern-set-1/
 
 Q14) What is Chain of Responsibility pattern ?
 Ans:- https://www.geeksforgeeks.org/chain-responsibility-design-pattern/ 
-
-
