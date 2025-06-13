@@ -1,0 +1,186 @@
+Two incompatible interfaces or systems can cooperate by using the adapter design pattern, 
+a structural design pattern. Because of incompatible interfaces, it serves as a bridge between 
+two classes that would not otherwise be able to communicate. The adapter approach is very helpful
+when attempting to incorporate third-party libraries or legacy code into a new system.
+
+🟢Components of Adapter Design Pattern
+----------------------------------------
+Target Interface: 
+    Defines the interface expected by the client. It represents the set of operations that the client
+    code can use. It's the common interface that the client code interacts with.
+Adaptee: 
+    The existing class or system with an incompatible interface that needs to be integrated into the new system.
+    It's the class or system that the client code cannot directly use due to interface mismatches.
+Adapter: 
+    A class that implements the target interface and internally uses an instance of the adaptee to make it compatible 
+    with the target interface. It acts as a bridge, adapting the interface of the adaptee to match the target interface.
+Client: 
+    The code that uses the target interface to interact with objects. It remains unaware of the specific implementation 
+    details of the adaptee and the adapter. It's the code that benefits from the integration of the adaptee into the system 
+    through the adapter.
+
+🟢Different implementations of Adapter Design Pattern
+----------------------------------------------------------
+The Adapter Design Pattern can be applied in various ways depending on the programming language and the specific context.
+Here are the primary implementations:
+
+1. Class Adapter (Inheritance-based)-
+In this approach, the adapter class inherits from both the target interface (the one the client expects) and the adaptee (the existing class needing adaptation).
+Programming languages that allow multiple inheritance, like C++, are more likely to use this technique.
+However, in languages like Java and C#, which do not support multiple inheritance, this approach is less frequently used.
+
+2. Object Adapter (Composition-based)-
+The object adapter employs composition instead of inheritance. In this implementation, the adapter holds an instance of the adaptee and implements the target interface.
+This approach is more flexible as it allows a single adapter to work with multiple adaptees and does not require the complexities of inheritance.
+The object adapter is widely used in languages like Java and C#.
+
+3. Two-way Adapter-
+A two-way adapter can function as both a target and an adaptee, depending on which interface is being invoked.
+This type of adapter is particularly useful when two systems need to work together and require mutual adaptation.
+
+4. Interface Adapter (Default Adapter)-
+When only a few methods from an interface are necessary, an interface adapter can be employed.
+This is especially useful in cases where the interface contains many methods, and the adapter provides default implementations for those that are not needed.
+This approach is often seen in languages like Java, where abstract classes or default method implementations in interfaces simplify the implementation process.
+
+📝Example 
+-----------------------
+Suppose we have a AudioPlayer that plays mp3 files, but now we want it to also play mp4 and vlc. These new formats 
+have a different interface.
+
+1. Target Interface
+---------------------------
+public interface MediaPlayer {
+    void play(String audioType, String fileName);
+}
+---------------------------
+
+2. Adaptee Classes
+--------------------------------------
+public interface AdvancedMediaPlayer {
+    void playVlc(String fileName);
+    void playMp4(String fileName);
+}
+
+public class VlcPlayer implements AdvancedMediaPlayer {
+    public void playVlc(String fileName) {
+        System.out.println("Playing vlc file: " + fileName);
+    }
+    public void playMp4(String fileName) {
+        // Do nothing
+    }
+}
+
+public class Mp4Player implements AdvancedMediaPlayer {
+    public void playVlc(String fileName) {
+        // Do nothing
+    }
+    public void playMp4(String fileName) {
+        System.out.println("Playing mp4 file: " + fileName);
+    }
+}
+-------------------------------------------
+
+3. Adapter Class
+-------------------------------
+public class MediaAdapter implements MediaPlayer {
+    AdvancedMediaPlayer advancedMusicPlayer;
+
+    public MediaAdapter(String audioType) {
+        if(audioType.equalsIgnoreCase("vlc")) {
+            advancedMusicPlayer = new VlcPlayer();
+        } else if(audioType.equalsIgnoreCase("mp4")) {
+            advancedMusicPlayer = new Mp4Player();
+        }
+    }
+
+    public void play(String audioType, String fileName) {
+        if(audioType.equalsIgnoreCase("vlc")) {
+            advancedMusicPlayer.playVlc(fileName);
+        } else if(audioType.equalsIgnoreCase("mp4")) {
+            advancedMusicPlayer.playMp4(fileName);
+        }
+    }
+}
+-----------------------------------------------
+
+4. Client Class (uses Target interface)
+-----------------------------------------
+public class AudioPlayer implements MediaPlayer {
+    MediaAdapter mediaAdapter;
+
+    public void play(String audioType, String fileName) {
+        if(audioType.equalsIgnoreCase("mp3")) {
+            System.out.println("Playing mp3 file: " + fileName);
+        } 
+        else if(audioType.equalsIgnoreCase("vlc") || audioType.equalsIgnoreCase("mp4")) {
+            mediaAdapter = new MediaAdapter(audioType);
+            mediaAdapter.play(audioType, fileName);
+        } 
+        else {
+            System.out.println("Invalid media. " + audioType + " format not supported");
+        }
+    }
+}
+-----------------------------------------
+
+5. Demo – Running the Example
+--------------------------------------------
+public class Main {
+    public static void main(String[] args) {
+        AudioPlayer audioPlayer = new AudioPlayer();
+
+        audioPlayer.play("mp3", "song.mp3");
+        audioPlayer.play("mp4", "video.mp4");
+        audioPlayer.play("vlc", "movie.vlc");
+        audioPlayer.play("avi", "clip.avi");  // unsupported
+    }
+}
+--------------------------------------------
+
+
+👌Pros of Adapter Design Pattern
+-----------------------------------------------------------
+->  By creating an adapter, you can reuse existing code without needing to modify it. This promotes code reuse and 
+    helps maintain a cleaner architecture.
+->  By separating the issues of interface adaptation, the adapter pattern frees classes to concentrate on their main
+    duties without having to deal with adaptation code that clogs their logic.
+->  Because you can simply switch out multiple adapters to support different interfaces without altering the underlying system.
+->  By separating your system from particular implementations, adapters make it simpler to swap out or modify parts 
+    without compromising the functionality of other parts.
+
+🫥Cons of Adapter Design Pattern
+-----------------------------------------------------------
+->  Introducing adapters can add a layer of complexity to your system. Having multiple adapters can make the code harder 
+    to navigate and understand.
+->  The additional layer of indirection may introduce slight performance overhead, especially if the adapter needs to perform
+    complex transformations.
+->  If not managed properly, the use of adapters can lead to maintenance challenges. Keeping track of multiple adapters for 
+    various interfaces can become cumbersome.
+->  There’s a risk of overusing adapters for trivial changes, which can lead to unnecessary complexity. It's critical to assess 
+    whether an adapter is actually required in a particular circumstance.
+->  Only two interfaces can be translated by adapters; if you need to adjust to more than one interface, you might need a lot 
+    of different adapters, which could make the design even more difficult.
+
+✅ When to use Adapter Design Pattern?
+Use adapter design pattern when:
+
+->  We need to connect systems or components that weren’t built to work together. The adapter allows these incompatible 
+    interfaces to communicate, making integration smoother.
+->  Many times, we have existing code or libraries that we want to use, but they don’t match our current system. The adapter
+    helps us incorporate this old code without having to rewrite it.
+->  As projects grow, new components are frequently added. An adapter allows you to integrate these new pieces without affecting
+    the existing code, keeping the system flexible and adaptable.
+->  By isolating the changes needed for compatibility in one place, the adapter makes it easier to maintain the code. This reduces 
+    the risk of bugs that might arise from changing multiple parts of the system.
+
+❌When not to use Adapter Design Pattern?
+Do not use adapter design pattern when:
+
+->  If the system is straightforward and all components are compatible, an adapter may be unnecessary.
+->  Adapters can introduce a slight overhead, which might be a concern in performance-sensitive environments.
+->  When there are no issues with interface compatibility, using an adapter can be redundant.
+->  For projects with a very short lifespan, the overhead of implementing an adapter might not be worth it.
+
+
+

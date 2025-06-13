@@ -1,0 +1,179 @@
+The Chain of Responsibility design pattern is a behavioral design pattern that allows an object to pass
+a request along a chain of handlers. Each handler in the chain decides either to process the request or 
+to pass it along the chain to the next handler.
+
+✌️Characteristics of the Chain of Responsibility Design Pattern
+------------------------------------------------------------------
+
+Loose Coupling:
+    This means the sender of a request doesn't need to know which specific object will handle it. Similarly, the handler
+    doesn’t need to understand how the requests are sent. This keeps the components separate and flexible.
+Dynamic Chain: 
+    While the program is running, changing the chain is simple. This makes your code incredibly flexible because you may
+    add or delete handlers without changing the main body of the code.
+Single Responsibility Principle: 
+    Each handler in the chain has one job: either to handle the request or to pass it to the next handler. 
+    This keeps the code organized and focused, making it easier to manage.
+Sequential Order:
+    Requests move through the chain one at a time. Each handler gets a chance to process the request in a 
+    specific order, ensuring consistency.
+Fallback Mechanism:
+    If a request isn’t handled by any of the handlers, the chain can include a fallback option. This means
+    there's a default way to deal with requests that don't fit anywhere else.
+
+🟢Components of the Chain of Responsibility Design Pattern
+-----------------------------------------------------------------------
+
+Handler Interface or Abstract Class: 
+    This is the base class that defines the interface for handling requests and, in many cases, for chaining to the next 
+    handler in the sequence.
+Concrete Handlers: 
+    These are the classes that implement how the requests are going to be handled. They can handle the request or pass it 
+    to the next handler in the chain if it is unable to handle that request.
+Client: 
+    The request is sent by the client, who then forwards it to the chain’s first handler. Which handler will finally handle 
+    the request is unknown to the client.
+
+🔴How to Implement Chain of Responsibiility Design Pattern?
+-----------------------------------------------------------------------
+
+Step 1: Define the Handler Interface: Create an interface with methods for setting the next handler and processing requests.
+Step 2: Create Concrete Handlers: Implement the handler interface in multiple classes, each handling specific requests and 
+        passing unhandled requests to the next handler.
+Step 3: Set Up the Chain: Create instances of your handlers and link them together by setting the next handler for each one.
+Step 4: Send Requests: Use the first handler in the chain to send requests, allowing each handler to decide whether to process 
+        it or pass it along
+
+📝Example
+------------------------
+Imagine a customer support system where customer requests need to be handled based on their priority. There are three levels of
+support: Level 1, Level 2, and Level 3. Level 1 support handles basic requests, Level 2 support handles more complex requests, 
+and Level 3 support handles critical issues that cannot be resolved by Level 1 or Level 2.
+
+
+1. Handler Interface
+Defines the interface for handling requests. Includes methods for handling requests (handleRequest()) and setting the next
+handler in the chain (setNextHandler()).
+----------------------------------------
+public interface SupportHandler {
+    void handleRequest(Request request);
+    void setNextHandler(SupportHandler nextHandler);
+}
+-----------------------------------------
+
+2. Concrete Handlers
+Implement the SupportHandler interface. Each handler is responsible for handling requests based on its assigned priority level.
+If a handler can handle the request, it processes it; otherwise, it passes the request to the next handler in the chain.
+--------------------------------------------
+public class Level1SupportHandler implements SupportHandler {
+    private SupportHandler nextHandler;
+
+    public void setNextHandler(SupportHandler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    public void handleRequest(Request request) {
+        if (request.getPriority() == Priority.BASIC) {
+            System.out.println("Level 1 Support handled the request.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        }
+    }
+}
+
+public class Level2SupportHandler implements SupportHandler {
+    private SupportHandler nextHandler;
+
+    public void setNextHandler(SupportHandler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    public void handleRequest(Request request) {
+        if (request.getPriority() == Priority.INTERMEDIATE) {
+            System.out.println("Level 2 Support handled the request.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        }
+    }
+}
+
+public class Level3SupportHandler implements SupportHandler {
+    public void handleRequest(Request request) {
+        if (request.getPriority() == Priority.CRITICAL) {
+            System.out.println("Level 3 Support handled the request.");
+        } else {
+            System.out.println("Request cannot be handled.");
+        }
+    }
+
+    public void setNextHandler(SupportHandler nextHandler) {
+        // No next handler for Level 3
+    }
+}
+-------------------------------------------------------
+
+
+3. Client Setup
+-------------------------------------------------
+// Main Class
+public class Main {
+    public static void main(String[] args) {
+        SupportHandler level1Handler = new Level1SupportHandler();
+        SupportHandler level2Handler = new Level2SupportHandler();
+        SupportHandler level3Handler = new Level3SupportHandler();
+
+        level1Handler.setNextHandler(level2Handler);
+        level2Handler.setNextHandler(level3Handler);
+
+        Request request1 = new Request(Priority.BASIC);
+        Request request2 = new Request(Priority.INTERMEDIATE);
+        Request request3 = new Request(Priority.CRITICAL);
+
+        level1Handler.handleRequest(request1);
+        level1Handler.handleRequest(request2);
+        level1Handler.handleRequest(request3);
+    }
+}
+------------------------------------------------------
+
+🟢Applications of Chain of Responsibility Design Pattern
+----------------------------------------------------------------------
+
+->  In graphical user interfaces (GUIs), events like mouse clicks or key presses can be handled by a chain of listeners. 
+    Each listener checks if it can handle the event, passing it along the chain if it can't. This way, multiple components can 
+    respond to the same event without being tightly linked.
+
+->  In logging systems, you might have different levels of loggers (like INFO, WARN, ERROR). Each logger can handle specific
+    log messages. If one logger can’t process a message (for example, if it's below its level), it passes it to the next logger 
+    in the chain.
+->  In security systems, access requests can be processed by a series of handlers that check permissions. For instance, one 
+    handler might check user roles, while another checks specific permissions. If one handler denies access, it can pass the 
+    request to the next handler for further evaluation.
+
+🟢Pros of the Chain of Responsibility Design Pattern
+------------------------------------------------------------------------
+
+->  The pattern makes enables sending a request to a series of possible recipients without having to worry about which 
+    object will handle it in the end. This lessens the reliance between items.
+
+->  New handlers can be easily added or existing ones can be modified without affecting the client code. This promotes 
+    flexibility and extensibility within the system.
+
+->  The sequence and order of handling requests can be changed dynamically during runtime, which allows adjustment of the 
+    processing logic as per the requirements.
+
+->  It simplifies the interaction between the sender and receiver objects, as the sender does not need to know about the 
+    processing logic.
+
+🟢Cons of the Chain of Responsibility Design Pattern
+-----------------------------------------------------------------
+
+->  The chain should be implemented correctly otherwise there is a chance that some requests might not get handled at all,
+     which leads to unexpected behavior in the application.
+->  The request will go through several handlers in the chain if it is lengthy and complicated, which could cause performance 
+    overhead. The processing logic of each handler has an effect on the system’s overall performance.
+->  The fact that the chain has several handlers can make debugging more difficult. Tracking the progression of a request and 
+    determining which handler is in charge of handling it can be difficult.
+->  It may become more difficult to manage and maintain the chain of responsibility if the chain is dynamically modified at runtime.
+
+    

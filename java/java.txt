@@ -1,0 +1,458 @@
+Q1) How to handle Failure in microservices?
+And:-  Handling failures in a microservices architecture is critical because services are distributed and interdependent. 
+Here's how you can handle failures effectively:
+
+✅ 1. Retries with Backoff
+If a dependent service fails temporarily, retry the request after a delay.
+
+->  Exponential backoff: Increase the delay after each retry.
+->  Use libraries like Resilience4j (Java), Polly (.NET), or custom retry logic.
+⚠️ Avoid aggressive retry loops—they can overload the system.
+
+✅ 2. Circuit Breaker Pattern
+Stops calling a failing service after a threshold and gives it time to recover.
+->  Implement with:
+        Resilience4j (Java)
+        Hystrix (deprecated)
+        Polly (.NET)
+
+Prevent cascading failures by stopping requests to a failing service for a specified time.
+The circuit breaker has three states:
+    Closed: Requests are allowed as normal.
+    Open: Requests are blocked after multiple failures.
+    Half-Open: Limited requests are allowed to check if the service has recovered.
+
+
+✅ 3. Timeouts
+->  Always set a timeout for external service calls.
+->  Prevents a slow service from holding up others.
+->  Example: HTTP client timeout = 3 seconds.
+
+✅ 4. Fallbacks
+Provide alternative logic when a service is down.
+->  Return cached data, defaults, or a simple message:
+    “Service temporarily unavailable. Please try again later.”
+
+✅ 5. Asynchronous Communication:
+->  Use message queues (e.g., RabbitMQ, Kafka) for communication.
+->  This decouples services and allows them to handle failures independently.
+->  Failed messages can be retried or placed in a dead-letter queue.
+
+✅ 6. Health Checks and Self-Healing
+Use tools like Kubernetes or ECS to:
+->  Automatically restart failed containers.
+->  Use liveness and readiness probes.
+
+✅ 8. Centralized Logging & Monitoring
+Use observability tools:
+->  ELK Stack / OpenSearch
+->  Prometheus + Grafana
+->  Jaeger / Zipkin for tracing
+->  Detect issues before they become critical.
+
+✅ 9. Rate Limiting:
+->  Limit the number of requests to a service to prevent overloading.
+->  This can protect services from excessive traffic during failures.
+
+✅ 10. Bulkhead Pattern
+Isolate parts of the system so failure in one doesn't crash others.
+Example: Use separate thread pools or service partitions.
+
+Q2) what is communication message queue in microservices? 
+Ans:- In a microservices architecture, services often need to communicate with each other. There are two main
+communication styles:
+
+Synchronous (e.g., REST APIs, gRPC)
+Asynchronous (e.g., Message Queues)
+
+📨 Message Queue in Microservices Communication
+Message Queue enables asynchronous communication, where a producer sends a message to a queue, and one or more consumers 
+read from it. This helps decouple services.
+
+✅ Benefits of Using a Message Queue
+---------------------------------------
+->  Loose Coupling: Services don't need to know about each other.
+
+->  Scalability: Consumers can scale independently.
+
+->  Fault Tolerance: If a consumer is down, messages stay in the queue.
+
+->  Buffering: Handles traffic spikes better.
+
+->  Retry Mechanism: Failed messages can be retried or sent to a Dead Letter Queue.
+
+🏗️ Common Message Queues
+-----------------------------------
+| Tool              | Protocol/Type       | Best For                         |
+| ----------------- | ------------------- | -------------------------------- |
+| **RabbitMQ**      | AMQP                | Complex routing, acknowledgments |
+| **Apache Kafka**  | Pub/Sub, Log-based  | High-throughput, event streaming |
+| **Amazon SQS**    | Managed Queue       | Serverless AWS-based apps        |
+| **Redis Streams** | Lightweight MQ      | Simple, fast use-cases           |
+| **NATS**          | Lightweight Pub/Sub | Low latency systems              |
+
+🔁 Example: Communication Flow Using RabbitMQ
+Actors:
+->  Order Service → Publishes "OrderCreated" event
+->  Inventory Service → Listens to "OrderCreated" and updates stock
+->  Notification Service → Listens to "OrderCreated" and sends email
+
+Workflow:
+1.  Order Service sends message:
+    { "orderId": 123, "item": "iPhone", "qty": 1 }
+2.  Message goes to OrderExchange
+3.  Inventory and Notification services consume the message
+
+🔧 Message Structure
+------------------------------------
+{
+  "event": "OrderCreated",
+  "data": {
+    "orderId": "1234",
+    "customerId": "5678",
+    "items": [
+      { "productId": "p01", "quantity": 2 }
+    ]
+  },
+  "timestamp": "2025-06-12T09:00:00Z"
+}
+------------------------------------
+
+🔒 Things to Consider
+Idempotency: Ensure the same message doesn't cause duplicate actions.
+Message Ordering: Use Kafka partitions if order matters.
+Dead Letter Queue (DLQ): Store failed messages for retry/debug.
+Message Acknowledgment: Needed in RabbitMQ to avoid loss.
+
+Q3) Java 8 feature?
+Ans:- To utilize functional programming benefits in Java, java 8 come.
+
+Features of java 8
+------------------------
+
+1. lambda expression
+Enables functional-style programming by writing anonymous functions.
+✅ Syntax:
+-----------
+(parameters) -> expression
+
+example
+------------
+List<String> list = Arrays.asList("A", "B", "C");
+list.forEach(item -> System.out.println(item));
+
+2. Functional Interfaces
+An interface with exactly one abstract method, used with lambda expressions.
+
+✅ Example:
+-----------------------
+@FunctionalInterface
+interface MyFunction {
+    void apply(String s);
+}
+-----------------------
+
+🔸 Java provides built-in functional interfaces in java.util.function, like:
+
+->  Predicate<T>
+->  Function<T, R>
+->  Consumer<T>
+->  Supplier<T>
+->  BiFunction<T, U, R>
+
+3. Stream API
+For processing collections functionally and efficiently.
+
+🔸 Example:
+-----------------------------------------------
+List<String> names = List.of("Anand", "Amit", "Neha");
+List<String> filtered = names.stream()
+    .filter(n -> n.startsWith("A"))
+    .collect(Collectors.toList());
+-----------------------------------------------
+
+4. Date and Time API (java.time)
+A modern replacement for Date, Calendar.
+
+🔸 Example:
+-------------------------------------
+LocalDate today = LocalDate.now();
+LocalTime time = LocalTime.now();
+LocalDateTime dt = LocalDateTime.now();
+-------------------------------------
+
+
+5. Default Methods in Interfaces
+Allows concrete methods in interfaces.
+
+🔸 Example:
+--------------------------------------
+interface Vehicle {
+    default void start() {
+        System.out.println("Vehicle started");
+    }
+}
+--------------------------------------
+
+
+
+
+4) What is functional interface?
+Ans :- A functional interface in Java is an interface that contains only one abstract method. Functional interfaces 
+can have multiple default or static methods, but only one abstract method.
+We can invoke lambda expression by using functional interface.
+
+example
+-----------------
+public interface MyInterface{
+    public void sayHello(); //only one abstract method;
+}  
+
+or
+
+public interface MyInterface{
+    public void sayHello(); //only one abstract method;
+
+    default void sayBye(){
+
+    }
+
+    public static void sayOk(){
+
+    }
+}  
+
+@FunctionalInterface Annotation:
+While not mandatory, it's good practice to use the @FunctionalInterface annotation to mark an interface as functional.
+This annotation helps the compiler catch errors if you accidentally add more than one abstract method.
+
+Q5) What is stream api in java?
+Ans:- The Java Stream API (introduced in Java 8) allows you to process collections of objects functionally and 
+declaratively—using a pipeline of operations like filter, map, reduce, etc. It's part of the java.util.stream package.
+
+✅ Key Features
+->  No Storage
+->  Pipeline of Functions
+->  Laziness
+->  Can be infinite
+->  Can be parallelized
+->  Can be created from collections, arrays, Files Lines, Methods in Stream, IntStream etc.
+
+🧠 Stream Operations
+| Type             | Method Examples                                 |
+| ---------------- | ----------------------------------------------- |
+| **Intermediate** | `filter()`, `map()`, `sorted()`, `distinct()`   |
+| **Terminal**     | `collect()`, `forEach()`, `reduce()`, `count()` |
+
+🟢Characteristics of Intermediate Operations
+->  Methods are chained together.
+->  Intermediate operations transform a stream into another stream.
+->  It enables the concept of filtering where one method filters data and passes it to another method after processing.
+
+Important Intermediate Operations
+There are a few Intermediate Operations mentioned below:
+
+1. map(): The map method is used to return a stream consisting of the results of applying the given function to the elements of this stream.
+
+Syntax:
+
+<R> Stream<R> map(Function<? super T, ? extends R> mapper)
+
+2. filter(): The filter method is used to select elements as per the Predicate passed as an argument.
+
+Syntax:
+
+Stream<T> filter(Predicate<? super T> predicate)
+
+3. sorted(): The sorted method is used to sort the stream.
+
+Syntax:
+
+Stream<T> sorted()
+Stream<T> sorted(Comparator<? super T> comparator)
+
+4. flatMap(): The flatMap operation in Java Streams is used to flatten a stream of collections into a single stream of elements.
+
+Syntax:
+
+<R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper)
+
+5. distinct(): Removes duplicate elements. It returns a stream consisting of the distinct elements (according to Object.equals(Object)).
+
+Syntax:
+
+Stream<T> distinct()
+
+
+Terminal Operations
+Terminal Operations are the type of Operations that return the result. These Operations are not processed further just return a final result value.
+
+Important Terminal Operations
+There are a few Terminal Operations mentioned below:
+
+1. collect(): The collect method is used to return the result of the intermediate operations performed on the stream.
+
+Syntax:
+
+<R, A> R collect(Collector<? super T, A, R> collector)
+
+2. forEach(): The forEach method is used to iterate through every element of the stream.
+
+Syntax:
+
+void forEach(Consumer<? super T> action)
+
+3. reduce(): The reduce method is used to reduce the elements of a stream to a single value. The reduce method takes a BinaryOperator as a parameter.
+
+Syntax:
+
+T reduce(T identity, BinaryOperator<T> accumulator)
+Optional<T> reduce(BinaryOperator<T> accumulator)
+
+4. count(): Returns the count of elements in the stream.
+
+Syntax:
+
+long count()
+
+5. findFirst(): Returns the first element of the stream, if present.
+
+Syntax:
+
+Optional<T> findFirst()
+
+6. allMatch(): Checks if all elements of the stream match a given predicate.
+
+Syntax:
+
+boolean allMatch(Predicate<? super T> predicate)
+
+7. anyMatch(): Checks if any element of the stream matches a given predicate.
+
+Syntax:
+
+boolean anyMatch(Predicate<? super T> predicate)
+
+Q6) What is lambda expression?
+Ans:- Lambda expression is an anonymous function 
+i.e.,
+    1) Not having any name.
+    2) Not having any return type 
+    3) Not having modifier 
+
+🟢 Steps to make any function lambda expression
+    1. remove modifier 
+    2. remove return type 
+    3. remove method name 
+    4. place arrow 
+
+eg:- 
+-----------------------------
+private void sayHello(){
+    System.out.println("Hello World");
+}
+
+after converting into lambda expression
+
+()->{System.out.println("hello world")}
+or 
+()-> System.out.println("hello world")
+------------------------------
+
+🟢Benifits of Lambda expression
+---------------------------------
+ 1. To enable functional programming in java 
+ 2. To make code more readable, maintainable and concise code 
+ 3. To enable parallel processing 
+ 4. JAR file size reduction 
+ 5. Elimination of shadow variables 
+
+ Q7) What is default methods in interface ? 
+ ans->  Before Java 8, interfaces could only have abstract methods. The implementation of these methods has 
+ to be provided in a separate class. So, if a new method is to be added in an interface, then its implementation 
+ code has to be provided in the class implementing the same interface. To overcome this issue, Java 8 has introduced
+ the concept of default(concrete) methods which allow the interfaces to have methods with implementation without affecting the 
+ classes that implement the interface.
+
+example 
+----------------------------------------------------------
+// A simple program to Test Interface default
+// methods in java
+interface TestInterface
+{
+    // abstract method
+    public void square(int a);
+
+    // default method
+    default void show()
+    {
+      System.out.println("Default Method Executed");
+    }
+}
+
+class TestClass implements TestInterface
+{
+    // implementation of square abstract method
+    public void square(int a)
+    {
+        System.out.println(a*a);
+    }
+
+    public static void main(String args[])
+    {
+        TestClass d = new TestClass();
+        d.square(4);
+
+        // default method executed
+        d.show();
+    }
+}
+-------------------------------------------------------
+
+Q8) static methods in interface ? 
+Ans:- Static Methods in Interface are those methods, which are defined in the interface with the keyword static. 
+Unlike other methods in Interface, these static methods contain the complete definition of the function and since
+the definition is complete and the method is static, therefore these methods cannot be overridden or changed in the 
+implementation class.
+
+example:
+------------------------
+// Java program to demonstrate
+// static method in Interface.
+
+interface NewInterface {
+
+    // static method
+    static void hello()
+    {
+        System.out.println("Hello, New Static Method Here");
+    }
+
+    // Public and abstract method of Interface
+    void overrideMethod(String str);
+}
+
+// Implementation Class
+public class InterfaceDemo implements NewInterface {
+
+    public static void main(String[] args)
+    {
+        InterfaceDemo interfaceDemo = new InterfaceDemo();
+
+        // Calling the static method of interface
+        NewInterface.hello();
+
+        // Calling the abstract method of interface
+        interfaceDemo.overrideMethod("Hello, Override Method here");
+    }
+
+    // Implementing interface method
+
+    @Override
+    public void overrideMethod(String str)
+    {
+        System.out.println(str);
+    }
+}
+----------------------------------------------------
+
