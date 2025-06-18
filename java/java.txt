@@ -28,6 +28,7 @@ The circuit breaker has three states:
 ->  Prevents a slow service from holding up others.
 ->  Example: HTTP client timeout = 3 seconds.
 
+
 ✅ 4. Fallbacks
 Provide alternative logic when a service is down.
 ->  Return cached data, defaults, or a simple message:
