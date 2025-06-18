@@ -5,7 +5,7 @@ Ans:-
 for almost any kind of project!Node.js runs the V8 JavaScript engine, the core of Google Chrome,
 outside of the browser. This allows Node.js to be very performant.A Node.js app runs in a single process, 
 without creating a new thread for every request. Node.js provides a set of asynchronous I/O primitives in 
-its standard library that prevent JavaScript code from blocking and generally, libraries in Node.js are
+mits standard library that prevent JavaScript code from blocking and generally, libraries in Node.js are
 written using non-blocking paradigms, making blocking behavior the exception rather than the norm.
 When Node.js performs an I/O operation, like reading from the network, accessing a database or the filesystem, 
 instead of blocking the thread and wasting CPU cycles waiting, Node.js will resume the operations when the response
@@ -679,3 +679,41 @@ Dot commands: REPL has special dot commands for various actions:
 commander: A popular library to handle command-line arguments.
 yargs: Another library for parsing command-line arguments.
 These methods enable you to create powerful command-line tools and interact with the system using Node.js.
+
+Q13) Transaction management in node js?
+Ans:- Transaction management in Node.js, particularly when interacting with databases, ensures data integrity and consistency by treating a series of operations as a single, atomic unit. This means either all operations within a transaction succeed and are committed, or if any operation fails, the entire transaction is rolled back, and no changes are made to the database.
+Key principles and steps for managing transactions in Node.js:
+Database Driver/ORM Integration:
+Most database drivers (e.g., mysql, pg for PostgreSQL, mongodb for MongoDB) and Object-Relational Mappers (ORMs) like Sequelize or Mongoose provide built-in support for transactions.
+These tools expose methods to initiate, commit, and roll back transactions.
+Starting a Transaction:
+A transaction is typically initiated by calling a specific method on the database connection or session object (e.g., beginTransaction() in SQL-based databases, startSession() and startTransaction() in MongoDB).
+Executing Transactional Queries/Operations:
+All database operations intended to be part of the atomic unit are executed within the context of the active transaction. This often involves passing a transaction object or session to the individual query or operation calls.
+Committing the Transaction:
+If all operations within the transaction execute successfully, the changes are made permanent in the database by committing the transaction (e.g., commit() or commitTransaction()).
+Rolling Back the Transaction:
+If any error occurs during the execution of operations within the transaction, or if a specific condition is not met, the transaction is aborted, and all changes made during that transaction are undone (e.g., rollback() or abortTransaction()). This ensures that the database remains in a consistent state.
+Error Handling and Session Management:
+Robust error handling is crucial to catch exceptions and trigger rollbacks when necessary.
+For session-based transactions (common in NoSQL databases like MongoDB), ending the session after the transaction is committed or aborted is important for resource management.
+
+Example (Conceptual with a SQL-like database):
+----------------------
+const connection = await pool.getConnection(); // Get a database connection
+try {
+    await connection.beginTransaction(); // Start the transaction
+
+    // Execute multiple database operations within the transaction
+    await connection.query('UPDATE accounts SET balance = balance - ? WHERE id = ?', [amount, senderId]);
+    await connection.query('UPDATE accounts SET balance = balance + ? WHERE id = ?', [amount, receiverId]);
+
+    await connection.commit(); // Commit the transaction if all operations succeed
+    console.log('Transaction committed successfully.');
+} catch (error) {
+    await connection.rollback(); // Rollback the transaction if an error occurs
+    console.error('Transaction rolled back:', error);
+} finally {
+    connection.release(); // Release the connection back to the pool
+}
+----------------------
