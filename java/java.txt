@@ -457,3 +457,436 @@ public class InterfaceDemo implements NewInterface {
 }
 ----------------------------------------------------
 
+Q9) Basic bulding block of microservice architecture? 
+Ans:- Microservices architecture is a distributed server-side architecture based on loosely coupled 
+services that are designed, developed, packaged, build, tested, deployed and scaled independently. 
+The twelve-factor app is a methodology which nicely complements and helps to leverage the value of 
+microservices architecture.
+
+Service Discovery
+Load Balancer
+API Gateway
+Service Registry
+Circuit Breaker
+Service Monitoring
+Service Orchestration
+Configuration Server
+
+1. Service registration and discovery
+Services need to find each other. They also have location transparency in a distributed architecture where services with 
+short life cycles can reside in different containers/virtual machines/bare metals with continuously changing IP addresses. 
+Service registration and discovery component allow services to register themselves by bootstrapping during start-up. 
+They are found by other services and also find other services through the discovery server.
+eg:-
+Hashicorp Consul, Netflix Eureka, Etcd are few of the examples of service registration and discovery servers.
+
+2. Load Balancer 
+A load balancer distributes network traffic across multiple servers to ensure no single server is overwhelmed, 
+optimizing resource utilization, maximizing throughput, minimizing response time, and ensuring high availability. 
+It acts as a single point of contact for clients, directing requests to healthy servers in a pool. 
+Distributes client requests across multiple service instances. Ensures reliability and scalability
+eg: nginx, aws elastic load balancer 
+
+3. API Gateway 
+An API gateway acts as a single entry point for all client requests to backend services, providing a centralized point for 
+managing and routing API calls. It simplifies interactions between clients and multiple microservices or backend systems by 
+handling tasks like request routing, authentication, authorization, and rate limiting. 
+eg: Apigee, Amazon API Gateway 
+
+4. Circuit Breaker 
+The Circuit Breaker pattern is a design pattern used in microservices to enhance system resilience and fault tolerance.
+It acts as a protective mechanism to prevent cascading failures.
+eg: resilience4j 
+
+5. Service Monitoring & Logging
+Microservices monitoring involves tracking the health and performance of individual, independently deployable services
+within a microservices architecture. It's crucial for ensuring availability, identifying bottlenecks, and troubleshooting 
+issues across a distributed system. 
+
+Key aspects of microservices monitoring:
+------------------------------------------
+Metrics, Logging, Tracing, Alerting 
+
+Tools for microservices monitoring:
+---------------------------------
+Prometheus: An open-source monitoring system and alerting toolkit. 
+Grafana: A platform for visualizing and analyzing time series data, often used with Prometheus. 
+Jaeger/Zipkin: Open-source distributed tracing systems. 
+Dynatrace: An all-in-one platform for monitoring microservices, offering auto-discovery and AI-powered insights. 
+ELK stack (Elasticsearch, Logstash, Kibana): A popular open-source solution for log management and analysis. 
+CloudWatch: Amazon's monitoring service for AWS resources, including microservices deployed on AWS. 
+
+6. Containerization & Orchestration
+Packages microservices for consistency and portability.
+Uses Docker containers and orchestration tools like Kubernetes.
+
+7. Configuration Server
+A configuration server in microservices provides a centralized location to manage and distribute configuration 
+data for all microservices in a distributed environment. This eliminates the need for individual configuration 
+files in each service, streamlining management and reducing deployment complexities. 
+
+Centralized configuration management.
+Enables dynamic configuration updates without redeployment.
+Examples: Spring Cloud Config.
+
+Q10) Finally block ? 
+Ans:- The finally block is used in exception handling to execute important code regardless of whether an exception is thrown or not.
+you can implement finally block without catch block. 
+    try {
+            return 1;
+        } finally {
+            System.out.println("Finally always runs");
+        }
+
+
+Q11) Errors vs Exception in java ? 
+ans : - 
+🟢In Java, errors and exceptions are both types of throwable objects, but they represent different types of 
+problems that can occur during the execution of a program.
+Errors are usually caused by serious problems that are outside the control of the program, such as running out of 
+memory or a system crash. Errors are represented by the Error class and its subclasses. Some common examples of 
+errors in Java include:
+
+OutOfMemoryError: Thrown when the Java Virtual Machine (JVM) runs out of memory.
+StackOverflowError: Thrown when the call stack overflows due to too many method invocations.
+NoClassDefFoundError: Thrown when a required class cannot be found.
+Since errors are generally caused by problems that cannot be recovered from, it's usually not appropriate for a program to catch errors. Instead, the best course of action is usually to log the error and exit the program.
+
+🟢Exceptions, on the other hand, are used to handle errors that can be recovered from within the program. 
+Exceptions are represented by the Exception class and its subclasses. Some common examples of exceptions in Java include:
+
+NullPointerException: Thrown when a null reference is accessed.
+IllegalArgumentException: Thrown when an illegal argument is passed to a method.
+IOException: Thrown when an I/O operation fails.
+
+Since exceptions can be caught and handled within a program, it's common to include code to catch and handle exceptions 
+in Java programs. By handling exceptions, you can provide more informative error messages to users and prevent the program 
+from crashing
+In summary, errors and exceptions represent different types of problems that can occur during program execution. Errors are
+usually caused by serious problems that cannot be recovered from, while exceptions are used to handle recoverable errors 
+within a program.
+
+In java, both Errors and Exceptions are the subclasses of java.lang.Throwable class. Error refers to an illegal operation
+performed by the user which results in the abnormal working of the program. Programming errors often remain undetected until 
+the program is compiled or executed. Some of the errors inhibit the program from getting compiled or executed. Thus errors 
+should be removed before compiling and executing. It is of three types:
+
+Compile-time
+Run-time
+Logical
+
+✅ 1. Compile-Time Error
+📌 What is it?
+An error detected by the compiler before the program runs.
+
+Caused by syntax issues, type mismatches, missing imports, etc.
+🧠 Examples:
+int x = "abc";   // ❌ Type mismatch
+int y = ;        // ❌ Syntax error
+System.out.println(msg); // ❌ Variable 'msg' not declared
+
+🛠️ Fix:
+Correct the code so the compiler can successfully build the program.
+
+
+✅ 2. Run-Time Error
+📌 What is it?
+An error that occurs while the program is running.
+
+Program compiles fine but crashes or behaves unexpectedly during execution.
+
+🧠 Examples:
+int a = 10 / 0;               // ❌ ArithmeticException
+String s = null;
+System.out.println(s.length()); // ❌ NullPointerException
+
+int[] arr = new int[3];
+System.out.println(arr[5]);  // ❌ ArrayIndexOutOfBoundsException
+
+🛠️ Fix:
+Use try-catch blocks and proper validation to handle exceptions safely.
+
+✅ 3. Logical Error
+📌 What is it?
+The program runs successfully without crashing, but the output is wrong due to a mistake in logic.
+
+The hardest to detect — no error messages! 
+🧠 Examples:
+// Intention: multiply numbers
+int a = 5;
+int b = 4;
+int result = a + b;  // ❌ Logic mistake (used + instead of *)
+
+System.out.println("Product is: " + result); // Output: 9 (should be 20)
+
+🛠️ Fix:
+Requires debugging, testing, and careful thinking about the algorithm.
+
+
+12) Immutable class in java ? 
+Ans:- 
+An immutable class is a class whose objects cannot be modified after creation. 
+It ensures thread safety, consistency, and safe sharing.
+
+🔐 Rules to Create an Immutable Class
+->  The class must be declared as final so that child classes cannot be created.
+->  Data members in the class must be declared private so that direct access is not allowed.
+->  Data members in the class must be declared as final so that we can’t change their value after object creation.
+->  A parameterized constructor should initialize all the fields, performing a deep copy so that data members can't be 
+    modified with an object reference.
+->  Deep Copy of objects should be performed in the getter methods to return a copy rather than returning the actual object reference.
+
+Note: There should be no setters or in simpler terms, there should be no option to change the value of the instance variable.
+
+🔷 Example: Immutable Person Class
+------------------------------------------ 
+// Java Program to Create An Immutable Class
+import java.util.HashMap;
+import java.util.Map;
+
+// declare the class as final
+final class Student {
+
+    // make fields private and final
+    private final String name;
+    private final int regNo;
+    private final Map<String, String> metadata;
+
+    // initialize all fields via constructor
+    public Student(String name, int regNo, Map<String, String> metadata) {
+        this.name = name;
+        this.regNo = regNo;
+
+        // deep copy of mutable object (Map)
+        Map<String, String> tempMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : metadata.entrySet()) {
+            tempMap.put(entry.getKey(), entry.getValue());
+        }
+        this.metadata = tempMap;
+    }
+
+    // only provide getters (no setters)
+    public String getName() {
+        return name;
+    }
+
+    public int getRegNo() {
+        return regNo;
+    }
+
+    // return deep copy to avoid exposing internal state
+    public Map<String, String> getMetadata() {
+        Map<String, String> tempMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : this.metadata.entrySet()) {
+            tempMap.put(entry.getKey(), entry.getValue());
+        }
+        return tempMap;
+    }
+}
+
+
+
+
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Geeks {
+    public static void main(String[] args) {
+
+        // create a map and adding data
+        Map<String, String> map = new HashMap<>();
+        map.put("1", "first");
+        map.put("2", "second");
+
+        // create an immutable Student object
+        Student s = new Student("GFG", 101, map);
+
+        // accessing data
+        System.out.println(s.getName());       
+        System.out.println(s.getRegNo());     
+        System.out.println(s.getMetadata());   
+
+        // try to modify the original map
+        map.put("3", "third");
+        System.out.println(s.getMetadata());   
+
+        // try to modify the map returned by getMetadata()
+        s.getMetadata().put("4", "fourth");
+        System.out.println(s.getMetadata());   
+    }
+}
+-----------------------------------------
+
+✅ Benefits of Immutability
+-------------------------------------------
+Thread-safe (no need to synchronize).
+Safe to cache or reuse.
+Helps in functional programming.
+Used in
+
+Q13) Diffrent ways to create object in java ? 
+Ans:- 
+🟢List of Methods to Create Objects in Java
+Using new keyword
+Using clone() method
+Using Deserialization
+Using Constructor.newInstance() from Reflection API
+
+a) Using new keyword 
+----------------------
+class GFG {
+
+    // Declaring and initializing string
+    // Custom input string
+    String name = "GeeksForGeeks";
+
+    // Main driver method
+    public static void main(String[] args)
+    {
+        // As usual and most generic used we will
+        // be creating object of class inside main()
+        // using new keyword
+        GFG obj = new GFG();
+
+        // Print and display the object
+        System.out.println(obj.name);
+    }
+}
+----------------------------------------
+
+b) : Using clone() Method
+-----------------------------
+class GFG implements Cloneable {
+
+    // Instance variable
+    String name = "GeeksForGeeks";
+
+    // Overriding the clone() method from Object class
+    @Override
+    protected Object clone()
+        throws CloneNotSupportedException
+    {
+        return super
+        // Calls Object class's clone() method
+            .clone(); 
+    }
+
+    // Main method
+    public static void main(String[] args)
+    {
+        try {
+            // Creating the first object
+            GFG obj1 = new GFG();
+
+            // Creating a clone (copy) of obj1
+            GFG obj2 = (GFG)obj1.clone();
+
+            // Printing the value of name from the cloned
+            // object
+            System.out.println(obj2.name);
+        }
+        catch (CloneNotSupportedException e) {
+            // Handling exception if cloning is not
+            // supported
+            e.printStackTrace();
+        }
+    }
+}
+-------------------------------------------------
+
+c: Using Deserialization
+---------------------------------------
+import java.io.*;
+
+// Class GFG implements Serializable to allow object serialization
+class GFG implements Serializable {
+
+    String name;
+
+    GFG(String name) {
+        this.name = name;
+    }
+
+    // Method to serialize the object
+    public static void serialize() {
+        try {
+            GFG obj = new GFG("GeeksForGeeks");
+            FileOutputStream fos = new FileOutputStream("file.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(obj);
+            oos.close();
+            fos.close();
+            System.out.println("Object has been serialized");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to deserialize the object
+    public static void deserialize() {
+        try {
+            FileInputStream fis = new FileInputStream("file.txt");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            GFG obj = (GFG) ois.readObject();
+            ois.close();
+            fis.close();
+            System.out.println("Deserialized object name: " + obj.name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        // First serialize the object
+        serialize(); 
+         // Then deserialize it and print the name
+        deserialize();    
+    }
+}
+-----------------------------------------------------
+
+d) Constructor.newInstance() from Reflection API:
+--------------------------------------------------
+// Importing the Constructor class from java.lang.reflect package
+import java.lang.reflect.Constructor;
+
+// Defining the class
+class GFG {
+    // Private member variable
+    private String name;
+
+    // Public no-argument constructor
+    public GFG() {}
+
+    // Setter method to assign a value to 'name'
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Main method – entry point of the program
+    public static void main(String[] args) {
+        try {
+            // Getting the Constructor object for GFG class (no-arg constructor)
+            Constructor<GFG> constructor = GFG.class.getDeclaredConstructor();
+
+            // Making the constructor accessible (useful if it's private)
+            constructor.setAccessible(true);
+
+            // Creating a new instance of GFG using the constructor
+            GFG obj = constructor.newInstance();
+
+            // Setting the name using the setter method
+            obj.setName("GeeksForGeeks");
+
+            // Printing the name to verify object creation
+            System.out.println(obj.name);
+        } catch (Exception e) {
+            // Handling exceptions that may occur during reflection
+            e.printStackTrace();
+        }
+    }
+}
+------------------------------------------------------

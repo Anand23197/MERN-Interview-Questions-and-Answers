@@ -681,25 +681,41 @@ yargs: Another library for parsing command-line arguments.
 These methods enable you to create powerful command-line tools and interact with the system using Node.js.
 
 Q13) Transaction management in node js?
-Ans:- Transaction management in Node.js, particularly when interacting with databases, ensures data integrity and consistency by treating a series of operations as a single, atomic unit. This means either all operations within a transaction succeed and are committed, or if any operation fails, the entire transaction is rolled back, and no changes are made to the database.
+Ans:- Transaction management in Node.js, particularly when interacting with databases, ensures data integrity 
+and consistency by treating a series of operations as a single, atomic unit. This means either all operations 
+within a transaction succeed and are committed, or if any operation fails, the entire transaction is rolled back,
+and no changes are made to the database.
+
 Key principles and steps for managing transactions in Node.js:
 Database Driver/ORM Integration:
-Most database drivers (e.g., mysql, pg for PostgreSQL, mongodb for MongoDB) and Object-Relational Mappers (ORMs) like Sequelize or Mongoose provide built-in support for transactions.
+Most database drivers (e.g., mysql, pg for PostgreSQL, mongodb for MongoDB) and Object-Relational Mappers (ORMs)
+like Sequelize or Mongoose provide built-in support for transactions.
 These tools expose methods to initiate, commit, and roll back transactions.
-Starting a Transaction:
-A transaction is typically initiated by calling a specific method on the database connection or session object (e.g., beginTransaction() in SQL-based databases, startSession() and startTransaction() in MongoDB).
+
+Starting a Transaction: 
+A transaction is typically initiated by calling a specific method on the database connection or session object 
+(e.g., beginTransaction() in SQL-based databases, startSession() and startTransaction() in MongoDB).
+
 Executing Transactional Queries/Operations:
-All database operations intended to be part of the atomic unit are executed within the context of the active transaction. This often involves passing a transaction object or session to the individual query or operation calls.
+All database operations intended to be part of the atomic unit are executed within the context of the active transaction.
+This often involves passing a transaction object or session to the individual query or operation calls.
+
 Committing the Transaction:
-If all operations within the transaction execute successfully, the changes are made permanent in the database by committing the transaction (e.g., commit() or commitTransaction()).
+If all operations within the transaction execute successfully, the changes are made permanent in the database by committing 
+the transaction (e.g., commit() or commitTransaction()).
+
 Rolling Back the Transaction:
-If any error occurs during the execution of operations within the transaction, or if a specific condition is not met, the transaction is aborted, and all changes made during that transaction are undone (e.g., rollback() or abortTransaction()). This ensures that the database remains in a consistent state.
+If any error occurs during the execution of operations within the transaction, or if a specific condition is not met, the
+transaction is aborted, and all changes made during that transaction are undone (e.g., rollback() or abortTransaction()). 
+This ensures that the database remains in a consistent state.
+
 Error Handling and Session Management:
 Robust error handling is crucial to catch exceptions and trigger rollbacks when necessary.
-For session-based transactions (common in NoSQL databases like MongoDB), ending the session after the transaction is committed or aborted is important for resource management.
+For session-based transactions (common in NoSQL databases like MongoDB), ending the session after the transaction is 
+committed or aborted is important for resource management.
 
 Example (Conceptual with a SQL-like database):
-----------------------
+------------------------------------------------------------------------------------
 const connection = await pool.getConnection(); // Get a database connection
 try {
     await connection.beginTransaction(); // Start the transaction
@@ -716,4 +732,225 @@ try {
 } finally {
     connection.release(); // Release the connection back to the pool
 }
-----------------------
+----------------------------------------------------------------------------------------
+
+Q14) What is webhooks?
+Ans:- Webhooks are a method for applications to communicate in real-time by sending automated messages or 
+information to other applications when specific events occur. They are essentially user-defined HTTP callbacks 
+that get triggered when certain events happen in a system. 
+
+🟢Key Concepts:
+Event-driven:
+Webhooks are triggered by specific events within an application, such as a new user registration, a payment being processed, 
+or a code change being committed. 
+
+Real-time:
+Webhooks provide near real-time updates, as the receiving application is notified immediately when the event occurs. 
+
+HTTP callbacks:
+Webhooks utilize HTTP requests (typically POST) to send data to a designated URL (the webhook endpoint). 
+
+One-way communication:
+Webhooks are unidirectional, meaning data is sent from the source application to the receiving application, unlike WebSockets
+which are bidirectional. 
+
+🟢How Webhooks Work:
+-------------------------------------------
+1. Registration:
+The receiving application registers a webhook endpoint (a URL) with the source application, indicating which events it's interested in. 
+2. Event Trigger:
+When a registered event occurs in the source application, it sends an HTTP POST request to the registered webhook URL. 
+3. Payload Delivery:
+The POST request contains a payload of data related to the event. 
+4. Processing:
+The receiving application processes the data in the payload and takes appropriate action, such as updating a database, sending 
+a notification, or triggering a workflow. 
+
+🟢Use Cases:
+------------------------------------------
+Notifications: Sending notifications to users or other applications about events like new orders, code commits, or 
+social media mentions. 
+
+Data synchronization: Automatically syncing data between different applications, such as customer data between a CRM and 
+an email marketing platform. 
+
+Workflow automation: Triggering automated workflows based on specific events, such as deploying code to a production server 
+when a new commit is pushed. 
+
+Continuous Integration/Continuous Deployment (CI/CD): Triggering CI pipelines when code is pushed to a repository. 
+Payment processing: Notifying accounting software when a payment is received. 
+
+🟢Benefits of Webhooks:
+------------------------------------------
+Real-time updates: Receive data as it happens, eliminating the need for polling. 
+Reduced overhead: Webhooks are more efficient than polling, as they only send data when events occur. 
+Simplified integration: Webhooks provide a simple and standardized way for applications to communicate. 
+Event-driven automation: Enable the creation of powerful, automated workflows. 
+
+Security Considerations:
+Authentication: Verifying the authenticity of the webhook request is crucial to prevent malicious actors from sending fake events.
+Signature validation: Using HMAC algorithms with a shared secret key to verify the request's signature is a common security practice.
+Timestamp validation: Validating the timestamp of the request can help prevent replay attacks. 
+
+Q15) What is buffer in memory? 
+Ans:- In Node.js, a Buffer is a global object used to handle and manipulate raw binary data directly in memory. It represents a 
+fixed-size chunk of memory allocated outside the V8 JavaScript engine's heap.
+
+🟢Key characteristics and uses of Buffers in Node.js:
+----------------------------------------------------
+Binary Data Handling:
+Buffers are specifically designed for working with binary data, such as images, audio/video files, network packets, or raw data 
+from I/O operations.
+
+Fixed Size:
+Once a Buffer is created, its size cannot be changed. This fixed-size nature allows for efficient memory management when dealing
+with large amounts of data.
+
+Direct Memory Access:
+Buffers provide a low-level way to interact with raw bytes, allowing for direct manipulation of memory. This is crucial for 
+performance-critical operations.
+
+Efficiency:
+Buffers are more efficient than JavaScript strings for handling binary data because they avoid the overhead of encoding and 
+decoding data into string formats.
+
+I/O Operations:
+They are fundamental for handling I/O operations like reading from or writing to files, or sending/receiving data over network connections.
+
+Streams:
+Buffers are commonly used in conjunction with Node.js streams, where data is processed in chunks, and Buffers serve as the temporary
+storage for these chunks.
+
+🟢Creating Buffers:
+----------------------------------
+-> Buffer.alloc(size): Creates a new Buffer of a specified size and initializes it with zeros.
+-> Buffer.allocUnsafe(size): Creates a new Buffer of a specified size without initializing it. This can be faster but might 
+   expose sensitive data from previously allocated memory.
+-> Buffer.from(data): Creates a new Buffer from various data sources like strings, arrays, or other Buffers.
+
+🟢Common Buffer Methods:-
+
+->  buf.toString(): Converts the Buffer's content to a string using a specified encoding (e.g., 'utf8', 'hex', 'base64').
+->  buf.write(): Writes data to the Buffer.
+->  buf.copy(): Copies data from one Buffer to another.
+->  buf.length: Returns the size of the Buffer in bytes.
+->  In essence, Buffers are a crucial part of Node.js for efficiently managing and interacting with binary data, particularly in scenarios involving I/O and network communication.
+
+Q16) What is Streams in node js ? 
+Ans:- Streams in Node.js are a fundamental concept for handling data flow, especially when dealing with large datasets or 
+I/O operations like file manipulation and network communication. They represent a collection of data that may not be available 
+all at once and doesn't necessarily need to fit entirely in memory.
+
+🟢Key characteristics of Node.js Streams:
+-------------------------------------
+Efficiency:
+Streams process data in chunks, reducing memory consumption and enabling faster processing of large files or network requests 
+compared to loading entire datasets into memory.
+
+Asynchronous Nature:
+Streams are built upon the EventEmitter class, allowing them to emit various events (like data, end, error, finish) at different 
+stages of data processing. This enables asynchronous handling of data as it becomes available.
+
+Piping:
+A powerful feature that allows connecting the output of one stream to the input of another, creating a pipeline for data 
+transformation and transfer.
+
+🟢Types of Streams in Node.js:
+-----------------------------------
+Readable Streams:
+From which data can be read (e.g., fs.createReadStream() for reading from a file).
+Writable Streams:
+To which data can be written (e.g., fs.createWriteStream() for writing to a file).
+Duplex Streams:
+Streams that are both Readable and Writable (e.g., net.Socket for network communication).
+Transform Streams:
+A type of Duplex stream that can modify or transform the data as it is written and read (e.g., zlib.createDeflate() 
+for data compression). 
+
+Example of using Streams (Piping):
+-------------------------------------------------------------
+const fs = require('fs');
+
+const readableStream = fs.createReadStream('input.txt');
+const writableStream = fs.createWriteStream('output.txt');
+
+readableStream.pipe(writableStream); // Pipes data from input.txt to output.txt
+
+readableStream.on('end', () => {
+  console.log('File reading complete.');
+});
+
+writableStream.on('finish', () => {
+  console.log('File writing complete.');
+});
+
+readableStream.on('error', (err) => {
+  console.error('Error reading file:', err);
+});
+
+writableStream.on('error', (err) => {
+  console.error('Error writing file:', err);
+});
+-------------------------------------------------------------
+
+Q17) What is clusture module in node js? 
+Ans:- 
+Node.js runs on a single thread by default.
+The Cluster module lets you create child processes (workers) that share the same server port.
+It helps take advantage of multi-core CPUs to improve performance and scalability.
+
+🔷 Why use Cluster?
+Node.js is single-threaded, so it can only use one CPU core per process.
+Cluster creates multiple worker processes to handle concurrent requests.
+If one worker crashes, others can keep running.
+
+🔷 How it works?
+The master process spawns multiple worker processes.
+Workers share the same server port.
+Master distributes incoming connections among workers (round-robin).
+
+🔷 Basic Example of Cluster
+-------------------------------------------------------
+const cluster = require('cluster');
+const http = require('http');
+const os = require('os');
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master process is running. Spawning ${numCPUs} workers.`);
+
+  // Fork workers
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died. Spawning a new one.`);
+    cluster.fork();  // Restart worker
+  });
+
+} else {
+  // Worker processes run the server
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end(`Hello from worker ${process.pid}\n`);
+  }).listen(8000);
+
+  console.log(`Worker ${process.pid} started`);
+}
+----------------------------------------------------
+
+🔷 Key Points:
+------------------------
+| Feature            | Description                           |
+| ------------------ | ------------------------------------- |
+| `cluster.isMaster` | True if the current process is master |
+| `cluster.fork()`   | Creates a new worker process          |
+| Workers share port | All workers listen on the same port   |
+| Fault tolerance    | Master can restart workers on failure |
+| Load balancing     | Distributes requests across workers   |
+
+
+🔷 When to Use
+For CPU-intensive apps or to handle high traffic.
+When you want to utilize all CPU cores in your server.
