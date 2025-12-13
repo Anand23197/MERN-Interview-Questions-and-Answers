@@ -1357,3 +1357,243 @@ Pure Node.js worker threads
 4. RabbitMQ
 Enterprise-grade message queue
 
+
+Q20) What is redis ?
+Ans:-
+
+- **Problem with Traditional Database Queries:**
+  - When a user visits a web page, the server queries multiple tables in a database (e.g., PostgreSQL, MongoDB).
+  - These queries often involve numerous foreign key lookups and complex joins, leading to **high response times**.
+  - If the user refreshes the page repeatedly, the server reruns the expensive queries multiple times, increasing load and slowing down the user experience.
+  - This results in **increased server load, higher latency, and a poor user experience**.
+
+- **Redis as a Solution:**
+  - Redis operates as an **in-memory data store** (RAM-based), making data access extremely fast but temporary.
+  - It acts as a caching layer between the application server and the database.
+  - When data is first queried, Redis stores (caches) the computed result.
+  - Subsequent requests for the same data are served from Redis, drastically reducing response time and database load.
+  - Redis supports **setting expiry times** on cached data, ensuring stale data is invalidated and fresh data fetched from the database.
+
+---
+
+### Redis Architecture Overview
+
+| Component           | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| User                | Initiates requests by interacting with the application/web server           |
+| Application Server  | Processes user requests, queries data from Redis or falls back to the database |
+| Database            | Traditional data store (e.g., PostgreSQL, MongoDB) holding persistent data   |
+| Redis Server        | In-memory cache server storing frequently accessed or computed data          |
+
+- On a user request, the server first checks Redis.
+- If Redis has the cached data, it returns it instantly.
+- If not, the server queries the database, caches the result in Redis, and returns it to the user.
+- This architecture reduces **database reads** and **improves user response times**.
+
+---
+
+### Redis Features and Data Structures
+
+- **Core Data Types:**
+  - **Strings:** Simple key-value pairs, e.g., user names or message counts.
+  - **Lists:** Ordered collections supporting push/pop operations on left or right ends, useful for queues or stacks.
+  - **Sets:** Unordered collections of unique elements, useful for tracking unique items like IP addresses.
+  - **Hashes (HAS):** Key-value pairs within a key, resembling objects or dictionaries, helpful to store related fields like a bike's model, brand, price.
+  - **Sorted Sets:** Similar to sets but ordered by a score, useful for priority queues or rankings.
+  - **Streams:** Append-only log data structures designed for high-throughput data ingestion, like sensor data or user event tracking.
+  - **Geospatial Indexes:** Support storing and querying geo-coordinates, enabling location-based queries such as finding nearby restaurants or hotels.
+
+- **Operations and Commands:**
+  - **SET, GET:** Store and retrieve string values.
+  - **EXPIRE:** Set expiry time on keys to automatically invalidate cache.
+  - **INCR/DECR:** Increment or decrement numeric values atomically.
+  - **LPUSH, RPUSH, LPOP, RPOP:** Add or remove items from lists.
+  - **SADD, SREM, SISMEMBER:** Manage set membership.
+  - **ZRANGE, ZADD:** Manage sorted sets with scores.
+  - **XADD, XRANGE:** Add and read entries from streams.
+  - **GEOADD, GEORADIUS:** Manage geospatial data and perform radius searches.
+
+---
+
+### Practical Implementation and Best Practices
+
+- **Installation and Setup:**
+  - Redis can be installed on various platforms (Linux, MacOS, Windows).
+  - Recommended to run Redis inside a Docker container for portability and consistency across environments.
+  - Redis server runs by default on port **6379**, and a GUI client like **RedisInsight** on port **8001** helps visualize and interact with data.
+
+- **Client Integration:**
+  - Examples provided use Node.js with the `ioredis` package to interact with Redis.
+  - Basic operations demonstrated:
+    - Connecting to Redis server.
+    - Setting keys and values.
+    - Getting values.
+    - Using expiry to invalidate cache.
+    - Using list commands to implement queues.
+    - Using sets and hashes for structured data.
+  - Proper **key-naming conventions** (e.g., `user:1:name`) help organize and group keys for clarity and efficient querying.
+
+- **Caching Example:**
+  - A sample Express.js server is built to demonstrate caching API responses:
+    - On request, check Redis cache.
+    - If cache miss, fetch from database (mocked), cache the result with expiry, and return.
+    - Subsequent requests serve data from Redis cache instantly.
+  - Demonstrates **dramatic reduction in response time** (from seconds to milliseconds).
+
+---
+
+### Advanced Usage and Features
+
+- **Streams:** Efficiently handle high-throughput data like logs, sensor readings, or user actions, supporting append-only data with timestamped entries.
+- **Geospatial Queries:** Store and query location-based data efficiently, useful for applications like delivery services or hotel finders.
+- **Pub/Sub Model:** Redis supports publish-subscribe messaging to build scalable real-time features like notifications.
+- **Rate Limiting:** Can be implemented using Redis counters with expiry to control API usage or user actions.
+
+---
+
+### Summary of Benefits of Redis
+
+- **High performance due to in-memory storage.**
+- **Significant reduction in database load by caching computed or frequently accessed data.**
+- **Improved user experience via faster response times.**
+- **Rich data types and atomic operations enable flexible application logic.**
+- **Supports expiration and invalidation to keep cache fresh.**
+- **Easy integration with modern tech stacks and cross-platform support.**
+- **Tools like RedisInsight facilitate monitoring and debugging.**
+
+---
+
+### References for Further Learning
+
+- Official Redis documentation and commands reference.
+- Node.js `ioredis` client documentation.
+- Docker-based Redis deployment.
+- RedisInsight GUI for data visualization.
+
+---
+
+Q21) What is proxy server?
+Ans:-
+ **proxy server** is an **intermediary hardware or software component** placed between a client and an application or server to provide intermediate services during communication.
+
+### Key Concepts
+
+- **Proxy Server**: A device or software that acts as a middleman between a client and a server.
+- **Positioning**: It is placed between the client and the server to manage or modify requests and responses.
+- **Two Types of Proxies**:
+  - **Forward Proxy**
+  - **Reverse Proxy**
+
+### Detailed Explanation of Forward Proxy
+---------------------------------------------------------------------------------------------------------------------
+
+- When a client (e.g., a mobile application) sends a request to a server, normally the connection is direct. Both client and server know each other's identity.
+- By introducing a **forward proxy**, the client sends requests to the proxy server instead of directly to the actual server.
+- The proxy server then forwards the request to the real server.
+- The **real server does not know the identity of the original client**; it only sees the proxy server’s request.
+- The proxy server **hides the client's identity** from the actual server, acting as a shield.
+
+### Practical Use Case
+
+- Understand a situation where certain websites are **blocked in India**.
+- A user attempts to access such a blocked website directly and encounters restrictions.
+- By using a **forward proxy**, the user sends requests through the proxy server instead of directly to the blocked website.
+- The blocked website only sees the proxy server's location (which could be outside India) and allows the request.
+- This allows the user to access the blocked content **without revealing their real location or identity** to the blocked website.
+
+### Important Points
+
+- **Forward proxy** hides the client’s identity from the server.
+- The server believes the request is coming from the proxy server, not from the client.
+- This method is often used to bypass **geographical restrictions or content blocks**.
+- The actual server responds to the proxy server, which then forwards the response back to the client.
+- The video promises to explain the **reverse proxy** in the next session.
+
+### Glossary Table
+
+| Term           | Definition                                                     |
+|----------------|----------------------------------------------------------------|
+| Proxy Server   | An intermediary device/software that relays requests between client and server. |
+| Forward Proxy  | A proxy server that hides the client's identity from the actual server.          |
+| Client         | The user or device initiating a request to a server.                           |
+| Server         | The destination system that processes client requests and sends responses.    |
+| IP Blocking    | A method used by servers to restrict access to users from certain geographic locations. |
+
+### Key Insights
+
+- **Proxy servers act as intermediaries, enhancing privacy and security by hiding client identities.**
+- **Forward proxies are commonly used to bypass content restrictions imposed by geographic or network policies.**
+- **The actual server only sees the proxy server’s IP and not the client’s, enabling anonymity.**
+- **This mechanism is useful in scenarios involving censorship or content filtering.**
+
+
+
+**Detailed Explaination of Reverse Proxy
+--------------------------------------------------------------------------
+
+### Key Concepts and Definitions
+
+| Term            | Definition                                                                                       |
+|-----------------|-------------------------------------------------------------------------------------------------|
+| **Forward Proxy** | A server that hides the identity of the client from the actual server. For example, accessing a blocked website in India via a proxy server       located elsewhere, so the target server sees the request coming from the proxy, not the client. |
+| **Reverse Proxy** | A server that hides the identity of the actual server from the client. It acts as an intermediary, presenting a single interface while routing requests internally to multiple backend servers. |
+
+---
+
+### Core Explanation
+
+- **Forward Proxy**: 
+  - Hides the client’s identity.
+  - Example: If a website is blocked in India, a forward proxy server in another country fetches the website content, so the website does not know the client is in India.
+  
+- **Reverse Proxy**:
+  - Hides the server’s identity.
+  - Acts as an abstraction layer between clients and multiple backend servers.
+  - Clients see only the reverse proxy’s IP address, not the actual backend server IPs.
+  - Useful for scalability and security by preventing direct access to internal servers.
+  
+---
+
+### Practical Example: Amazon.com
+
+- Amazon has numerous backend servers handling different functions like orders, payments, and cart management.
+- Instead of exposing multiple IPs and servers, **Amazon uses a reverse proxy** to present a single domain (amazon.com).
+- Internally, the reverse proxy routes requests to the appropriate backend server:
+  - Payment requests → payment server
+  - Order requests → order server
+  - Cart requests → cart server
+- This setup **simplifies complexity and hides internal architecture** from clients.
+- The reverse proxy also enables:
+  - **Load balancing**: Distributing traffic across multiple servers.
+  - **Server swapping**: Admins can change backend servers without disrupting service.
+  - **Security controls and filtering**: For example, only allowing certain HTTP methods (e.g., GET but blocking POST).
+
+---
+
+### Additional Details
+
+- Reverse proxies can filter or block unwanted requests before they reach backend servers.
+- Example: If a user tries to change subscription plans with an unauthorized POST request, the reverse proxy can block it.
+- The concept is similar to an **API Gateway**, which sits between clients and servers, routing requests based on predefined mappings.
+- API Gateway maintains a mapping of virtual IPs and endpoints to actual backend services.
+  
+---
+
+### Summary of Benefits of Reverse Proxy
+
+- **Hides backend server IPs** from the client.
+- **Simplifies client interaction** by exposing a single domain or IP.
+- Provides **load balancing and fault tolerance**.
+- Enables **request filtering and security enforcement**.
+- Allows **seamless backend server management** without client disruption.
+
+---
+
+### Key Insights
+
+- Reverse proxy is an essential component in modern web architectures, especially for large platforms like Amazon.
+- It provides an abstraction layer that enhances security, scalability, and manageability.
+- It differs fundamentally from forward proxy by hiding the server rather than the client.
+- Reverse proxies often integrate with API gateways to manage and route API requests efficiently.
+
+---
