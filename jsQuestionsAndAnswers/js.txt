@@ -779,3 +779,31 @@ useEffect(() => {
 | Syntax        | `function*`, `yield` | `async`, `await` |
 | Sync or Async | Sync                 | Async            |
 | Use Case      | Iteration, pausing   | Promises, I/O    |
+
+
+Q16) What is Observer in js?
+Ans:-In JavaScript, an observer is an object or function that monitors a specific subject (another object or system event) and is automatically notified when that subject's state changes. This concept is central to the Observer design pattern and several built-in Web APIs. 
+
+The Observer Design Pattern
+-------------------------------------
+The Observer design pattern is a behavioral pattern that establishes a one-to-many dependency between objects without making them tightly coupled. 
+
+Subject (Observable): The object that holds the important state and maintains a list of observers. It provides methods to subscribe (subscribe/addEventListener), unsubscribe (unsubscribe/removeEventListener), and notify (notify/dispatch) observers of changes.
+
+Observer (Subscriber): An object (often just a callback function in JS) with an update method that gets called by the subject when a change occurs. Observers can be added or removed dynamically at runtime. 
+
+This pattern promotes loose coupling, making code more flexible and easier to maintain. It is the basis for event handling systems and reactive programming. 
+
+Built-in JavaScript Observer APIs 
+-------------------------------------
+Modern browsers provide several powerful, specialized Observer APIs for handling specific types of changes efficiently: 
+
+a) Event Listeners: The most common form, used with addEventListener() to react to user interactions (like clicks, keypresses) or system events on the DOM.
+
+b) Mutation Observer: Watches for changes in the DOM tree, such as elements being added, removed, or their attributes/text content modified. This is useful for integrating with third-party scripts or implementing undo/redo functionality.
+
+c) Intersection Observer: Asynchronously monitors when a target element enters or leaves the browser's viewport (or another specified root element). This is widely used for lazy-loading images, infinite scrolling, or triggering animations as elements become visible.
+
+d) Resize Observer: Tracks changes to the size of an element's content box, allowing for the creation of responsive components that adapt to dynamic size changes.
+
+e) Performance Observer: Monitors performance- related events, such as resource loading times or long tasks that might block the main thread, to help optimize application performance. 

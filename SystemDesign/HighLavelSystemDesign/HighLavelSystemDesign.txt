@@ -1,0 +1,93 @@
+Q1) Define microservice architecture of any system?
+Ans:-
+
+### Core Concepts and Definitions
+
+| Term              | Definition                                                                                      |
+|-------------------|------------------------------------------------------------------------------------------------|
+| **API Gateway**   | A single entry point that accepts client API requests and routes them to the correct backend microservice based on the API endpoint. |
+| **Load Balancer** | Distributes incoming traffic evenly across multiple instances of the **same** microservice but does **not** understand API endpoint structure. |
+| **Service Discovery** | Keeps track of microservice instances' locations (IP and port), dynamically updating as services scale up/down or become unavailable. |
+| **Region**        | A geographic area containing multiple Availability Zones (AZs), each with dedicated data centers. |
+| **Availability Zone (AZ)** | Isolated data center within a region to ensure high availability and fault tolerance. |
+
+---
+
+### Key Differences Between API Gateway and Load Balancer
+
+- **API Gateway** routes requests based on the API endpoint (e.g., `/invoice` routes to invoice microservice, `/order` routes to order microservice).
+- **Load Balancer** distributes traffic only among multiple instances of a **single** microservice without endpoint awareness.
+- **API Gateway** is intelligent and can perform additional operations like authentication, rate limiting, API composition, etc.
+
+---
+
+### Major Features of API Gateway
+
+- **API Routing:** Directs API requests to the appropriate microservice based on URL endpoint.
+- **API Composition:** Aggregates multiple microservice responses into a single response, optimizing client-side complexity. For example:
+  - Mobile devices get fewer details (product + invoice).
+  - PCs get more detailed info (product, invoice, ratings, reviews, recommendations).
+- **Authentication:** Integrates with OAuth 2.0 or similar protocols to validate access tokens before forwarding requests to microservices.
+- **Rate Limiting and Throttling:**
+  - **Burst Limit:** Controls the maximum concurrent requests allowed (e.g., 500).
+  - **Throttling:** Limits requests per user or application (e.g., max 10 requests per minute for a specific API).
+  - Supports IP-based blocking and queuing (API Q) to manage traffic spikes (thundering herd problem).
+- **Service Discovery Integration:** Uses service discovery tools (e.g., Zookeeper, Eureka) to dynamically locate microservice instances and load balancers.
+- **Request/Response Transformation:** Modifies requests and responses as needed for compliance or business logic.
+- **Caching:** Stores responses temporarily to reduce backend load.
+- **Logging:** Records request/response data for monitoring and debugging.
+
+---
+
+### Handling High Traffic and Fault Tolerance
+
+- **Traffic Flow:**
+  1. Client requests hit the **API Gateway**.
+  2. API Gateway queries **Service Discovery** for the load balancer address of the relevant microservice.
+  3. Load balancer distributes traffic among multiple microservice instances.
+  
+- **Scaling and Availability:**
+  - Multiple **Availability Zones (AZs)** exist within a region, each with isolated data centers.
+  - If one AZ fails, traffic is routed to another AZ within the same region.
+  - Multiple **regions** (e.g., Mumbai, Chennai) provide geographical redundancy.
+  - If one region goes down, traffic is rerouted to another region.
+  
+- **DNS-Based Traffic Distribution:**
+  - DNS services like **AWS Route 53** or **Azure Traffic Manager** act as global load balancers.
+  - They distribute incoming requests among API Gateway instances across different regions based on latency, compliance, or user location.
+  - DNS itself is highly resilient, composed of a hierarchical network of servers, avoiding single points of failure.
+
+---
+
+### Timeline / Flow of a Request Through the System
+
+| Step | Component              | Action                                                                                          |
+|-------|-----------------------|------------------------------------------------------------------------------------------------|
+| 1     | Client                | Sends API request (e.g., `/invoice`) to API Gateway.                                           |
+| 2     | API Gateway           | Determines the target microservice based on API endpoint.                                      |
+| 3     | API Gateway           | Queries Service Discovery to get the load balancer location for the target microservice.       |
+| 4     | Service Discovery     | Returns IP and port of the load balancer managing the microservice instances.                   |
+| 5     | API Gateway           | Forwards request to the load balancer.                                                         |
+| 6     | Load Balancer         | Distributes the request to one of multiple instances of the microservice.                       |
+| 7     | Microservice Instance | Processes the request and sends response back through load balancer and API Gateway.           |
+| 8     | API Gateway           | Optionally transforms, caches, authenticates, or logs the response before sending to the client.|
+
+---
+
+### Additional Notes
+
+- **API Gateway is not a single instance** but a distributed, multi-instance system deployed across regions and AZs to ensure scalability and fault tolerance.
+- **DNS load balancing** at the global level ensures traffic is routed intelligently, removing the "single entry point" bottleneck concern.
+- The video hints at future discussions on **DNS internals** and **OAuth 2.0 flows** but does not elaborate in detail here.
+
+---
+
+### **Key Insights**
+
+- The **API Gateway acts as a smart router** with additional responsibilities like authentication, rate limiting, and API composition, surpassing a load balancer's capabilities.
+- **Service Discovery is critical** for dynamic routing and scaling in microservices environments.
+- Multi-region and multi-AZ deployment, combined with DNS-based routing, eliminate single points of failure and ensure **high availability and fault tolerance**.
+- API Gateway features like **rate limiting, queuing, and throttling** help protect backend services from overload and abuse.
+- **API composition at the gateway** reduces client-side complexity and optimizes network usage, especially useful in bandwidth-constrained environments like mobile devices.
+
+---
