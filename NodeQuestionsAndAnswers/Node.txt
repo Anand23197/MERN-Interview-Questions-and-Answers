@@ -1597,3 +1597,177 @@ Ans:-
 - Reverse proxies often integrate with API gateways to manage and route API requests efficiently.
 
 ---
+
+Q22) Provide Security Machansm in node js?
+Ans:- There are lots of way from which you can implement security machanism.
+
+1. Authentication & Authorization 🔐
+Authentication (Who are you?)
+
+-JWT (JSON Web Token) – most common
+-OAuth2 (Google, GitHub login)
+-Session-based auth (cookies + Redis)
+
+Best practices
+---------------------------------------------
+// JWT verification middleware
+const jwt = require("jsonwebtoken");
+
+function auth(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).send("Unauthorized");
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).send("Invalid token");
+    req.user = user;
+    next();
+  });
+}
+---------------------------------------------
+
+Authorization (What can you do?)
+
+-RBAC (Role Based Access Control)
+-ABAC (Attribute based)
+------------------------------------------------
+const isAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") return res.status(403).send("Forbidden");
+  next();
+};
+------------------------------------------------
+
+2. Input Validation & Sanitization 🧹
+
+Prevents SQL Injection, NoSQL Injection, XSS
+
+Tools
+-Joi, Zod, express-validator
+-MongoDB: prevent $ne, $gt attacks
+
+3. Prevent XSS (Cross-Site Scripting) 🛡️
+
+Backend
+-Escape user input
+-Never trust frontend data
+
+Frontend (React)
+-React auto-escapes JSX (safe by default)
+-Avoid dangerouslySetInnerHTML
+
+Headers
+---------------------------
+const helmet = require("helmet");
+app.use(helmet());
+---------------------------
+
+4. Prevent CSRF (Cross-Site Request Forgery) 🔄
+
+Important when using cookies
+
+Solutions
+-CSRF token
+-SameSite cookies
+------------------------------------------
+app.use(csrf({ cookie: true }));
+
+res.cookie("token", jwt, {
+  httpOnly: true,
+  sameSite: "strict",
+  secure: true
+});
+------------------------------------------
+
+5. Secure Password Handling 🔑
+
+❌ Never store plain passwords
+✅ Always hash passwords
+------------------------------------------
+const bcrypt = require("bcrypt");
+
+const hash = await bcrypt.hash(password, 12);
+const isValid = await bcrypt.compare(password, hash);
+------------------------------------------
+
+6. Rate Limiting & Brute-Force Protection 🚦
+
+Prevents DDoS & password attacks
+------------------------------------------
+const rateLimit = require("express-rate-limit");
+
+app.use("/login",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5
+  })
+);
+------------------------------------------
+
+7. Secure HTTP Headers (Helmet) 🪖
+
+Protects from:
+-Clickjacking
+-MIME sniffing
+-XSS
+-------------------
+app.use(helmet());
+-------------------
+
+8. CORS Security 🌐
+
+Allow only trusted domains
+----------------------------
+const cors = require("cors");
+
+app.use(cors({
+  origin: ["https://myfrontend.com"],
+  credentials: true
+}));
+----------------------------
+
+9. Protect Against NoSQL Injection (MongoDB) 🍃
+----------------------------------------
+// BAD
+User.findOne({ email: req.body.email });
+
+// GOOD
+User.findOne({ email: String(req.body.email) });
+-----------------------------------------
+
+Use
+------------------------------------------------------
+const mongoSanitize = require("express-mongo-sanitize");
+app.use(mongoSanitize());
+------------------------------------------------------
+
+10. Environment Variable Security 🔐
+
+-Never push secrets to GitHub
+-Use .env
+----------------------------------
+require("dotenv").config();
+-----------------------------------
+
+11. HTTPS & TLS 🔒
+
+-Always use HTTPS in production
+-Use Nginx / Load Balancer
+-------------------------------
+app.enable("trust proxy");
+-------------------------------
+
+12. Logging & Monitoring 👀
+
+Detect attacks early
+-Winston / Pino
+-Datadog / Prometheus
+
+13. Secure File Uploads 📁
+
+-Validate file type
+-Limit file size
+-Store outside root
+-------------------------------------------------------------
+if (!["image/png", "image/jpeg"].includes(file.mimetype)) {
+  throw new Error("Invalid file type");
+}
+-------------------------------------------------------------
