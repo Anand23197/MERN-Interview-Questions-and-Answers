@@ -1,0 +1,77 @@
+Q1) Types of indexes in DBMS? 
+Ans:- In Database Management Systems (DBMS), indexes can be categorized based on how they store and organize data pointers and on the data structures they use. 
+The main types of indexes are:
+
+By Data Storage and Organization
+----------------------------------
+a) Primary Index (Clustered Index): This index is typically built on the primary key of a table and determines the physical order in which data rows are stored on disk.
+
+Key Feature: A table can have only one clustered index because the data rows themselves can only be stored in one physical order.
+Efficiency: Highly efficient for range queries and retrieving large sets of ordered data.
+
+    Sub-types: Primary indexes can be further classified as Dense or Sparse:
+    1) Dense Index: Creates an index entry for every single record in the main data file, offering faster lookups but requiring more storage space.
+
+    2) Sparse Index: Creates index entries only for some of the records, typically one entry per data block. This saves space but might require a short sequential scan within a data block to find the exact record.
+
+b) Secondary Index (Non-Clustered Index): This index is created on non-primary key attributes and does not affect the physical order of the data rows. Instead, it creates a separate structure containing the indexed column values and pointers (row locators) to the actual data locations in the main table.
+
+Key Feature: A table can have multiple non-clustered indexes, offering query flexibility across various columns.
+Efficiency: Slower than clustered indexes for data retrieval because it requires an extra step to follow the pointer to the actual data, but ideal for optimizing lookups on non-primary columns.
+
+c) Clustering Index: This type groups records with similar non-key values together into clusters and creates indexes for these groups. It is less common than the primary/secondary distinction.
+
+d) Multilevel Index: Used for managing very large indexes by breaking the primary index block into smaller, manageable blocks across several tiers. The top level fits in main memory, pointing to lower levels on disk, reducing the number of disk accesses. 
+
+By Data Structure Implementation
+------------------------------------------------
+
+a) B-Tree Indexes: One of the most commonly used indexing mechanisms. It's a self-balancing tree data structure that maintains sorted data and supports efficient insertion, deletion, and search operations
+
+b) B+ Tree Indexes: An extension of B-trees, widely used in relational databases (like MySQL and PostgreSQL).
+Key Feature: All data pointers are stored only in the leaf nodes, while internal nodes only store keys and pointers to other nodes. This structure makes both point queries (exact match) and range queries (finding values within a range) very efficient.
+
+c) Hash Indexes: These use a hash function to map search keys to specific index locations, providing constant-time access for equality searches (e.g., WHERE id = 123).
+Limitation: They are not suitable for range queries because the hash function does not preserve the order of the original data.
+
+d) Bitmap Indexes: Used for columns with low cardinality (a small number of distinct values, e.g., "Gender" or "Status"). They use a bitmap (a string of bits) for each distinct value, which is very efficient for complex queries involving multiple filter conditions.
+
+e) Full-Text Indexes: Specialized indexes designed for efficient keyword searches within large text documents or fields, supporting features like phrase search and relevance ranking. 
+
+
+
+Q2)What is ACID property?
+Ans:- Transactions are fundamental operations that allow us to modify and retrieve data. However, to ensure the integrity of a database, it is important that these transactions are executed in a way that maintains consistency, correctness, and reliability even in case of failures / errors. This is where the ACID properties come into play.
+
+ACID stands for Atomicity, Consistency, Isolation, and Durability.
+
+Properties Of ACID:
+There are Four Properties of ACID
+1. Atomicity
+Atomicity means a transaction is all-or-nothing either all its operations succeed, or none are applied. If any part fails, the entire transaction is rolled back to keep the database consistent.
+
+--Commit: If the transaction is successful, the changes are permanently applied.
+--Abort/Rollback: If the transaction fails, any changes made during the transaction are discarded.
+
+2. Consistency
+Consistency in transactions means that the database must remain in a valid state before and after a transaction.
+
+--A valid state follows all defined rules, constraints, and relationships (like primary keys, foreign keys, etc.).
+--If a transaction violates any of these rules, it is rolled back to prevent corrupt or invalid data.
+--If a transaction deducts money from one account but doesn't add it to another (in a transfer), it violates consistency.
+
+3. Isolation
+Isolation ensures that transactions run independently without affecting each other. Changes made by one transaction are not visible to others until they are committed.
+
+It ensures that the result of concurrent transactions is the same as if they were run one after another, preventing issues like:
+
+--Dirty reads: reading uncommitted data
+--Non-repeatable reads: data changes between two reads
+--Phantom reads: new rows appear during a transaction
+
+4. Durability:
+Durability ensures that once a transaction is committed, its changes are permanently saved, even if the system fails. The data is stored in non-volatile memory, so the database can recover to its last committed state without losing data.
+
+Example: After successfully transferring money from Account A to Account B, the changes are stored on disk. Even if there is a crash immediately after the commit, the transfer details will still be intact when the system recovers, ensuring durability.
+
+Q3) 

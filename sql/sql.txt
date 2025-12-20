@@ -1,2 +1,0 @@
-Q)Types of indexes in sql? 
-Ans:- 
