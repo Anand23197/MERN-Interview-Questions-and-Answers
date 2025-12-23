@@ -1071,3 +1071,142 @@ Reference Point: Always the font-size of the <html> element. The browser default
 Behavior: Sizes do not compound with nesting. If the root is 16px, a child element with font-size: 2rem will always be 32px, no matter how many parent elements it is nested within. 
 
 Best Used For: Global typography, margins, padding, and consistent layout spacing, ensuring that all elements scale uniformly when the user adjusts their browser's default font size for accessibility
+
+Q14) What is react fiber?
+Ans:- 
+
+**React Fiber** is a fundamental reimplementation of React's core reconciliation algorithm, developed over more than two years by the React team. Its primary goal is to improve React's handling of **animation, layout, and gestures** by enabling **incremental rendering**—breaking rendering work into smaller chunks that can be spread across multiple frames. This approach facilitates smoother user interfaces and better responsiveness.
+
+#### Key Features of React Fiber
+
+- **Incremental rendering:** Splits rendering work into manageable units processed over multiple frames.
+- **Work control:** Ability to **pause, abort, or reuse** work as new updates arrive.
+- **Prioritization:** Assigns different priorities to updates, ensuring critical tasks (e.g., animations) are processed before less urgent ones (e.g., background data fetching).
+- **Concurrency primitives:** Lays groundwork for concurrent rendering and error handling.
+
+---
+
+### Background Concepts and Motivation
+
+**Reconciliation** is React's algorithm to efficiently update the UI by diffing two trees (previous and new representations of the UI) and determining the minimal set of changes required. React conceptualizes updates as if the entire app re-renders on every change, but optimizations make only necessary parts update.
+
+- React's reconciliation algorithm is separate from rendering, allowing it to target multiple environments (e.g., DOM, iOS, Android).
+- Fiber reimplements the reconciler, not the renderer, but renderers will evolve to leverage Fiber's capabilities.
+- **Scheduling** determines when work should be executed, enabling React to delay or prioritize updates to avoid dropped frames and improve user experience.
+
+**React’s scheduling philosophy** contrasts "push" (execute work as soon as data arrives) with "pull" (delay work until necessary). Fiber embraces the pull model, allowing React to decide when and how to perform updates based on priority and visibility.
+
+---
+
+### What is a Fiber?
+
+A **fiber** represents a **unit of work** in React, analogous to a **stack frame** in program execution but specialized for UI rendering. The traditional call stack executes functions synchronously and to completion, which can cause jank in UIs. Fiber reimplements the stack to allow:
+
+- **Interrupting**, **pausing**, and **resuming** work.
+- **Assigning priorities** to different work units.
+- **Reusing** completed work to avoid unnecessary recalculations.
+- **Aborting** work if superseded by newer updates.
+
+This architecture enables React to coordinate rendering work with browser APIs like `requestIdleCallback` and `requestAnimationFrame`.
+
+---
+
+### Fiber Structure and Core Fields
+
+A fiber is a JavaScript object representing a component instance and its state during rendering. Important fields include:
+
+| Field Name              | Description                                                                                          |
+|-------------------------|--------------------------------------------------------------------------------------------------    |
+| **type**                | The component type (function, class, or host component string like "div").                           |
+| **key**                 | Used during reconciliation to identify and reuse fibers.                                             |
+| **child**               | Points to the first child fiber, representing the rendered output of the component’s render method.  |
+| **sibling**             | Points to the next sibling fiber, supporting multiple children as a singly-linked list.              |
+| **return**              | Points to the parent fiber, indicating where to return after processing current fiber.               |
+| **pendingProps**        | Incoming props for the current render cycle (function arguments).                                    |
+| **memoizedProps**       | Props from the previous render, used to detect changes and avoid unnecessary work.                   |
+| **pendingWorkPriority** | Numeric priority level of the work; higher priority work is processed first.                         |
+| **alternate**           | Reference to the alternate fiber (work-in-progress vs. current), used for efficient updates.         |
+| **output**              | Rendered output of the fiber, typically host components (e.g., DOM nodes) at leaf fibers.            |
+
+- Fibers form a **tree structure** via `child`, `sibling`, and `return` pointers.
+- The **alternate** field supports double buffering, allowing React to maintain two versions of the fiber tree: the current rendered tree and the work-in-progress tree.
+- The **priority system** enables React to schedule and process updates efficiently, balancing responsiveness and workload.
+
+---
+
+### Scheduling and Prioritization
+
+- React uses priority levels to decide which fiber work to perform next.
+- Different updates have different urgency; for example, **user interactions and animations get higher priority** than background data loading.
+- The Fiber architecture is designed to enable **interruptible work**, allowing React to yield control and resume later, improving UI smoothness.
+
+---
+
+### Conclusion and Future Directions
+
+React Fiber represents a **significant architectural overhaul** of React’s reconciliation and scheduling mechanism, designed to provide:
+
+- **Fine-grained control over rendering work.**
+- **Improved responsiveness and performance** for complex UI updates.
+- A foundation for **concurrent rendering** and enhanced error handling.
+
+Future documentation and development will focus on:
+
+- How the scheduler selects the next unit of work.
+- How priority propagates through the fiber tree.
+- Mechanics of pausing, resuming, and completing work.
+- Handling of side-effects (e.g., lifecycle methods).
+- Implementation of advanced features like coroutines for context and layout.
+
+---
+
+### Key Insights
+
+- **Fiber enables incremental, interruptible rendering** to improve UI performance.
+- The fiber tree models React components as units of work with associated priority and state.
+- React's **pull-based scheduling** allows it to optimize what work happens and when.
+- Fiber supports **double buffering** via `alternate` fibers to reconcile and update efficiently.
+- This architecture is crucial for future React features like concurrency and improved error boundaries.
+
+---
+
+### Prerequisites to Understand Fiber
+
+- Familiarity with React **components, elements, and instances**.
+- Understanding of React's **reconciliation algorithm**.
+- Basic React theoretical concepts and design principles, especially **scheduling**.
+
+---
+
+Q15) What is webpack?
+Ans- Webpack is a crucial module bundler in modern React development, primarily used to combine numerous individual files and assets into optimized bundles for the browser. It is not strictly necessary (alternatives exist like Vite or Rollup), but it is widely used for its robust features and efficiency in managing complex applications. 
+
+Here is why Webpack is needed in a React project:
+1. Module Bundling and Dependency Management
+React applications are built with a modular architecture, involving many JavaScript files, components, and third-party libraries. 
+Single Bundle: Webpack traverses your entire project, building a dependency graph of all files (JS, CSS, images, etc.) and combines them into one or a few highly optimized files (bundles).
+Efficiency: Browsers are inefficient at loading hundreds of individual files due to network overhead. Webpack reduces this to a single or a few requests, resulting in faster initial page load times and better performance. 
+
+2. Transpilation and Compatibility (via Loaders)
+React uses modern JavaScript features (ES6+) and a special syntax called JSX (HTML embedded in JavaScript). 
+Browser Incompatibility: Most browsers do not natively understand JSX or all the latest JavaScript features.
+Babel Integration: Webpack uses loaders (specifically babel-loader) to automatically run your code through Babel (a JavaScript compiler/transpiler). Babel converts the modern code and JSX into compatible JavaScript (e.g., ES5) that all browsers can run. 
+
+3. Asset Management (CSS, Images, etc.)
+Webpack treats every file as a module. Loaders enable it to process and bundle non-JavaScript assets directly within your code (e.g., importing CSS files into a JS component). 
+Loaders:
+css-loader and style-loader handle CSS files.
+url-loader or file-loader manage images and fonts, often converting small files into data URIs to reduce requests. 
+
+4. Development Experience
+Webpack offers tools that significantly enhance the development workflow. 
+Development Server: webpack-dev-server provides a local server to serve your application.
+Hot Module Replacement (HMR): This powerful feature allows for instant updates of code changes in the browser without a full page reload, preserving the application state and drastically speeding up development. 
+
+5. Production Optimization
+For deployment, Webpack optimizes the bundle size and performance. 
+Minification: Removes whitespace and shortens variable names in the code.
+Tree Shaking: Eliminates unused code from the final bundle.
+Code Splitting: Breaks the application into smaller "chunks" that are loaded on demand, improving the initial load time of the application. 
+
+In essence, Webpack serves as the central build tool that allows developers to write modern, modular React code and transforms it into an efficient, optimized format that all browsers can readily consume. 
