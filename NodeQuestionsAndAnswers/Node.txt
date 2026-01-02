@@ -901,6 +901,8 @@ It helps take advantage of multi-core CPUs to improve performance and scalabilit
 
 🔷 Why use Cluster?
 Node.js is single-threaded, so it can only use one CPU core per process.
+So if there is long running task then due to long running task or long running incomming request it should not 
+block other request.
 Cluster creates multiple worker processes to handle concurrent requests.
 If one worker crashes, others can keep running.
 
@@ -911,11 +913,11 @@ Master distributes incoming connections among workers (round-robin).
 
 🔷 Basic Example of Cluster
 -------------------------------------------------------
-const cluster = require('cluster');
-const http = require('http');
-const os = require('os');
+import cluster from "cluster";
+import http from "http";
+import os from "os";
 
-if (cluster.isMaster) {
+if (cluster.isPrimary) {
   const numCPUs = os.cpus().length;
   console.log(`Master process is running. Spawning ${numCPUs} workers.`);
 
@@ -924,27 +926,40 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died. Spawning a new one.`);
-    cluster.fork();  // Restart worker
-  });
-
+  cluster.on(
+    "exit",
+    (worker: { process: { pid: any } }, code: any, signal: any) => {
+      console.log(`Worker ${worker.process.pid} died. Spawning a new one.`);
+      cluster.fork(); // Restart worker
+    }
+  );
 } else {
   // Worker processes run the server
-  http.createServer((req, res) => {
-    res.writeHead(200);
-    res.end(`Hello from worker ${process.pid}\n`);
-  }).listen(8000);
+  http
+    .createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
+      if (req.url === "/") {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("Home Page");
+      } else if (req.url === "/slowPage") {
+        for (let i = 0; i < 90000000000; i++) {}
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("Slow Page");
+      }
+      res.writeHead(200, undefined);
+      res.end(`Hello from worker ${process.pid}\n`);
+    })
+    .listen(8000);
 
   console.log(`Worker ${process.pid} started`);
 }
+
 ----------------------------------------------------
 
 🔷 Key Points:
 ------------------------
 | Feature            | Description                           |
 | ------------------ | ------------------------------------- |
-| `cluster.isMaster` | True if the current process is master |
+| `cluster.isPrimary`| True if the current process is master |
 | `cluster.fork()`   | Creates a new worker process          |
 | Workers share port | All workers listen on the same port   |
 | Fault tolerance    | Master can restart workers on failure |

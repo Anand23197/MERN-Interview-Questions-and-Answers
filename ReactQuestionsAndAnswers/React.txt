@@ -665,7 +665,7 @@ function handleClick() {
 In the above code, count will not be immediately updated after calling setCount. It will update after the next render,
 so you'll see the old value in the console.
 
-Q18) What is rendere in react js?
+Q18) What is Renderer in react js?
 Ans:- In React, a renderer is responsible for taking the component tree and translating it into the user interface.
  This process involves several key aspects:
 
@@ -1210,3 +1210,133 @@ Tree Shaking: Eliminates unused code from the final bundle.
 Code Splitting: Breaks the application into smaller "chunks" that are loaded on demand, improving the initial load time of the application. 
 
 In essence, Webpack serves as the central build tool that allows developers to write modern, modular React code and transforms it into an efficient, optimized format that all browsers can readily consume. 
+
+Q16) How you can do performance optimization in React?
+Ans:- 
+1️⃣ Prevent Unnecessary Re-renders
+🔹 React.memo
+Memoizes a component and re-renders only if props change.
+---------------------------------------------------------
+const UserCard = React.memo(({ user }: { user: User }) => {
+  return <div>{user.name}</div>;
+});
+---------------------------------------------------------
+✅ Use for:
+
+Pure UI components
+
+List items
+
+Heavy components
+
+❌ Avoid for:
+
+Components that always receive new props
+
+🔹 useCallback
+Prevents function recreation on every render.
+----------------------------------------------
+const handleClick = useCallback(() => {
+  setCount(c => c + 1);
+}, []);
+-------------------------------------------------
+
+🔹 useMemo
+Memoizes expensive calculations.
+-----------------------------------------------
+const filteredUsers = useMemo(() => {
+  return users.filter(u => u.active);
+}, [users]);
+-----------------------------------------------
+
+2️⃣ Optimize List Rendering
+🔹 Use Stable key
+----------------------------------------------
+{users.map(user => (
+  <UserCard key={user.id} user={user} />
+))}
+----------------------------------------------
+❌ Never use index as key if list changes.
+
+🔹 Virtualization (Very Important)
+Render only visible items.
+
+Libraries:
+
+-react-window
+-react-virtualized
+
+-----------------------------------------------
+import { FixedSizeList as List } from "react-window";
+-----------------------------------------------
+✅ Huge boost for large tables & feeds.
+
+3️⃣ Code Splitting & Lazy Loading
+🔹 React.lazy + Suspense
+
+Load components only when needed.
+-----------------------------------------------
+const Dashboard = React.lazy(() => import("./Dashboard"));
+
+<Suspense fallback={<Loader />}>
+  <Dashboard />
+</Suspense>
+------------------------------------------------
+✅ Best for:
+
+-Routes
+-Modals
+-Heavy components
+
+5️⃣ Optimize Context Usage
+⚠️ Context re-renders all consumers when value changes.
+
+❌ Bad
+---------------------------------------------
+<AuthContext.Provider value={{ user, theme }}>
+---------------------------------------------
+
+✅ Good (Split Contexts)
+--------------------------------------------
+<UserContext.Provider value={user}>
+<ThemeContext.Provider value={theme}>
+--------------------------------------------
+
+7️⃣ Throttling & Debouncing
+
+For search, scroll, resize events.
+-----------------------------------------------
+import debounce from "lodash.debounce";
+
+const handleSearch = debounce((value) => {
+  fetchData(value);
+}, 300);
+-------------------------------------------------
+
+8️⃣ Optimize Images & Assets
+
+-Use lazy loading
+-Use WebP format
+-Compress images
+
+--------------------------------------
+<img loading="lazy" src="image.jpg" />
+--------------------------------------
+
+9️⃣ Production Build Optimizations
+
+-Use npm run build
+-Enable gzip / brotli on server
+-Use CDN for static assets
+
+🔟 Measure Performance (Very Important)
+🔹 React DevTools Profiler
+
+Identify slow components
+
+Detect wasted re-renders
+
+🔹 Web Vitals
+-------------------------------------
+reportWebVitals(console.log);
+-------------------------------------
