@@ -1340,3 +1340,70 @@ Detect wasted re-renders
 -------------------------------------
 reportWebVitals(console.log);
 -------------------------------------
+
+Q14) How can you make react app seo friendly?
+Ans:- 
+SEO Basics:
+-------------------------- 
+-SEO (Search Engine Optimization) aims to improve a website’s organic ranking on search engines like Google, without paid ads. Google uses over 200 metrics to rank pages.
+
+React and SEO Challenges:
+-------------------------
+-React apps rely heavily on JavaScript, making them different from traditional HTML websites.
+-Google can crawl React pages, but proper setup is necessary to optimize SEO.
+
+Meta Tags Management:
+-----------------------
+-Setting unique meta tags (title, description) per page is crucial to SEO.
+-Default meta tags in CRA apply globally, which is suboptimal.
+-The video introduces react-helmet-async, a library to dynamically set meta tags per route/component.
+
+Routing Setup:
+------------------
+-React Router DOM is used to create multiple routes (e.g., /login and /shop) to demonstrate page-specific SEO handling.
+-Each page component uses Helmet from react-helmet-async to define custom titles and meta descriptions.
+
+Meta SEO Inspector Chrome Extension:
+------------------------------------
+Used to inspect meta tags and verify dynamic updates on different routes.
+
+Canonical URLs:
+-Adding canonical link tags avoids duplicate content issues.
+-Canonical URLs point to the preferred version of a page.
+
+robots.txt File:
+--------------------
+-Controls which pages search engines are allowed to crawl.
+-By default, CRA’s robots.txt allows crawling all pages.
+-Specific pages can be disallowed (e.g., /login or /secret).
+-However, disallowing crawling does not guarantee exclusion from search results; for that, a noindex meta tag is required.
+
+Sitemap Management:
+---------------------
+-A sitemap.txt file is created manually in the public folder listing URLs.
+-For larger apps, manual maintenance may be cumbersome.
+-The presenter suggests considering frameworks like Next.js for better SEO support (server-side rendering, static site generation, 
+hybrid rendering).
+
+Google Search Console Integration:
+----------------------------------
+-Verification of ownership via meta tag added to index.html.
+-Submission of sitemap URL (sitemap.txt) to Google.
+-Enables monitoring of crawl status, indexing, and SEO performance.
+
+Deployment:
+--------------
+-Deployment is done via Netlify (or any hosting platform).
+-The live site serves updated meta tags and sitemap.
+
+
+-Google can crawl React SPA content, but you need to explicitly manage meta tags and routing for SEO.
+-Using react-helmet-async allows dynamic, per-page meta information essential for SEO.
+-A canonical URL tag is recommended to avoid duplicate content issues.
+-The robots.txt file controls crawling but not indexing; use meta tags for noindex control.
+-Maintaining a manual sitemap works for small apps; for larger apps, consider frameworks like Next.js with better SEO capabilities.
+-Verifying your site in Google Search Console and submitting your sitemap is vital for SEO monitoring and indexing.
+-SEO in React requires a technical approach combining routing, meta tags, crawling rules, sitemap management, and Google verification.
+-You can add CDN(Content Delivery Network) for low latency and caching.
+-You can implement Lazy Loading for code splitting so that while bundling it can be in saperate - saperate module.
+-You can use Memo api so that when props are not changing component should not rerender it will optimize performance and faster page loading.

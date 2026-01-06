@@ -807,3 +807,558 @@ c) Intersection Observer: Asynchronously monitors when a target element enters o
 d) Resize Observer: Tracks changes to the size of an element's content box, allowing for the creation of responsive components that adapt to dynamic size changes.
 
 e) Performance Observer: Monitors performance- related events, such as resource loading times or long tasks that might block the main thread, to help optimize application performance. 
+
+Q17) What is debauncing and Throttling ?
+Ans :- Debouncing and throttling are performance optimization techniques in JavaScript used to control how often a function executes in response to high-frequency events like scrolling, resizing, or user input. They prevent excessive function calls, which can cause lag and performance issues. They prevent excessive function calls, which can cause lag and performance issues. 
+
+**Debouncing**
+----------------------------
+Debouncing ensures that a function is executed only after a specific period of inactivity has passed since the last time the event was triggered. It is ideal when you only care about the final state after a series of rapid events. 
+Execution Timing: The function runs once, a specified time after the events stop occurring.
+Analogy: Waiting for an elevator door to close; it only closes when no one has pressed the "open" button for a certain amount of time, with each button press resetting the timer.
+Use Cases:
+Search input fields: Fetching search results only after the user has finished typing to avoid unnecessary API calls on every keystroke.
+Window resize: Recalculating layout or redrawing UI elements only after the user has finished resizing the window.
+Auto-save: Saving form data to a backend after the user pauses typing. 
+
+  e.g.
+  --------------------------------------------------------------------------
+  function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeoutId); // Clear the previous timer with every new event
+        timeoutId = setTimeout(() => {
+            func.apply(context, args); // Call the function after the delay
+        }, delay);
+    };
+}
+
+// Usage:
+const handleSearch = debounce((query) => {
+    console.log('API call with query:', query);
+}, 500); // 500ms delay
+
+document.getElementById('searchInput').addEventListener('input', (event) => {
+    handleSearch(event.target.value);
+});
+
+----------------------------------------------------------------------------
+
+**Throttling**
+-----------------------
+Throttling limits the number of times a function can be called within a given time frame. It ensures the function executes at most once per specified interval, regardless of how many times the event is triggered during that period. 
+
+-Execution Timing: The function runs at regular intervals while the events are continuously occurring.
+-Analogy: A machine gun that can fire at most once every 100 milliseconds; subsequent clicks within that interval are ignored.
+
+-Use Cases:
+  -Scroll events: Implementing infinite scroll or lazy loading of images periodically while the user is scrolling.
+  -Mouse movement tracking: Tracking mouse position for performance-sensitive tasks at a controlled rate.
+  -Button clicks: Preventing a user from spam-clicking a submit button multiple times in quick succession. 
+
+e.g.
+------------------------------------------------------------------------------------
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args); // Execute the function immediately
+            inThrottle = true;
+            setTimeout(() => {
+                inThrottle = false; // Allow subsequent calls after the limit
+            }, limit);
+        }
+    };
+}
+
+// Usage:
+const handleScroll = throttle(() => {
+    console.log('Scrolled!');
+}, 100); // at most once every 100ms
+
+window.addEventListener('scroll', handleScroll);
+-------------------------------------------------------------------------------------
+
+Key Differences Summary
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Aspect         |   Debauncing                                                        |   Debauncing  
+---------------|---------------------------------------------------------------------|------------------------------------------------------------------------------
+Execution      | Executes only after a period of inactivity.                         | Executes at most once per fixed time interval.
+---------------|---------------------------------------------------------------------|------------------------------------------------------------------------------
+Trigger        | Triggered on the "trailing" edge (after events stop).               | Triggered at regular, fixed intervals (leading/trailing edge options exist).
+---------------|---------------------------------------------------------------------|------------------------------------------------------------------------------
+Use Case       | Search bars, form validation, window resize (final state matters).  | Scrolling, mouse move, game shooting (continuous updates needed).
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------   
+
+Many developers opt to use production-ready and well-tested functions from libraries like Lodash which provide robust implementations of both debounce and throttle. 
+
+Q18 ) What is prototype and prototype inheritance ?
+Ans:- In programming, we often want to take something and extend it, means we want to achive DRY principles while programming.
+
+For instance, we have a user object with its properties and methods, and want to make admin and guest as slightly modified variants of it. We’d like to reuse what we have in user, not copy/reimplement its methods, just build a new object on top of it.
+
+Prototypal inheritance is a language feature that helps in that.
+
+[[Prototype]]
+-------------------------
+In JavaScript, objects have a special hidden property [[Prototype]] (as named in the specification), that is either null or references another object. That object is called “a prototype”. When we read a property from object, and it’s missing, JavaScript automatically takes it from the prototype.
+
+The property [[Prototype]] is internal and hidden, but there are many ways to set it.
+One of them is to use the special name __proto__, like this:
+--------------------------------------------------------------
+let animal = {
+  eats: true
+};
+let rabbit = {
+  jumps: true
+};
+
+rabbit.__proto__ = animal; // sets rabbit.[[Prototype]] = animal
+
+// we can find both properties in rabbit now:
+alert( rabbit.eats ); // true (**)
+alert( rabbit.jumps ); // true
+-------------------------------------------------------------
+
+Now if we read a property from rabbit, and it’s missing, JavaScript will automatically take it from animal.
+
+Here we can say that “animal is the prototype of rabbit” or “rabbit prototypically inherits from animal”.
+
+So if animal has a lot of useful properties and methods, then they become automatically available in rabbit. Such properties are called “inherited”.
+
+If we have a method in animal, it can be called on rabbit:
+------------------------------------------------------------
+let animal = {
+  eats: true,
+  walk() {
+    alert("Animal walk");
+  }
+};
+
+let rabbit = {
+  jumps: true,
+  __proto__: animal
+};
+
+// walk is taken from the prototype
+rabbit.walk(); // Animal walk
+---------------------------------------------------------
+
+The prototype chain can be longer:
+-----------------------------------------------------
+let animal = {
+  eats: true,
+  walk() {
+    alert("Animal walk");
+  }
+};
+
+let rabbit = {
+  jumps: true,
+  __proto__: animal
+};
+
+let longEar = {
+  earLength: 10,
+  __proto__: rabbit
+};
+
+// walk is taken from the prototype chain
+longEar.walk(); // Animal walk
+alert(longEar.jumps); // true (from rabbit)
+----------------------------------------------------
+
+Now if we read something from longEar, and it’s missing, JavaScript will look for it in rabbit, and then in animal.
+
+There are only two limitations:
+-------------------------------
+  1) The references can’t go in circles. JavaScript will throw an error if we try to assign __proto__ in a circle.
+  2) The value of __proto__ can be either an object or null. Other types are ignored.
+
+Prototype chain traversal:
+-----------------------------------
+  -Property/method lookup traverses from the object → prototype → prototype’s prototype → … → null.
+  -Breaking the chain by setting __proto__ to null removes inheritance and affects instanceof checks.
+
+Best practices:
+-----------------------------------
+  -Do not manually modify __proto__ in production code as it can cause bugs and messy code.
+  -Use built-in functions like Object.create() for inheritance.
+  -Understand prototype inheritance for debugging and writing efficient JavaScript.\
+
+Q19) What is Garbage collection in js ?
+Ans:- Garbage Collection (GC) is the automatic process of freeing memory that is no longer reachable or used by the program.
+
+👉 JavaScript handles memory management automatically.
+
+Simply put, “reachable” values are those that are accessible or usable somehow. They are guaranteed to be stored in memory.
+
+1. There’s a base set of inherently reachable values, that cannot be deleted for obvious reasons.
+
+For instance:
+
+  -The currently executing function, its local variables and parameters.
+  -Other functions on the current chain of nested calls, their local   variables and parameters.
+  -Global variables.
+  -(there are some other, internal ones as well)
+These values are called roots.
+
+2. Any other value is considered reachable if it’s reachable from a root by a reference or by a chain of references.
+
+For instance, if there’s an object in a global variable, and that object has a property referencing another object, that object is considered reachable. And those that it references are also reachable. Detailed examples to follow.
+
+There’s a background process in the JavaScript engine that is called garbage collector. It monitors all objects and removes those that have become unreachable.
+
+A simple example
+--------------------------------------
+// user has a reference to the object
+let user = {
+  name: "John"
+};
+--------------------------------------
+ The global variable "user" references the object {name: "John"}. The "name" property of John stores a primitive, so it’s painted inside the object.
+
+ If the value of user is overwritten, the reference is lost:
+ ------------------
+ user=null
+ -----------------
+Now John becomes unreachable. There’s no way to access it, no references to it. Garbage collector will junk the data and free the memory.
+
+--Another Example 
+Now let’s imagine we copied the reference from user to admin:
+-------------------------------------
+// user has a reference to the object
+let user = {
+  name: "John"
+};
+
+let admin = user;
+-------------------------------------
+
+Now if we do the same:
+------------------------------
+user = null;
+------------------------------
+…Then the object is still reachable via admin global variable, so it must stay in memory. If we overwrite admin too, then it can be removed.
+
+-Interlinked objects
+  Now a more complex example. The family:
+--------------------------------------------
+function marry(man, woman) {
+  woman.husband = man;
+  man.wife = woman;
+
+  return {
+    father: man,
+    mother: woman
+  }
+}
+
+let family = marry({
+  name: "John"
+}, {
+  name: "Ann"
+});
+------------------------------------------
+Function marry “marries” two objects by giving them references to each other and returns a new object that contains them both.
+
+As of now, all objects are reachable.
+Now let’s remove two references:
+----------------------------------
+delete family.father;
+delete family.mother.husband;
+----------------------------------
+It’s not enough to delete only one of these two references, because all objects would still be reachable.
+
+But if we delete both, then we can see that John has no incoming reference any more:
+
+Outgoing references do not matter. Only incoming ones can make an object reachable. So, John is now unreachable and will be removed from the memory with all its data that also became unaccessible.
+
+After garbage collection:
+
+Unreachable island
+----------------------------
+It is possible that the whole island of interlinked objects becomes unreachable and is removed from the memory.
+
+The source object is the same as above. Then:
+----------------------------------------------
+family = null;
+--------------------------------------
+
+This example demonstrates how important the concept of reachability is.
+
+It’s obvious that John and Ann are still linked, both have incoming references. But that’s not enough.
+
+The former "family" object has been unlinked from the root, there’s no reference to it any more, so the whole island becomes unreachable and will be removed.
+
+Summary
+---------------------
+The main things to know:
+
+--Garbage collection is performed automatically. We cannot force or   prevent it.
+--Objects are retained in memory while they are reachable.
+--Being referenced is not the same as being reachable (from a root): a pack of interlinked objects can become unreachable as a whole, as we’ve seen in the example above.
+  
+Q20) Weakmap vs Weakset in js?
+Ans:- As we know from the Garbage collection, JavaScript engine keeps a value in memory while it is “reachable” and can potentially be used.
+
+For Instance 
+----------------------------------------------------------
+let john = { name: "John" };
+
+// the object can be accessed, john is the reference to it
+
+// overwrite the reference
+john = null;
+
+// the object will be removed from memory
+----------------------------------------------------------
+
+WeakMap
+-------
+The first difference between Map and WeakMap is that keys must be objects, not primitive values:
+------------------------------------------------------------------------
+let weakMap = new WeakMap();
+
+let obj = {};
+
+weakMap.set(obj, "ok"); // works fine (object key)
+
+// can't use a string as the key
+weakMap.set("test", "Whoops"); // Error, because "test" is not an object
+--------------------------------------------------------------------------
+
+Now, if we use an object as the key in it, and there are no other references to that object – it will be removed from memory (and from the map) automatically.
+-----------------------------------------
+let john = { name: "John" };
+
+let weakMap = new WeakMap();
+weakMap.set(john, "...");
+
+john = null; // overwrite the reference
+
+// john is removed from memory!
+----------------------------------------
+
+WeakMap does not support iteration and methods keys(), values(), entries(), so there’s no way to get all keys or values from it.
+
+WeakMap has only the following methods:
+---------------------------------------
+weakMap.set(key, value)
+weakMap.get(key)
+weakMap.delete(key)
+weakMap.has(key)
+-------------------------------------
+
+Use case: caching
+------------------
+Another common example is caching. We can store (“cache”) results from a function, so that future calls on the same object can reuse it.
+
+To achieve that, we can use Map (not optimal scenario):
+---------------------------------------------------------------------------------
+// 📁 cache.js
+let cache = new Map();
+
+// calculate and remember the result
+function process(obj) {
+  if (!cache.has(obj)) {
+    let result = /* calculations of the result for */ obj;
+
+    cache.set(obj, result);
+    return result;
+  }
+
+  return cache.get(obj);
+}
+
+// Now we use process() in another file:
+
+// 📁 main.js
+let obj = {/* let's say we have an object */};
+
+let result1 = process(obj); // calculated
+
+// ...later, from another place of the code...
+let result2 = process(obj); // remembered result taken from cache
+
+// ...later, when the object is not needed any more:
+obj = null;
+
+alert(cache.size); // 1 (Ouch! The object is still in cache, taking memory!)
+----------------------------------------------------------------------------------
+
+For multiple calls of process(obj) with the same object, it only calculates the result the first time, and then just takes it from cache. The downside is that we need to clean cache when the object is not needed any more.
+
+If we replace Map with WeakMap, then this problem disappears. The cached result will be removed from memory automatically after the object gets garbage collected.
+-------------------------------------------------------------------------------------
+// 📁 cache.js
+let cache = new WeakMap();
+
+// calculate and remember the result
+function process(obj) {
+  if (!cache.has(obj)) {
+    let result = /* calculate the result for */ obj;
+
+    cache.set(obj, result);
+    return result;
+  }
+
+  return cache.get(obj);
+}
+
+// 📁 main.js
+let obj = {/* some object */};
+
+let result1 = process(obj);
+let result2 = process(obj);
+
+// ...later, when the object is not needed any more:
+obj = null;
+
+// Can't get cache.size, as it's a WeakMap,
+// but it's 0 or soon be 0
+// When obj gets garbage collected, cached data will be removed as well
+---------------------------------------------------------------------------------
+
+Weakset
+------------------------
+WeakSet behaves similarly:
+
+-It is analogous to Set, but we may only add objects to WeakSet (not primitives).
+-An object exists in the set while it is reachable from somewhere else.
+-Like Set, it supports add, has and delete, but not size, keys() and no iterations.
+
+Being “weak”, it also serves as additional storage. But not for arbitrary data, rather for “yes/no” facts. A membership in WeakSet may mean something about the object.
+
+For instance, we can add users to WeakSet to keep track of those who visited our site:
+------------------------------------------------
+let visitedSet = new WeakSet();
+
+let john = { name: "John" };
+let pete = { name: "Pete" };
+let mary = { name: "Mary" };
+
+visitedSet.add(john); // John visited us
+visitedSet.add(pete); // Then Pete
+visitedSet.add(john); // John again
+
+// visitedSet has 2 users now
+
+// check if John visited?
+alert(visitedSet.has(john)); // true
+
+// check if Mary visited?
+alert(visitedSet.has(mary)); // false
+
+john = null;
+
+// visitedSet will be cleaned automatically
+-------------------------------------------------------------
+
+The most notable limitation of WeakMap and WeakSet is the absence of iterations, and the inability to get all current content. That may appear inconvenient, but does not prevent WeakMap/WeakSet from doing their main job – be an “additional” storage of data for objects which are stored/managed at another place.
+
+
+Summary
+----------------
+-WeakMap is Map-like collection that allows only objects as keys and removes them together with associated value once they become inaccessible by other means.
+
+-WeakSet is Set-like collection that stores only objects and removes them once they become inaccessible by other means.
+
+-Their main advantages are that they have weak reference to objects, so they can easily be removed by garbage collector.
+
+-That comes at the cost of not having support for clear, size, keys, values…
+
+-WeakMap and WeakSet are used as “secondary” data structures in addition to the “primary” object storage. Once the object is removed from the primary storage, if it is only found as the key of WeakMap or in a WeakSet, it will be cleaned up automatically.
+
+Q21) What is web worker? 
+Ans:- JavaScript executes all code on a single main thread, responsible for handling tasks like DOM updates, user events, animations, API calls, and timers. When a heavy or CPU-intensive operation runs on this main thread, it blocks other tasks, resulting in poor user experience, unresponsive interfaces, and potential browser warnings about unresponsive scripts.
+
+practical example involving two buttons on a webpage: one triggers a heavy calculation (summing numbers from 0 to 10 billion), and the other changes the background color of the page. When both tasks run on the main thread, clicking the heavy calculation button prevents the background color button from responding until the calculation finishes, demonstrating blocking behavior.
+
+To solve this, the video introduces web workers, which run JavaScript in separate background threads parallel to the main thread. By moving the expensive calculation into a worker thread, the background color button remains responsive regardless of the heavy computation’s state. The main thread handles UI interactions smoothly while the worker performs CPU-intensive tasks independently.
+
+script.js
+-------------------------------------------------------------------------
+const webWorker = new Worker("worker.js");
+const totalSumBtn = document.querySelector("#totalSumButton");
+const bgBtn = document.querySelector("#bgBtn");
+
+totalSumBtn.addEventListener("click", ()=>{
+  worker.postMessage("sum");
+})
+
+worker.onmessage = function("message"){
+  alert(`your total sum is ${message.data}`);
+}
+
+bgBtn.addEventListener("click", ()=>{
+  if(document.body.style.background !== "red"){
+    document.body.style.background= "red" ;
+  }else{
+    document.body.style.background = "white" ;
+  }
+})
+----------------------------------------------------------------
+
+worker.js 
+-----------------------------------------------------------------------
+self.onmessage = function(message){
+        console.log("message", message);
+
+        if(message.data === "sum"){
+          let sum = 0;
+           for(let i = 0;i < 100000000000000 ; i++ ){
+            sum = sum + i;
+           }
+
+           self.message(sum);
+        }
+}
+------------------------------------------------------------------
+
+
+Key Concepts and Workflow
+-----------------------------
+-Single-threaded JavaScript: Only one operation executes at a time on the main thread.
+-Blocking operations: Heavy tasks block the main thread, delaying UI updates and user interactions.
+-Web workers: Enable background threads for parallel execution of heavy tasks.
+-Communication between main thread and worker:
+  -postMessage: Sends messages between main thread and worker.
+  -onmessage: Event listener to receive messages.
+-Limitations: Web workers cannot access the DOM or window objects directly.
+
+Implementation Overview
+----------------------------
+-Create a worker script (worker.js) containing the expensive computation.
+-In the main script (script.js), instantiate the worker with new Worker("worker.js").
+-Send a message (postMessage) from the main thread to the worker to trigger the calculation.
+-In the worker, listen for the message with self.onmessage and, upon receiving the command, run the expensive loop.
+-After computation, use self.postMessage to send the result back to the main thread.
+-The main thread listens for the worker’s response via worker.onmessage and updates the UI accordingly.
+-Meanwhile, UI interactions like changing background color remain responsive because the heavy calculation runs off the main thread.
+
+Benefits of Web Workers
+----------------------------
+-Improved responsiveness: UI remains interactive during CPU-intensive tasks.
+-True parallelism: Web workers run concurrently with the main thread.
+-Better user experience: Prevents browser warnings and UI freezes.
+-Ease of communication: Simple message passing mechanism for coordination.
+
+Limitations and Important Notes
+---------------------------------------------------------------------------------------------------------
+Limitation	                  |     Explaination
+---------------------------------------------------------------------------------------------------
+No DOM access	                |  Workers cannot manipulate HTML elements or access window or document.
+Communication overhead	      |  Passing messages between threads involves serialization costs.
+Restricted API availability   |	Some browser APIs are unavailable inside workers.
+-------------------------------------------------------------------------------------------------------
+
+Key Insights
+--------------------------
+-JavaScript’s single-threading model can cause UI blocking under heavy computation.
+-Web workers allow offloading CPU-intensive tasks to background threads, preventing UI lag.
+-Communication between the main thread and worker threads is done via postMessage and onmessage.
+-Web workers do not have access to the DOM, requiring separation of concerns between UI updates and computation.
+-Using web workers is essential for maintaining smooth, responsive web applications when processing large data or complex calculations.

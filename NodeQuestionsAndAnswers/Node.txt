@@ -893,7 +893,7 @@ writableStream.on('error', (err) => {
 });
 -------------------------------------------------------------
 
-Q17) What is clusture module in node js? 
+Q17) What is clustur module in node js? 
 Ans:- 
 Node.js runs on a single thread by default.
 The Cluster module lets you create child processes (workers) that share the same server port.
