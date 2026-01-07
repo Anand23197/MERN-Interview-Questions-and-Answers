@@ -1973,3 +1973,38 @@ Ans:-
 - Security concerns with unsigned CloudFront URLs require further setup to implement signed URLs for restricted access, planned for future coverage.
 
 ---
+
+Q25) Difference between Worker Threads and Cluster Module in node js?
+Ans:- Worker threads are for CPU-intensive tasks within a single process, while the cluster module is for spawning multiple processes to distribute the network load of an entire application. They solve different problems and can even be used together. 
+
+Key Differences: Worker Threads vs. Cluster Module
+
++-------------------+-------------------------------+-----------------------------------------------+
+| Feature           | Worker Threads                | Cluster Module                                |
++-------------------+-------------------------------+-----------------------------------------------+
+| Primary Use Case  | CPU-intensive operations      | High availability and load balancing of       |
+|                   | (data processing, calculations,| incoming network requests (e.g., HTTP server)|
+|                   | image resizing)                |                                               |
++-------------------+-------------------------------+-----------------------------------------------+
+| Mechanism         | Multiple threads within a     | Multiple separate Node.js processes managed   |
+|                   | single Node.js process        | by a primary process                          |
++-------------------+-------------------------------+-----------------------------------------------+
+| Memory            | Can share memory using        | Each process has its own isolated memory      |
+|                   | SharedArrayBuffer             | space                                         |
++-------------------+-------------------------------+-----------------------------------------------+
+| Communication     | MessagePort (fast message     | Inter-Process Communication (IPC) channels    |
+|                   | passing)                      |                                               |
++-------------------+-------------------------------+-----------------------------------------------+
+| Fault Tolerance   | If one thread crashes, it may | If a worker crashes, the primary process can  |
+|                   | bring down the parent process | restart it, ensuring high availability        |
++-------------------+-------------------------------+-----------------------------------------------+
+| I/O Operations    | Not ideal for I/O-intensive   | Excellent for I/O-bound servers; processes    |
+|                   | tasks; async I/O is better    | handle requests in parallel                   |
++-------------------+-------------------------------+-----------------------------------------------+
+
+
+When to use which:
+--------------------
+Use worker threads when you have a single, long-running, synchronous JavaScript function that is blocking your main thread (e.g., complex calculations, data compression). The goal is to offload this specific task to prevent the main event loop from becoming unresponsive.
+
+Use the cluster module when you want to utilize all available CPU cores to handle a high volume of concurrent network requests, increasing the overall throughput and reliability of your web server application. This is often handled by process managers like PM2 in production environments. 

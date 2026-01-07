@@ -1,0 +1,160 @@
+Q1) What is projection operation in mongodb?
+Ans:-Projection in MongoDB is the process of selecting only the necessary data fields to return from a query, rather than the entire document. This helps reduce network traffic, improves application processing efficiency, and can optimize query performance by enabling "covered queries".
+
+## Using Projection in find()
+
+The find() method accepts an optional second parameter, a projection document, to specify which fields to include or exclude.
+
+-Including fields: Set the field name to 1 (or true) to include it. Unspecified fields are implicitly excluded, except for the _id field.
+-Excluding fields: Set the field name to 0 (or false) to exclude it. Unspecified fields are implicitly included.
+-Mixing inclusion and exclusion: You generally cannot mix inclusion (1) and exclusion (0) in the same projection document, except when excluding the _id field.
+
+Examples
+Consider a collection named inventory with documents containing item, status, instock, and \_id fields.
+Return only specified fields (and _id):
+
+-Return all but excluded fields:
+------------------------------------------------
+db.inventory.find( {}, { status: 0, instock: 0 } )
+--------------------------------------------------
+This returns all fields except status and instock.
+
+-Return specific fields in embedded documents (using dot notation):
+-------------------------------------------------------------------
+db.inventory.find( {}, { "size.uom": 1, item: 1 } )
+-------------------------------------------------------------------
+This returns the item field and the uom field within the embedded size document. 
+
+
+Q2) What is aggregation pipeline in mongodb ?
+Ans:- An aggregation pipeline consists of one or more stages that process documents. These documents can come from a collection, a view, or a specially designed stage.
+
+Each stage performs an operation on the input documents. For example, a stage can $filter documents, $group documents, and calculate values. The documents that a stage outputs are then passed to the next stage in the pipeline.
+
+An aggregation pipeline can return results for groups of documents. You can also update documents with an aggregation pipeline using the stages shown in Updates with Aggregation Pipeline.
+
+Aggregation pipelines run with the db.collection.aggregate() method do not modify documents in a collection, unless the pipeline contains a $merge or $out stage.
+
+example:- 
+------------------------------------------------------------------
+db.posts.aggregate([
+  // Stage 1: Only find documents that have more than 1 like
+  {
+    $match: { likes: { $gt: 1 } }
+  },
+  // Stage 2: Group documents by category and sum each categories likes
+  {
+    $group: { _id: "$category", totalLikes: { $sum: "$likes" } }
+  }
+])
+----------------------------------------------------------------
+
+Here are some of the most frequently used stages in an aggregation pipeline:
+
+-$match: Filters documents to pass only those that match the specified conditions to the next stage. It's often recommended to place this stage early in the pipeline to minimize the number of documents being processed.
+
+-$group: Groups input documents by a specified identifier expression and performs accumulator operations (like count, sum, avg, min, max) on the grouped data.
+
+-$project: Selects, reshapes, or renames fields in the documents, and can also calculate new fields.
+
+-$sort: Reorders the documents based on a specified field and sort order (ascending or descending).
+
+-$limit: Passes a specified number of the first documents to the next stage.
+
+-$skip: Skips a specified number of documents and passes the remaining documents to the next stage.
+
+-$lookup: Performs a left outer join with another collection in the same database to combine documents from both collections.
+
+-$unwind: Deconstructs an array field from the input documents to output one document for each element in the array.
+
+-$addFields / $set: Adds new fields to documents or sets the value of existing fields.
+
+
+
+
+Q3) What is mongodb $lookup ?
+Ans:- In mongo db we can perform join operation with the help of $lookup. Basically it Performs a left outer join to a collection in the same database to filter in documents from the foreign collection for processing. The $lookup stage adds a new array field to each input document. The new array field contains the matching documents from the foreign collection. The $lookup stage passes these reshaped documents to the next stage.
+
+$lookup stage Syntax
+
+---
+
+{
+$lookup:
+{
+from: <collection to join>,
+localField: <field from the input documents>,
+foreignField: <field from the documents of the "from" collection>,
+let: { <var_1>: <expression>, …, <var_n>: <expression> },
+pipeline: [ <pipeline to run> ],
+as: <output array field>
+}
+}
+
+---
+
+The $lookup accepts a document with these fields:
+
+---
+
+from -> Specifies the foreign collection in the same database to join to the local collection.
+
+localField -> Specifies the field from the documents input to the $lookup stage. $lookup performs an equality match on the localField to the foreignField from the documents of the from collection.
+
+foreignField -> Specifies the foreign documents' foreignField to perform an equality match with the local documents' localField.
+
+let -> Specifies variables to use in the pipeline stages. Use the variable expressions to access the fields from the local collection's documents that are input to the pipeline.
+
+pipeline -> Specifies the pipeline to run on the foreign collection. The pipeline returns documents from the foreign collection. To return all documents, specify an empty pipeline: [].
+
+as -> Specifies the name of the new array field to add to the input documents. The new array field contains the matching documents from the from collection. If the specified name already exists in the input document, the existing field is overwritten.
+
+---
+
+Example: Joining orders and customers
+
+Imagine you have two collections:
+------------------------------------------------------
+-orders: with fields _id, product_id, and customer_id.
+-customers: with fields _id, name, and address. 
+------------------------------------------------------
+
+To retrieve all orders along with the corresponding customer details, you would use an aggregation pipeline with $lookup
+
+---------------------------------------
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: "customers",
+      localField: "customer_id",
+      foreignField: "_id",
+      as: "customer_details"
+    }
+  }
+])
+----------------------------------------
+
+Resulting Document Structure (example):
+--------------------------------------------
+{
+  "_id": ObjectId("..."),
+  "product_id": "prod123",
+  "customer_id": ObjectId("cust456"),
+  "customer_details": [
+    {
+      "_id": ObjectId("cust456"),
+      "name": "Jane Doe",
+      "address": "123 Main St"
+    }
+  ]
+}
+--------------------------------------------
+
+Performance Considerations
+----------------------------------
+Excessive or inefficient use of $lookup can slow down query performance. Best practices include: 
+    -Indexing the foreignField in the from collection is crucial for performance.
+    -Applying $match stages earlier in the pipeline to reduce the number of documents passed to the $lookup stage.
+    -Considering an embedded data model if data is frequently read together, to reduce reliance on joins. 
+
+
