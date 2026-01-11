@@ -378,20 +378,89 @@ Ans:-
 ----------
 
 Q9) What is HOC create HOC ? 
-Ans :- A component that take input as a component and return comonent is known as Higher Order Component.
-      e.g.:-
-      ------------
-      function Hoc({props}){
-       return 
-       <div style={{color: "red"}}>
-         {props.children}
-       </div>
-     
-      }
+Ans :- Higher-order components (HOCs) are a popular pattern in ReactJS for code reuse and composition. HOCs are functions that accept a component as an argument and return a new component with additional functionality.
 
-      function App(){
-      return <Hoc><button>click</button></Hoc>
-      } 
+Example: Theme Context
+---------------------------------
+🎨 Goal
+-Create a Theme HOC
+-Inject theme + toggleTheme
+-Reuse across components
+-Support light / dark mode
+
+1) Crate ThemeContext  
+--------------------------------------
+// ThemeContext.jsx
+import { createContext, useState } from "react";
+
+export const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState("light");
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "light" ? "dark" : "light"));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+-------------------------------------------------------
+
+2) Create Custom HOC withTheme 
+--------------------------------------------
+// withTheme.jsx
+import { useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
+
+const withTheme = (WrappedComponent) => {
+  return function WithTheme(props) {
+    const themeContext = useContext(ThemeContext);
+
+    return <WrappedComponent {...props} {...themeContext} />;
+  };
+};
+
+export default withTheme;
+
+---------------------------------------------------
+
+3) Wrap App with ThemeProvider
+-------------------------------------
+// main.jsx or index.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { ThemeProvider } from "./ThemeContext";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
+);
+--------------------------------------
+
+4) Use HOC in any component 
+----------------------------------------
+// Header.jsx
+import withTheme from "./withTheme";
+
+const Header = ({ theme, toggleTheme }) => {
+  return (
+    <header className={theme}>
+      <h1>Current Theme: {theme}</h1>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+    </header>
+  );
+};
+
+export default withTheme(Header);
+------------------------------------------
+
 
 Q10) Create a custom Hook? 
 Ans:- 
@@ -947,7 +1016,7 @@ General Security Best Practices
 
 --Secure APIs: Since React is client-side, the backend APIs must be secure. Use prepared statements or ORM libraries to prevent SQL injection and use secure authentication methods like OAuth or JWT with server-side validation.
 
---Content Security Policy (CSP): Implement a strict CSP to control which scripts and resources the browser is allowed to load. This acts as a defense-in-depth layer against XSS, blocking unauthorized script execution. Use libraries like React Helmet to manage security headers.
+--Content Security Policy (CSP): Implement a strict CSP to control which scripts and resources the browser is allowed to load. CSP comes from backend. This acts as a defense-in-depth layer against XSS, blocking unauthorized script execution. Use libraries like React Helmet to manage security headers.
 
 --Secure Authentication & Authorization: Implement robust mechanisms such as multi-factor authentication (MFA), secure session management using HttpOnly cookies, and Role-Based Access Control (RBAC).
 
@@ -1407,3 +1476,912 @@ Deployment:
 -You can add CDN(Content Delivery Network) for low latency and caching.
 -You can implement Lazy Loading for code splitting so that while bundling it can be in saperate - saperate module.
 -You can use Memo api so that when props are not changing component should not rerender it will optimize performance and faster page loading.
+
+Q15 ) What is protected routes ?
+Ans:- In web development, security is critical when building React applications, especially those handling sensitive data or functionalities, it's crucial to restrict access to certain parts of the application to authorized users only. This is where protected routes come into play.
+In React, routes are protected by creating a wrapper component (e.g., ProtectedRoute or AuthGuard) that checks a user's authentication status (e.g., a token in localStorage or state) and conditionally renders the requested content or redirects the user to a login page using React Router's <Navigate> component. 
+
+1. Manage Authentication State 
+First, you need a way to track if the user is authenticated. This can be done using React's useState and useContext hooks for simple apps, or Redux for larger applications. The authentication status must persist across page refreshes (e.g., stored in localStorage or session storage). 
+
+--------------------------------------------------------
+// A simple hook to check authentication status (example)
+import { useState, useEffect } from 'react';
+
+const useAuth = () => {
+  // In a real app, you'd check a token in localStorage and validate it (e.g., using a fetch call)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      // In reality, this would involve a server-side check to verify the token's validity
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  return isAuthenticated;
+};
+
+export default useAuth;
+---------------------------------------------------------
+
+2. Create the ProtectedRoute Component 
+This component acts as the "guard." It receives the protected content as children or uses <Outlet /> for nested routes and determines whether the user should access them. 
+
+--------------------------------------------------------------------------------------
+// src/components/ProtectedRoute.js
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import useAuth from '../hooks/useAuth'; // Your custom auth hook
+
+const ProtectedRoute = () => {
+  const isAuthenticated = useAuth();
+  
+  // If authenticated, render the child routes via Outlet, otherwise redirect to login
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
+export default ProtectedRoute;
+----------------------------------------------------------------------------------------
+
+3. Configure Routes in App.js 
+In your main routing setup, you wrap the routes you want to protect inside a parent <Route> that uses your ProtectedRoute component. 
+--------------------------------------------------------------
+// src/App.js
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home'; // Example of a protected page
+import Dashboard from './pages/Dashboard'; // Another protected page
+import Login from './pages/Login'; // Public login page
+import ProtectedRoute from './components/ProtectedRoute';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Routes Wrapper */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+
+        {/* Handle 404 or other public pages */}
+        {/* <Route path="*" element={<NotFound />} /> */}
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+--------------------------------------------------------------------------------------------
+
+Q16) Diffrence between custom hooks and HOC ?
+Ans:-  
+
+Q17) How do you handle react with 20+ fields? 
+Ans:-
+a) Use Formik or React-hook-forms library because it is already well tested with performance, so even if you are using 20 fields, if in one field there is any changes happend so all fields will not re-renderd.
+
+b) Use conditional rendering. If you need to show some field based on conditions then show others fields otherwise don't show. Generally we disabled field not hide.
+
+c) Use Schema based Validation library Zod/Yup. Because it provides you Centralized validation, Easy to update, Less Bugs. 
+
+d) Use Controlled Inputs Only When Needed. Use controlled inputs (value, onChange) only when:
+  Conditional logic
+  Live preview
+  Dependent fields
+
+e) Centralize Form State (Avoid 20 useState Calls)
+❌ Bad:
+--------------------------------------------------
+const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+// 20+ times
+--------------------------------------------------
+
+✅ Better:
+--------------------------------------------------
+const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  phone: ""
+});
+--------------------------------------------------
+
+Q18) How do you support dark mode in a React application?
+Ans:- There is three scenarios where you can implement this 
+    a) system preferences b) user preferences c) default -> light
+ 
+ a) for system preferences we have property in windows "prefers-color-scheme"
+
+ detect system theme
+ ---------------------------------
+ const getSystemTheme = () =>
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+----------------------------------
+
+2️⃣ Store User Preference (localStorage)
+
+Values:
+"dark"
+"light"
+"system" (important)
+---------------------------------------
+localStorage.setItem("theme", "dark");
+---------------------------------------
+
+3️⃣ Create a Theme Context (Best Practice)
+-----------------------------------------
+you can create theme context with the help of context api and passed it with Provider, so from anywhere you can access theme and change theme. 
+---------------------------------------------------------
+  <ThemeContext.Provider value={{ theme, changeTheme }}>
+      {children}
+  </ThemeContext.Provider>
+---------------------------------------------------------
+
+4️⃣ Tailwind CSS (If You Use It). Set config:
+----------------------------------------
+darkMode: ["attribute", "data-theme"],
+----------------------------------------
+
+5️⃣ Apply Styles (CSS Variables – Recommended)
+---------------------------------------------
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #000000;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #ffffff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+----------------------------------------------
+✅ No re-render required
+✅ Super fast
+✅ Works with Tailwind / CSS / SCSS
+
+Q19) How would you handle online/offline functionality in a React app?
+Ans:- It means we want to detect wheather user is online or offline .
+we have navigator.onLine provided by browser. 
+If we have to listen to those change we can do
+-------------------------------------------------
+window.addEventListener("online", handler);
+window.addEventListener("offline", handler);
+------------------------------------------------
+
+For best practice you can create hooks
+-------------------------------------------
+import { useEffect, useState } from "react";
+
+export function useOnlineStatus() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+
+  return isOnline;
+}
+---------------------------------------------------
+
+Uses:-
+
+1️⃣ Service Workers (PWA(progressive web app) – Advanced)
+------------------------------------------------------
+PWA means application will not communicate with real network because it is offline instead it will comunicate with cache data.
+For full offline experience:
+-Cache assets
+-Cache API responses
+-Background sync
+
+Tools:
+-Workbox
+-Vite PWA plugin
+------------------------------------------------------------------------
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then(res => res || fetch(event.request))
+  );
+});
+------------------------------------------------------------------------
+
+
+2️⃣prevent api call when user is offline 
+--------------------------------------------------
+axios.interceptors.request.use((config) => {
+  if (!navigator.onLine) {
+    return Promise.reject("Offline");
+  }
+  return config;
+});
+--------------------------------------------------
+Or 
+-------------------------------------------------
+if (!navigator.onLine) {
+  throw new Error("No internet connection");
+}
+------------------------------------------------
+
+3️⃣ Queue Actions While Offline (Advanced)
+
+When offline:
+-----------------------------------
+-Save user actions locally
+-Replay them when online
+-------------------------------------------------------------------
+const queue = JSON.parse(localStorage.getItem("queue") || "[]");
+
+queue.push({
+  type: "CREATE_ORDER",
+  payload: data,
+});
+
+localStorage.setItem("queue", JSON.stringify(queue));
+------------------------------------------------------------------
+
+when user comes online sync them with backend
+---------------------------------------------------------
+window.addEventListener("online", async () => {
+  const queue = JSON.parse(localStorage.getItem("queue") || "[]");
+
+  for (const action of queue) {
+    await api(action);
+  }
+
+  localStorage.removeItem("queue");
+});
+-----------------------------------------------------------
+
+4️⃣ Cache Data for Offline Use
+you can set data to localStorage or indexdb so that if user is offline you can take data from there. 
+
+-Local Storage 
+----------------------------------------------------
+localStorage.setItem("posts", JSON.stringify(data));
+----------------------------------------------------
+
+-IndexedDB
+----------------------------------------------------
+Libraries:
+  -idb
+  -dexie
+-------------------------------------------------
+import { set, get } from "idb-keyval";
+
+await set("posts", posts);
+const cachedPosts = await get("posts");
+-------------------------------------------------
+
+Q20) Production is not getting the latest deployed update unless in incognito. How do you solve this?
+Ans:- This is a classic production issue, When an app loads correctly in Incognito but not in normal mode, the problem is almost always caching.
+
+🔍 Why This Happens
+---------------------
+Incognito:
+-No cached JS/CSS
+-No service worker cache
+-No stale assets
+
+Normal browser:
+-Cached index.html
+-Cached JS/CSS bundles
+-Old Service Worker still controlling the app
+-Aggressive CDN/browser caching
+
+✅ Step-by-Step Solutions (in correct order)
+-----------------------------------------------
+1️⃣ Fix Browser Cache (Most Common)
+❌ Problem
+index.html is cached → it keeps loading old JS bundle names.
+
+✅ Solution
+-Never aggressively cache index.html
+-Cache static assets aggressively
+
+Correct Cache Headers
+----------------------------------------------------------
+index.html
+Cache-Control: no-cache, no-store, must-revalidate
+
+/static/*.js
+Cache-Control: public, max-age=31536000, immutable
+----------------------------------------------------------
+
+This ensures:
+-HTML always fetches latest version
+-JS/CSS can be safely cached
+
+2️⃣ Enable Proper Asset Hashing (MUST)
+Your build must generate hashed filenames.
+
+Example:
+----------------------------------------------------------
+main.8f3a2c.js
+vendor.a91c7e.css
+---------------------------------------------------------
+In Vite / CRA (default)
+Already enabled ✅
+If not:
+-----------------------------------------
+output: {
+  filename: "[name].[contenthash].js"
+}
+-----------------------------------------
+
+3️⃣ Service Worker Is the #1 Culprit 🚨
+❌ Problem
+
+Old service worker still serving cached files.
+
+How to Confirm
+-Open DevTools → Application → Service Workers
+-If one exists → this is likely the issue
+
+✅ Fix Option 1: Force SW Update (Recommended)
+----------------------------------------------
+self.addEventListener("install", () => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(self.clients.claim());
+});
+-----------------------------------------------
+
+✅ Fix Option 2: Versioned Cache Names
+----------------------------------------------------------
+const CACHE_NAME = "app-cache-v2"; // change every deploy
+----------------------------------------------------------
+Old cache is auto removed.
+
+✅ Fix Option 3: Show “New Version Available” Banner (BEST UX)
+-------------------------------------------------------------
+if (registration.waiting) {
+  showUpdateToast();
+}
+-------------------------------------------------------------
+User clicks → refresh → new version loads.
+
+4️⃣ CDN / Reverse Proxy Caching (Very Common)
+❌ Problem
+Cloudflare / Nginx / AWS CloudFront caching HTML.
+
+✅ Solution (Nginx example)
+------------------------------------------------------------------
+location / {
+  add_header Cache-Control "no-cache, no-store, must-revalidate";
+}
+------------------------------------------------------------------
+
+For assets:
+------------------------------------------------------------------
+location /assets/ {
+  add_header Cache-Control "public, max-age=31536000, immutable";
+}
+-------------------------------------------------------------------
+
+5️⃣ Hard Reload Is NOT a Fix ❌
+
+If you say:
+“Ask users to hard refresh”. Use ctrl+shift+R button.
+That is not production acceptable.
+
+You must:
+-Auto update
+-Or notify user
+
+6️⃣ Quick Debug Checklist 🧪
+|-------------------|------------------------|
+| Check             | Where                  |
+| ----------------- | ---------------------- |
+| Service Worker    | DevTools → Application |
+| index.html cached | Network tab            |
+| JS hash changed   | View page source       |
+| CDN cache         | Cloudflare / AWS       |
+| Incognito works   | Confirms caching issue |
+|--------------------------------------------|
+
+🧠 Interview One-Liner Answer
+--------------------------------------
+“This happens due to aggressive caching or stale service workers. I fix it by preventing caching of index.html, enabling hashed assets, handling service worker updates correctly, and configuring CDN cache rules so users always receive the latest deployment.”
+
+Q21) What is memory leak and its solutions?
+Ans:-
+A memory leak happens when an application allocates memory but never releases it, even though it’s no longer needed. Over time, memory usage keeps growing, leading to:
+
+-Slow performance 🐌
+-UI freezes
+-App crashes
+-Browser tab going unresponsive
+
+In JavaScript / React, memory leaks are usually caused by unreleased references, not manual memory allocation.
+
+🧠 How Memory Works in JS (Quick)
+---------------------------------------
+JavaScript uses Garbage Collection (GC).
+
+➡️ Memory is freed automatically when objects have no references pointing to them.
+
+🚨 A leak occurs when:
+-References are unintentionally retained
+-GC cannot clean unused objects
+
+🚨 Common Causes of Memory Leaks (React / JS)
+1️⃣ Uncleaned Event Listeners
+
+❌ Problem:
+--------------------------------------------------
+useEffect(() => {
+  window.addEventListener("resize", handleResize);
+}, []);
+--------------------------------------------------
+
+✅ Fix:
+------------------------------------------------------------------
+useEffect(() => {
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+------------------------------------------------------------------
+
+2️⃣ Timers (setInterval / setTimeout)
+
+❌ Problem:
+------------------------------------------------------------------
+useEffect(() => {
+  setInterval(fetchData, 1000);
+}, []);
+------------------------------------------------------------------
+
+✅ Fix:
+-----------------------------------------------------------------
+useEffect(() => {
+  const id = setInterval(fetchData, 1000);
+  return () => clearInterval(id);
+}, []);
+-----------------------------------------------------------------
+
+3️⃣ Subscriptions Not Cleaned Up
+
+Examples:
+-WebSocket
+-RxJS
+-Firebase listeners
+
+❌ Problem:
+--------------------------------
+socket.on("message", handler);
+-------------------------------
+
+✅ Fix:
+----------------------------------------------
+useEffect(() => {
+  socket.on("message", handler);
+  return () => socket.off("message", handler);
+}, []);
+----------------------------------------------
+
+4️⃣ Api calls cause memory leaks 
+
+🔥 Problem Without AbortController (Memory Leak)
+----------------------------------------------------------------
+useEffect(() => {
+  fetch("/api/users")
+    .then(res => res.json())
+    .then(data => setUsers(data)); // ❌ may run after unmount
+}, []);
+----------------------------------------------------------------
+If the component unmounts before the request finishes, setUsers runs on an unmounted component → memory leak warning.
+
+✅ Solution: AbortController (Recommended Way)
+Basic Example (Fetch API) 
+----------------------------------------------------
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetch("/api/users", { signal })
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") {
+          console.log("Fetch aborted");
+        } else {
+          console.error(error);
+        }
+      });
+
+    // 🔥 cleanup
+    return () => {
+      controller.abort();
+    };
+  }, []);
+----------------------------------------------------- 
+
+5️⃣ Closures Holding Old References
+  -Closures keep old variable alive 
+  -Refs holding large objects or DOM nodes 
+  -Garbage collector can't free memory 
+
+❌ Problem:
+----------------------------------------------------
+function DataComponent(){
+  const bigArray = new Array(10000000).fill("data");
+
+  useEffect(()=>{
+    const LogData = () => console.log(bigArray.length);
+    window.addEventListener("click", LogData);
+  },[])
+}
+------------------------------------------------------
+
+✅ Fix: Nullify refs/release references on cleanup
+--------------------------------------------------------
+function DataComponent(){
+  const bigArray = new Array(10000000).fill("data");
+
+  useEffect(()=>{
+    const LogData = () => console.log(bigArray.length);
+    window.addEventListener("click", LogData);
+
+    //clean up and help GC release memory 
+    return ()=>{
+      window.addEventListener("click", LogData);
+    }
+  },[])
+}
+--------------------------------------------------------
+
+
+6️⃣ Global Variables
+
+❌ Problem:
+------------------------------
+window.data = largeObject;
+------------------------------
+
+✅ Fix:
+-Avoid globals
+-Cleanup on unmount
+
+7️⃣ Detached DOM Nodes
+
+DOM nodes removed visually but still referenced in JS.
+
+❌ Problem:
+-----------------------------------------------------
+const el = document.getElementById("modal");
+document.body.removeChild(el);
+// reference still exists
+-----------------------------------------------------
+
+✅ Fix:
+------------------------------
+el = null;
+------------------------------
+
+8️⃣ Wrong Data Structures (Map vs WeakMap)
+
+❌ Problem:
+--------------------------------------
+const map = new Map();
+map.set(domNode, data); // never GC'd
+--------------------------------------
+
+✅ Fix:
+--------------------------------------
+const weakMap = new WeakMap();
+weakMap.set(domNode, data);
+-------------------------------------
+
+
+🛠️ How to Detect Memory Leaks
+Chrome DevTools
+-Open Memory tab
+-Take Heap Snapshot
+-Interact with app
+-Take another snapshot
+-Compare retained objects
+
+Performance Tab
+-Look for increasing JS heap size
+
+✅ Best Practices to Prevent Memory Leaks
+✔ Always clean up useEffect
+✔ Clear timers & listeners
+✔ Cancel API calls
+✔ Avoid unnecessary globals
+✔ Use WeakMap / WeakSet
+✔ Use libraries that handle cleanup (React Query)
+
+🧠 Interview One-Liner
+
+“A memory leak occurs when unused memory isn’t released due to retained references. In React, it’s commonly caused by uncleaned effects, timers, subscriptions, or async updates after unmount, and is fixed by proper cleanup and cancellation.”
+
+Q22) Explain batching behavior in react js?
+Ans:- React groups multiple state updates togather to avoid unnecessary rerender, making the application faster and more efficient. 
+
+Automatic Batching in React 18
+--------------------------------
+A major enhancement in React 18 is automatic batching, which extends this behavior to cover nearly all scenarios, including asynchronous operations. 
+Before React 18: Batching only occurred within native React event handlers (like onClick). Updates inside setTimeout, promises, or native addEventListener calls were not batched, leading to multiple re-renders.
+
+In React 18+: Updates are automatically batched everywhere by default. This includes updates inside of:
+-setTimeout
+-Promises and async/await functions
+-Native event handlers 
+
+How Batching Works
+React waits until all state updates within the same event handler or synchronous code block have been enqueued before triggering a single, consolidated render. 
+For example, calling multiple state setters in one function will result in only one re-render:
+-------------------------------
+const handleClick = () => {
+  setTimeOut(()=>{
+       setCount(c => c + 1);
+       setName('Updated Name');
+       setIsActive(true);
+      // React batches all three updates and re-renders once
+  },100)
+};
+--------------------------------
+
+Opting Out of Batching
+--------------------------
+In rare situations where you need a state update to be applied to the DOM immediately (e.g., to measure a DOM element's position for an animation), you can use ReactDOM.flushSync()
+------------------------------
+import { flushSync } from 'react-dom';
+
+function handleClick() {
+  flushSync(() => {
+    setCount(c => c + 1);
+  });
+  // React has updated the DOM by this point
+
+  flushSync(() => {
+    setFlag(f => !f);
+  });
+  // The DOM is updated again immediately after this call
+}
+----------------------------------------------------------
+
+flushSync should be used sparingly, as it can negatively impact performance by forcing synchronous updates and bypassing React's optimizations. 
+
+Q23) How do you optimize large list in react?
+Ans:- Handling a large list in React (hundreds or thousands of items) is mainly about performance, memory, and UX.
+
+🎯 Problems with Large Lists
+-Slow initial render
+-UI freezes on scroll
+-High memory usage
+-Unnecessary re-renders
+
+1️⃣ List Virtualization (MOST IMPORTANT)
+🔥 Best Solution
+
+Render only items visible on screen, not the full list.
+
+Libraries
+-react-window (recommended)
+-react-virtualized
+
+Example using react-window
+-------------------------------------------------------
+import { FixedSizeList as List } from "react-window";
+
+const Row = ({ index, style, data }) => (
+  <div style={style}>
+    {data[index].name}
+  </div>
+);
+
+<List
+  height={500}
+  itemCount={10000}
+  itemSize={50}
+  width="100%"
+  itemData={items}
+>
+  {Row}
+</List>
+-------------------------------------------------------
+
+Q24) How does react handle hydration in SSR, and what problems can arise? 
+Ans:- Hydration is the process where React attaches event listeners and state to server-rendered HTML on the client without re-rendering the DOM.
+
+Flow:
+-Server renders HTML → sends to browser
+-Browser displays HTML immediately (fast first paint)
+-React JS loads on client
+-React hydrates → makes HTML interactive
+------------------------------------
+Server HTML (static)
+↓
+React Hydration
+↓
+Fully interactive app
+------------------------------------
+
+🔹 How React Performs Hydration
+Instead of doing:
+-------------------------------------------------
+ReactDOM.createRoot(root).render(<App />); // ❌
+-------------------------------------------------
+React Uses
+-------------------------------------------------
+ReactDOM.hydrateRoot(root, <App />); // ✅
+-------------------------------------------------
+
+What React does during hydration:
+-Traverses existing DOM
+-Matches it with React Virtual DOM
+-Attaches:
+  -Event listeners
+  -State
+  -Effects
+
+⚠️ React expects server HTML === client render output
+
+🔹 Why Hydration Is Fast
+  -No DOM recreation
+  -Minimal mutations
+  -Uses existing HTML
+
+  This is why SSR improves:
+  -FCP (First Contentful Paint)
+  -SEO
+  -Perceived performance
+
+  🚨 Common Hydration Problems (VERY IMPORTANT)
+1️⃣ Hydration Mismatch (Most Common)
+❌ Cause
+
+Server HTML ≠ Client HTML
+---------------------------------------------
+const time = new Date().toLocaleTimeString();
+---------------------------------------------
+Server time ≠ client time → mismatch
+
+🔥 Error:
+“Text content does not match server-rendered HTML”
+
+✅ Fix
+Move client-only logic to useEffect:
+---------------------------------------------
+const [time, setTime] = useState("");
+
+useEffect(() => {
+  setTime(new Date().toLocaleTimeString());
+}, []);
+---------------------------------------------
+
+2️⃣ Using Browser-Only APIs During SSR
+❌ Problem
+---------------------------------------------
+window.innerWidth
+localStorage.getItem("theme")
+navigator.userAgent
+--------------------------------------------
+These don’t exist on server.
+✅ Fix
+Guard them:
+---------------------------------------------
+if (typeof window !== "undefined") {
+  // safe
+}
+---------------------------------------------
+Or run in useEffect.
+
+3️⃣ Random Values (Math.random, UUIDs)
+❌ Problem
+---------------------------------------------
+const id = Math.random();
+---------------------------------------------
+
+Server and client generate different values.
+
+✅ Fix
+  -Generate on server and pass as prop
+  -Or generate in useEffect
+
+4️⃣ Conditional Rendering Based on Client State
+❌ Problem
+-----------------------------------------------
+{isLoggedIn && <Dashboard />}
+-----------------------------------------------
+Server: false
+Client: true
+
+✅ Fix
+  -Use loading/skeleton
+  -Hydrate auth state properly
+  -Delay render
+-----------------------------------------------
+if (!mounted) return null;
+-----------------------------------------------
+
+5️⃣ CSS-in-JS Order Mismatch
+
+Common with:
+-Styled-components
+-Emotion
+
+❌ Problem
+Different class name order
+
+✅ Fix
+Use SSR-compatible setup:
+  -StyleSheetManager
+  -Next.js built-in support
+
+6️⃣ Theme / Dark Mode Mismatch (VERY COMMON)
+
+Server renders light
+Client prefers dark
+
+❌ Problem
+HTML differs → hydration warning
+
+✅ Fix
+  -Inline script before hydration
+  -Sync theme before React loads
+--------------------------------------------
+<script>
+  document.documentElement.dataset.theme =
+    localStorage.theme || "light";
+</script>
+--------------------------------------------
+
+7️⃣ Third-Party Libraries Mutating DOM
+Libraries that manipulate DOM directly break hydration.
+
+Examples:
+-jQuery plugins
+-Chart libraries
+
+✅ Fix
+Load them after hydration using useEffect.
+
+🔹 What React Does If Hydration Fails
+
+React logs warning
+
+Discards server DOM
+
+Re-renders everything on client
+
+🚨 This defeats SSR benefits.
+
+🔹 Best Practices to Avoid Hydration Issues
+
+✔ Keep render output deterministic
+✔ Avoid browser APIs in render
+✔ Use useEffect for client-only logic
+✔ Preload critical data on server
+✔ Use consistent CSS solutions
+✔ Handle theme & auth carefully
+
+🧠 Interview One-Liner Answer
+“Hydration is the process where React attaches interactivity to server-rendered HTML. Problems arise when server and client renders differ—due to browser-only APIs, random values, or client-specific state—causing hydration mismatches and forcing React to re-render.”
