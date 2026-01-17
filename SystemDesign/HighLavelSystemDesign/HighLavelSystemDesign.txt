@@ -78,7 +78,6 @@ Ans:-
 
 - **API Gateway is not a single instance** but a distributed, multi-instance system deployed across regions and AZs to ensure scalability and fault tolerance.
 - **DNS load balancing** at the global level ensures traffic is routed intelligently, removing the "single entry point" bottleneck concern.
-- The video hints at future discussions on **DNS internals** and **OAuth 2.0 flows** but does not elaborate in detail here.
 
 ---
 

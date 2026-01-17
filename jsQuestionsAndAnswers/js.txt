@@ -1277,7 +1277,7 @@ Ans:- JavaScript executes all code on a single main thread, responsible for hand
 
 practical example involving two buttons on a webpage: one triggers a heavy calculation (summing numbers from 0 to 10 billion), and the other changes the background color of the page. When both tasks run on the main thread, clicking the heavy calculation button prevents the background color button from responding until the calculation finishes, demonstrating blocking behavior.
 
-To solve this, the video introduces web workers, which run JavaScript in separate background threads parallel to the main thread. By moving the expensive calculation into a worker thread, the background color button remains responsive regardless of the heavy computation’s state. The main thread handles UI interactions smoothly while the worker performs CPU-intensive tasks independently.
+To solve this, you can introduces web workers, which run JavaScript in separate background threads parallel to the main thread. By moving the expensive calculation into a worker thread, the background color button remains responsive regardless of the heavy computation’s state. The main thread handles UI interactions smoothly while the worker performs CPU-intensive tasks independently.
 
 script.js
 -------------------------------------------------------------------------
