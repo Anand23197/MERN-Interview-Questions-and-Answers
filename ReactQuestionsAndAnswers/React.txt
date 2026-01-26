@@ -1016,8 +1016,6 @@ General Security Best Practices
 
 --Secure APIs: Since React is client-side, the backend APIs must be secure. Use prepared statements or ORM libraries to prevent SQL injection and use secure authentication methods like OAuth or JWT with server-side validation.
 
---Content Security Policy (CSP): Implement a strict CSP to control which scripts and resources the browser is allowed to load. CSP comes from backend. This acts as a defense-in-depth layer against XSS, blocking unauthorized script execution. Use libraries like React Helmet to manage security headers.
-
 --Secure Authentication & Authorization: Implement robust mechanisms such as multi-factor authentication (MFA), secure session management using HttpOnly cookies, and Role-Based Access Control (RBAC).
 
 --HTTPS Only: Ensure all communication between the client and the server uses HTTPS/TLS to encrypt data in transit, protecting sensitive information from interception (Man-in-the-Middle attacks).
@@ -1029,6 +1027,115 @@ General Security Best Practices
 --Error Handling and Logging: Ensure error messages do not expose sensitive application or server information.
 
 --Avoid JSON Injection Attacks: When using server-side rendering to preload state, escape HTML-sensitive characters (like <) from JSON data to prevent script injection. 
+
+Http Secure Headers 
+--------------------------------
+Secure headers are tiny rule books your server sends to the browser, telling it how to treat your content securely. They don't touch your app logic, but they quietly enforce critical rules in the browser like only load scripts from trusted resources, always use HTTPS or don't leak sensitive referral data. And just like that, you have shut down entire classes of attacks without changing a single line of JavaScript.
+
+These headers include:
+
+-Content Security Policy (CSP)
+-HTTP Strict Transport Security (HSTS)
+-X-Content-Type-Options
+-Referrer Policy
+-Cross-Origin Resource Sharing (CORS)
+-Permissions Policy
+
+  a) CSP - Acts as a whitelist for scripts. It tells browser that always use styles, scripts, assets from this trusted places.
+   ------------------------------------
+   eg:-  Content-Security-Policy:
+            default-src 'self';
+            script-src 'self';
+            object-src 'none';
+
+    Without CSP 
+    -------------
+     --Malicious scripts can run via XSS.
+     --Attackers may load code from any domain.
+     --Plugins like flash may execute.
+
+    With CSP 
+    ----------------
+    --Only trusted scripts are allowed.
+    --Blowser blocks unknown sources.
+    --Risky elements are blocked.
+
+  b) HSTS - ome websites still load over plain HTTP if the browser doesn't start with HTTPS. And that's a problem because in that initial moment, the connection is still unencrypted. That tiny window where the browser first reaches out over HTTP is all an attacker needs.On a public Wi-Fi network, someone could intercept the request, redirect you, or inject malicious content before the site even switches to HTTPS. HSTS fixes this. Once the browser sees the HSTS header, it knows always use HTTPS for this domain.
+
+  eg:-
+  --------
+  Strict-Transport-Security:
+    max-age=31536000;   //inforce https for one full year 
+    includeSubDomains;  //include all subdomain 
+    preload             //preload this rule into browsers 
+
+  c) X-Content Type Options - your server sends a file with a .txt extension, but inside that file is actually some malicious JavaScript. Some older or lenient browsers might try to guess what kind of file it is and decide, hm, this looks like a script. Let me run it. That's called mimen sniffing and it can lead to unexpected script execution. even if the content type says otherwise. To prevent this, we use X-content type options no sniff.
+
+  eg:-
+  ------------------------
+  X-Content-Type-Options: nosniff
+
+  This tells the browser, trust what I said the file is. Don't try to guess.
+
+  without X-content Type
+  -------------------------
+  --Browsers may "sniff" file types and misinterpret them.
+  --A .txt file with script content might get executed.
+
+  with X-Content type 
+  -------------------------
+  --Browser strictly follows declared content type.
+  --Malicious files are treated as plain text, not script. 
+
+  d) Referrer Policy - when a user clicks a link from your site to another the browser sends a referral header. Basically saying hey this is where the user came from. But here's the catch. That header might include full URLs including query parameters, tokens or even user ids. And that's risky. You might be leaking sensitive info to third party websites without even realizing it. To control this, we use referral policy strict origin when cross origin. 
+
+  eg:- 
+  ------------
+  Referrer-Policy: strict-origin-when-cross-origin 
+
+  This means if the next page is on your own domain, send the full URL. If it's going to another domain, just send the origin eg. https://bytemonk.io .
+
+  without Referrer Policy:-
+  --------------------------
+  --Full URLs-including auery params-can leak to other sites. 
+  --Sensitive data like tokens or IDs may be exposed.
+
+  with Referrer Policy:-
+  -------------------------
+  --Only the domain is shared on cross-site request.
+  --Users privacy is protected by limiting referrer info.
+
+  e) CORS - Controls which external domains can interact with your backend APIs securely.
+            Course make sure that only trusted domains can access your API and the access is tightly controlled by origin and method.
+
+  eg:-
+  -----------
+  Acess-Control-Allow-Origin: https://bytemap.io     //only allow request from https://bytemap.io 
+  Access-Control-Allow-Methods: GET, POST, OPTIONS   //only accept safe methods like get, post
+  Access-Control-Allow-Headers: Content-Type, Authorization //only allow specific headers like Content Type and Authorization 
+
+  Also don't use *(wildcard) unless you are sure that there is no sensitive data involved. 
+
+  without CORS:- 
+  ----------------------
+  --Legit cross-origin requests may fail.
+  --Apis may unintentionally expose dat to any site. 
+
+  with CORS:- 
+  ----------------------
+  --Only trusted domain can access you api.
+  --Access is tightly controlled by origin and method.
+
+  f) Permissions Policy:- Headers don't just control what comes in and out. They can also control what your site is allowed to do inside the browser itself. And that's where permissions policy come in. Modern browsers give websites access to features like geolocation, camera, microphone, full screen, and even vibration. But here's the thing, not every script on your site should have that power. Imagine emitting a third party widget and it quietly asks for a mic access. Yeah, not great. Permissions policy let you take that control. You define who gets access to what right from the response header.
+  eg:-
+  ------------
+  Permissions-Policy:
+    geolocation=(self),  //Only your own site can access your location. 
+    microphone=(),  //Mic and camera blocked completely even by accident.
+    camera=()
+
+
+  
 
 Q13) Responsive design in React?
 Ans:- 
