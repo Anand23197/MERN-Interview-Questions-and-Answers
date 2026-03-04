@@ -1060,7 +1060,7 @@ These headers include:
     --Blowser blocks unknown sources.
     --Risky elements are blocked.
 
-  b) HSTS - ome websites still load over plain HTTP if the browser doesn't start with HTTPS. And that's a problem because in that initial moment, the connection is still unencrypted. That tiny window where the browser first reaches out over HTTP is all an attacker needs.On a public Wi-Fi network, someone could intercept the request, redirect you, or inject malicious content before the site even switches to HTTPS. HSTS fixes this. Once the browser sees the HSTS header, it knows always use HTTPS for this domain.
+  b) HSTS - some websites still load over plain HTTP if the browser doesn't start with HTTPS. And that's a problem because in that initial moment, the connection is still unencrypted. That tiny window where the browser first reaches out over HTTP is all an attacker needs.On a public Wi-Fi network, someone could intercept the request, redirect you, or inject malicious content before the site even switches to HTTPS. HSTS fixes this. Once the browser sees the HSTS header, it knows always use HTTPS for this domain.
 
   eg:-
   --------

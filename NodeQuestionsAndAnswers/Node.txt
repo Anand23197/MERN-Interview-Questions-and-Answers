@@ -1522,7 +1522,6 @@ Ans:-
 - The server believes the request is coming from the proxy server, not from the client.
 - This method is often used to bypass **geographical restrictions or content blocks**.
 - The actual server responds to the proxy server, which then forwards the response back to the client.
-- The video promises to explain the **reverse proxy** in the next session.
 
 ### Glossary Table
 
@@ -1613,7 +1612,7 @@ Ans:-
 
 ---
 
-Q22) Provide Security Machansm in node js?
+Q22) Provide Security Machanism in node js?
 Ans:- There are lots of way from which you can implement security machanism.
 
 1. Authentication & Authorization 🔐
